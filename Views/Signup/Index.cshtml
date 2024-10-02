@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewData["Title"] = "Signup new account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="h-100">
+	<div class="container h-100">
+		<div class="row justify-content-sm-center h-100">
+			<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+				<div class="text-center mb-3">
+					<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">
+				</div>
+				<div class="card shadow-sm">
+					<div class="card-body px-5 py-4">
+						<h1 class="fs-4 card-title fw-bold mb-4">Đăng ký tài khoản</h1>
+						<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+							<div class="mb-3">
+								<label class="mb-2 text-muted" for="name">Họ và tên</label>
+								<input id="name" type="text" class="form-control" name="name" required autofocus>
+								<div class="invalid-feedback">
+									Họ và tên là bắt buộc
+								</div>
+							</div>
+
+							<div class="mb-3">
+								<label class="mb-2 text-muted" for="email">Email</label>
+								<input id="email" type="email" class="form-control" name="email" required>
+								<div class="invalid-feedback">
+									Email là bắt buộc
+								</div>
+							</div>
+
+							<div class="mb-3">
+								<label class="mb-2 text-muted" for="password">Mật khẩu</label>
+								<input id="password" type="password" class="form-control" name="password" required>
+								<div class="invalid-feedback">
+									Mật khẩu là bắt buộc
+								</div>
+							</div>
+
+							<div class="mb-3">
+								<label class="mb-2 text-muted" for="password-confirm">Xác nhận mật khẩu</label>
+								<input id="password-confirm" type="password" class="form-control" name="password_confirm" required>
+								<div class="invalid-feedback">
+									Bạn chưa xác nhận mật khẩu
+								</div>
+							</div>
+
+							<p class="form-text text-muted mb-3">
+								Bằng việc đăng ký tài khoản, bạn chấp nhận với các 
+								<a asp-area="" asp-controller="Home" asp-action="Privacy">điều khoản </a> 
+								của chúng tôi
+							</p>
+
+							<div class="align-items-center d-flex">
+								<button type="submit" class="btn btn-primary ms-auto">
+									Đăng ký
+								</button>
+							</div>
+						</form>
+					</div>
+					<div class="card-footer py-3 border-0">
+						<div class="text-center">
+							Đã có tài khoản? 
+							<a class="text-dark" asp-area="" asp-controller="Login" asp-action="Index">Đăng nhập ngay</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script src="~/js/validate_form.js" asp-append-version="true"></script>
