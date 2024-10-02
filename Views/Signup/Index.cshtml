@@ -1,4 +1,5 @@
-﻿
+﻿@model GallifreyPlanet.Models.User
+
 @{
     ViewData["Title"] = "Signup new account";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,42 +15,29 @@
 				<div class="card shadow-sm">
 					<div class="card-body px-5 py-4">
 						<h1 class="fs-4 card-title fw-bold mb-4">Đăng ký tài khoản</h1>
-						<form method="POST" class="needs-validation" novalidate="" autocomplete="off">
+						<form asp-action="Index" method="POST" class="needs-validation" novalidate="" autocomplete="off">
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
-								<label class="mb-2 text-muted" for="name">Họ và tên</label>
-								<input id="name" type="text" class="form-control" name="name" required autofocus>
-								<div class="invalid-feedback">
-									Họ và tên là bắt buộc
-								</div>
+								<label asp-for="Name" class="mb-2 text-muted">Họ và tên</label>
+								<input asp-for="Name" type="text" class="form-control" required autofocus>
+								<span asp-validation-for="Name" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">
-								<label class="mb-2 text-muted" for="email">Email</label>
-								<input id="email" type="email" class="form-control" name="email" required>
-								<div class="invalid-feedback">
-									Email là bắt buộc
-								</div>
+								<label asp-for="Email" class="mb-2 text-muted">Email</label>
+								<input asp-for="Email" type="email" class="form-control" required>
+								<span asp-validation-for="Email" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">
-								<label class="mb-2 text-muted" for="password">Mật khẩu</label>
-								<input id="password" type="password" class="form-control" name="password" required>
-								<div class="invalid-feedback">
-									Mật khẩu là bắt buộc
-								</div>
-							</div>
-
-							<div class="mb-3">
-								<label class="mb-2 text-muted" for="password-confirm">Xác nhận mật khẩu</label>
-								<input id="password-confirm" type="password" class="form-control" name="password_confirm" required>
-								<div class="invalid-feedback">
-									Bạn chưa xác nhận mật khẩu
-								</div>
+								<label asp-for="Password" class="mb-2 text-muted">Mật khẩu</label>
+								<input asp-for="Password" type="password" class="form-control" required>
+								<span asp-validation-for="Password" class="text-danger"></span>
 							</div>
 
 							<p class="form-text text-muted mb-3">
 								Bằng việc đăng ký tài khoản, bạn chấp nhận với các 
-								<a asp-area="" asp-controller="Home" asp-action="Privacy">điều khoản </a> 
+								<a asp-area="" asp-controller="Home" asp-action="Privacy">điều khoản</a> 
 								của chúng tôi
 							</p>
 
@@ -72,4 +60,6 @@
 	</div>
 </section>
 
-<script src="~/js/validate_form.js" asp-append-version="true"></script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
