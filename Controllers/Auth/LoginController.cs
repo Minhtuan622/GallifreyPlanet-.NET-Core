@@ -2,6 +2,8 @@
 using GallifreyPlanet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Policy;
+using System.Web.Helpers;
 
 namespace GallifreyPlanet.Controllers.Auth
 {
@@ -25,7 +27,7 @@ namespace GallifreyPlanet.Controllers.Auth
         {
             if (ModelState.IsValid)
             {
-                User? ahihi = _context.User.SingleOrDefault(m => m.Phone == user.Phone && m.Password == user.Password);
+                User? ahihi = _context.User.SingleOrDefault(m => m.Phone == user.Phone && Crypto.VerifyHashedPassword(user.Password, m.Password));
 
                 if (ahihi != null)
                 {

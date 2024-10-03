@@ -1,8 +1,9 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
-using System.Text;
+using System.Web.Helpers;
 
 namespace GallifreyPlanet.Controllers.Auth
 {
@@ -30,7 +31,7 @@ namespace GallifreyPlanet.Controllers.Auth
 
                 if (user.Password != null)
                 {
-                    user.Password = HashPassword(user.Password);
+                    user.Password = Crypto.HashPassword(user.Password);
                 }
                 else
                 {
@@ -45,20 +46,6 @@ namespace GallifreyPlanet.Controllers.Auth
             }
 
             return View(user);
-        }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString("x2"));
-                }
-                return builder.ToString();
-            }
         }
     }
 }
