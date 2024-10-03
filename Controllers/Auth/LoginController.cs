@@ -1,49 +1,41 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
-using System.Security.Cryptography;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Controllers.Auth
 {
     public class LoginController : Controller
     {
-        // GET: /Login
+        private readonly GallifreyPlanetContext _context;
+
+        public LoginController(GallifreyPlanetContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        // POST: /Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Index(User user)
         {
             if (ModelState.IsValid)
             {
-                // TODO: Check user credentials against database
-                // For now, we'll just simulate a successful login
-                
-                // If login is successful, redirect to home page
-                return RedirectToAction("Index", "Home");
-            }
+                User? ahihi = _context.User.SingleOrDefault(m => m.Phone == user.Phone && m.Password == user.Password);
 
-            // If login fails, show error message
-            ModelState.AddModelError("", "Invalid login attempt.");
-            return View(user);
-        }
-
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256Hash = SHA256.Create())
-            {
-                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
+                if (ahihi != null)
                 {
-                    builder.Append(bytes[i].ToString("x2"));
+                    HttpContext.Session.SetString("userId", user.Name);
+                    return RedirectToAction("Index", "Home");
                 }
-                return builder.ToString();
             }
+
+            ModelState.AddModelError("", "Đăng nhập không thành công.");
+            return View(user);
         }
     }
 }

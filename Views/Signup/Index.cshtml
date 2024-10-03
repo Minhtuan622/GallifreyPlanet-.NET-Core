@@ -15,24 +15,30 @@
 				<div class="card shadow-sm">
 					<div class="card-body px-5 py-4">
 						<h1 class="fs-4 card-title fw-bold mb-4">Đăng ký tài khoản</h1>
-						<form asp-action="Index" method="POST" class="needs-validation" novalidate="" autocomplete="off">
+						<form asp-action="Signup" method="POST" class="needs-validation" novalidate="" autocomplete="off">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
-								<label asp-for="Name" class="mb-2 text-muted">Họ và tên</label>
+								<label asp-for="Name" class="mb-2 text-muted"></label>
 								<input asp-for="Name" type="text" class="form-control" required autofocus>
 								<span asp-validation-for="Name" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">
-								<label asp-for="Email" class="mb-2 text-muted">Email</label>
-								<input asp-for="Email" type="email" class="form-control" required>
-								<span asp-validation-for="Email" class="text-danger"></span>
+								<label asp-for="Phone" class="mb-2 text-muted"></label>
+								<input asp-for="Phone" type="number" class="form-control" required>
+								<span asp-validation-for="Phone" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">
-								<label asp-for="Password" class="mb-2 text-muted">Mật khẩu</label>
+								<label asp-for="Password" class="mb-2 text-muted"></label>
 								<input asp-for="Password" type="password" class="form-control" required>
 								<span asp-validation-for="Password" class="text-danger"></span>
+							</div>
+
+							<div class="mb-3">
+								<label asp-for="ConfirmPassword" class="mb-2 text-muted"></label>
+								<input asp-for="ConfirmPassword" type="password" class="form-control" required>
+								<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
 							</div>
 
 							<p class="form-text text-muted mb-3">

@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -7,27 +8,39 @@ namespace GallifreyPlanet.Controllers.Auth
 {
     public class SignupController : Controller
     {
-        // GET: /Signup
+        private readonly GallifreyPlanetContext _context;
+
+        public SignupController(GallifreyPlanetContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
             return View();
         }
 
-        // POST: /Signup
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(User user)
+        public IActionResult Signup([Bind("Id,Name,Phone,Password")] User user)
         {
             if (ModelState.IsValid)
             {
-                // TODO: Check if email already exists in the database
+                // TODO: Check if phone already exists in the database
 
-                // Hash the password
-                user.Password = HashPassword(user.Password);
+                if (user.Password != null)
+                {
+                    user.Password = HashPassword(user.Password);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Chưa nhập mật khẩu.");
+                    return View(user);
+                }
 
-                // TODO: Save user to database
+                _context.Add(user);
+                _context.SaveChanges();
 
-                // Redirect to login page
                 return RedirectToAction("Index", "Login");
             }
 

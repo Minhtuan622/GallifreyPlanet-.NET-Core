@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using GallifreyPlanet.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<GallifreyPlanetContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("GallifreyPlanetContext") ?? throw new InvalidOperationException("Connection string 'GallifreyPlanetContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

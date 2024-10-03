@@ -18,14 +18,14 @@
 						<form asp-action="Index" method="POST" class="needs-validation" novalidate="" autocomplete="off">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
-								<label asp-for="Email" class="mb-2 text-muted">Email</label>
-								<input asp-for="Email" type="email" class="form-control" required autofocus>
-								<span asp-validation-for="Email" class="text-danger"></span>
+								<label asp-for="Phone" class="mb-2 text-muted"></label>
+								<input asp-for="Phone" type="number" class="form-control" required autofocus>
+								<span asp-validation-for="Phone" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">
 								<div class="mb-2 w-100">
-									<label asp-for="Password" class="text-muted">Mật khẩu</label>
+									<label asp-for="Password" class="text-muted"></label>
 									<a class="float-end" asp-area="" asp-controller="ForgotPassword" asp-action="Index">
 										Quên mật khẩu?
 									</a>
