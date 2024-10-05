@@ -1,7 +1,7 @@
-﻿@model GallifreyPlanet.Models.User
+﻿@model GallifreyPlanet.Models.Auth.LoginViewModel
 
 @{
-    ViewData["Title"] = "Login account";
+    ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
 }
 
@@ -15,7 +15,7 @@
 				<div class="card shadow-sm">
 					<div class="card-body p-5">
 						<h1 class="fs-4 card-title fw-bold mb-4">Đăng nhập</h1>
-						<form asp-action="Index" method="POST" class="needs-validation" novalidate="" autocomplete="off">
+						<form asp-action="Login" method="POST" class="needs-validation" novalidate="" autocomplete="off">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
 								<label asp-for="Phone" class="mb-2 text-muted"></label>
@@ -26,7 +26,7 @@
 							<div class="mb-3">
 								<div class="mb-2 w-100">
 									<label asp-for="Password" class="text-muted"></label>
-									<a class="float-end" asp-area="" asp-controller="ForgotPassword" asp-action="Index">
+									<a class="float-end" asp-area="" asp-controller="Account" asp-action="ForgotPassword">
 										Quên mật khẩu?
 									</a>
 								</div>
@@ -44,7 +44,7 @@
 					<div class="card-footer py-3 border-0">
 						<div class="text-center">
 							Chưa có tài khoản?
-							<a class="text-dark" asp-area="" asp-controller="Signup" asp-action="Index">Đăng ký ngay</a>
+							<a class="text-dark" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký ngay</a>
 						</div>
 					</div>
 				</div>
@@ -54,5 +54,7 @@
 </section>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

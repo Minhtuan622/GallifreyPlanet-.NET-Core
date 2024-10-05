@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GallifreyPlanet.Models
+namespace GallifreyPlanet.Models.Auth
 {
 	[Table("users")]
-	public class User : IdentityUser
+	public class SignupViewModel
 	{
 
 		[Column("id")]
@@ -26,6 +25,7 @@ namespace GallifreyPlanet.Models
 		public string? Phone { get; set; }
 
 		[Column("password")]
+		[DataType(DataType.Password)]
 		[Display(Name = "Mật khẩu")]
 		[Required(ErrorMessage = "Mật khẩu là bắt buộc")]
 		[StringLength(100, MinimumLength = 6, ErrorMessage = "Mật khẩu phải từ 6 đến 100 ký tự")]
