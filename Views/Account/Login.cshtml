@@ -1,4 +1,6 @@
-﻿@model GallifreyPlanet.Models.Auth.LoginViewModel
+﻿﻿@using GallifreyPlanet.ViewModels.Auth;
+@model LoginViewModel
+
 
 @{
     ViewData["Title"] = "Login";
@@ -18,9 +20,9 @@
 						<form asp-action="Login" method="POST" class="needs-validation" novalidate="" autocomplete="off">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
-								<label asp-for="Phone" class="mb-2 text-muted"></label>
-								<input asp-for="Phone" type="number" class="form-control" required autofocus>
-								<span asp-validation-for="Phone" class="text-danger"></span>
+								<label asp-for="Email" class="mb-2 text-muted"></label>
+								<input asp-for="Email" type="text" class="form-control" required autofocus>
+								<span asp-validation-for="Email" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">

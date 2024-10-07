@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GallifreyPlanet.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using GallifreyPlanet.Models;
 
 namespace GallifreyPlanet.Data
 {
-    public class GallifreyPlanetContext : DbContext
-    {
-        public GallifreyPlanetContext (DbContextOptions<GallifreyPlanetContext> options)
-            : base(options)
-        {
-        }
+	public class GallifreyPlanetContext : IdentityDbContext<User>
+	{
+		public GallifreyPlanetContext(DbContextOptions<GallifreyPlanetContext> options)
+			: base(options)
+		{
 
-        public DbSet<GallifreyPlanet.Models.User> User { get; set; } = default!;
-    }
+		}
+
+
+		public DbSet<GallifreyPlanet.Models.User> User { get; set; }
+	}
 }

@@ -1,10 +1,9 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
-using GallifreyPlanet.Models.Auth;
+using GallifreyPlanet.ViewModels.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Helpers;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers
@@ -31,12 +30,14 @@ namespace GallifreyPlanet.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				SignInResult? result = await _signInManager.PasswordSignInAsync(user.Phone, user.Password, true, false);
+				SignInResult? result = await _signInManager.PasswordSignInAsync(user.Email!, user.Password!, false, false);
 
 				if (result.Succeeded)
 				{
 					return RedirectToAction("Index", "Home");
 				}
+
+
 			}
 
 			ModelState.AddModelError("", "Đăng nhập không thành công.");
@@ -54,7 +55,7 @@ namespace GallifreyPlanet.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				User? existingUser = _context.User.SingleOrDefault(u => u.Phone == user.Phone);
+				User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
 
 				if (existingUser != null)
 				{
@@ -64,9 +65,10 @@ namespace GallifreyPlanet.Controllers
 
 				User? newUser = new User
 				{
-					Name = user.Name,
-					Phone = user.Phone,
-					Password = Crypto.HashPassword(user.Password),
+					//Name = user.Name,
+					//Email = user.Email,
+					//Password = Crypto.HashPassword(user.Password),
+					//Password = user.Password,
 				};
 
 				_context.User.Add(newUser);

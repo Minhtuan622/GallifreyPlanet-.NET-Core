@@ -1,8 +1,12 @@
 ﻿using GallifreyPlanet.Data;
+using GallifreyPlanet.Models;
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GallifreyPlanetContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("GallifreyPlanetContext") ?? throw new InvalidOperationException("Connection string 'GallifreyPlanetContext' not found.")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("GallifreyPlanetContext") ?? throw new InvalidOperationException("Connection string 'GallifreyPlanetContext' not found.")));
+builder.Services.AddDefaultIdentity<User>(option => option.SignIn.RequireConfirmedAccount = true)
+				.AddEntityFrameworkStores<GallifreyPlanetContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
