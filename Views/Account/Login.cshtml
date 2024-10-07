@@ -1,5 +1,4 @@
-﻿﻿@using GallifreyPlanet.ViewModels.Auth;
-@model LoginViewModel
+﻿@model GallifreyPlanet.ViewModels.Auth.LoginViewModel
 
 
 @{
@@ -17,12 +16,12 @@
 				<div class="card shadow-sm">
 					<div class="card-body p-5">
 						<h1 class="fs-4 card-title fw-bold mb-4">Đăng nhập</h1>
-						<form asp-action="Login" method="POST" class="needs-validation" novalidate="" autocomplete="off">
+						<form asp-action="Login" method="POST" class="needs-validation" novalidate="">
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
-								<label asp-for="Email" class="mb-2 text-muted"></label>
-								<input asp-for="Email" type="text" class="form-control" required autofocus>
-								<span asp-validation-for="Email" class="text-danger"></span>
+								<label asp-for="Username" class="mb-2 text-muted"></label>
+								<input asp-for="Username" type="email" class="form-control" required autofocus>
+								<span asp-validation-for="Username" class="text-danger"></span>
 							</div>
 
 							<div class="mb-3">

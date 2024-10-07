@@ -1,104 +1,114 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Auth;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers
 {
-	public class AccountController : Controller
-	{
-		private readonly SignInManager<User> _signInManager;
-		private readonly GallifreyPlanetContext _context;
+    public class AccountController : Controller
+    {
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly GallifreyPlanetContext _context;
 
-		public AccountController(SignInManager<User> signInManager, GallifreyPlanetContext context)
-		{
-			_signInManager = signInManager;
-			_context = context;
-		}
+        public AccountController(
+                SignInManager<User> signInManager,
+                UserManager<User> userManager,
+                GallifreyPlanetContext context
+            )
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _context = context;
+        }
 
-		[HttpGet]
-		public IActionResult Login()
-		{
-			return View();
-		}
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> Login(LoginViewModel user)
-		{
-			if (ModelState.IsValid)
-			{
-				SignInResult? result = await _signInManager.PasswordSignInAsync(user.Email!, user.Password!, false, false);
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                SignInResult? result = await _signInManager.PasswordSignInAsync(user.Username!, user.Password!, isPersistent: false, lockoutOnFailure: false);
 
-				if (result.Succeeded)
-				{
-					return RedirectToAction("Index", "Home");
-				}
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
 
+                ModelState.AddModelError(key: "", errorMessage: "Đăng nhập không thành công.");
+            }
 
-			}
+            return View(user);
+        }
 
-			ModelState.AddModelError("", "Đăng nhập không thành công.");
-			return View();
-		}
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
 
-		[HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
+        [HttpPost]
+        public async Task<IActionResult> Register(SignupViewModel user)
+        {
+            if (ModelState.IsValid)
+            {
+                User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
 
-		[HttpPost]
-		public IActionResult Register(SignupViewModel user)
-		{
-			if (ModelState.IsValid)
-			{
-				User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
+                    return View(user);
+                }
 
-				if (existingUser != null)
-				{
-					ModelState.AddModelError("", "Số điện thoại đã tồn tại.");
-					return View();
-				}
+                User? newUser = new User
+                {
+                    Name = user.Name,
+                    UserName = user.Email,
+                    Email = user.Email,
+                };
 
-				User? newUser = new User
-				{
-					//Name = user.Name,
-					//Email = user.Email,
-					//Password = Crypto.HashPassword(user.Password),
-					//Password = user.Password,
-				};
+                IdentityResult? result = await _userManager.CreateAsync(newUser, user.Password!);
 
-				_context.User.Add(newUser);
-				_context.SaveChanges();
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-				return RedirectToAction("Login", "Account");
-			}
+                    return RedirectToAction(actionName: "Index", controllerName: "Home");
+                }
 
-			return View();
-		}
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError(key: "", error.Description);
+                }
+            }
 
-		[HttpGet]
-		public IActionResult ForgotPassword()
-		{
-			return View();
-		}
+            return View(user);
+        }
 
-		[HttpGet]
-		public IActionResult ResetPassword()
-		{
-			return View();
-		}
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
-		[HttpGet]
-		public IActionResult Logout()
-		{
-			HttpContext.SignOutAsync("cookieScheme");
-			HttpContext.Session.Clear();
-			HttpContext.Session.Remove("UserName");
-			return RedirectToAction("Index", "Home");
-		}
-	}
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(actionName: "Index", controllerName: "Home");
+        }
+    }
 }

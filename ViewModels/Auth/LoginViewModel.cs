@@ -6,12 +6,11 @@ namespace GallifreyPlanet.ViewModels.Auth
 
 	public class LoginViewModel
 	{
-		[Display(Name = "Email")]
-		[Required(ErrorMessage = "Email là bắt buộc")]
-		[StringLength(100, MinimumLength = 9, ErrorMessage = "Số điện thoại phải từ 9 đến 11 ký tự")]
-		public string? Email { get; set; }
+		[Display(Name = "Tên người dùng")]
+		[Required(ErrorMessage = "Tên người dùng là bắt buộc")]
+		public string? Username { get; set; }
 
-		[Required(ErrorMessage = "Password is required.")]
+		[Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
 		[DataType(DataType.Password)]
 		public string? Password { get; set; }
 	}

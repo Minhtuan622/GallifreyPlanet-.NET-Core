@@ -14,7 +14,7 @@
 			<div class="card shadow-sm">
 				<div class="card-body px-5 py-4">
 					<h1 class="fs-4 card-title fw-bold mb-4">Đăng ký tài khoản </h1>
-					<form asp-action="Register" method="POST" class="needs-validation" novalidate="" autocomplete="off">
+					<form asp-action="Register" method="POST" class="needs-validation" novalidate="">
 						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 						<div class="mb-3">
 							<label asp-for="Name" class="mb-2 text-muted"></label>
@@ -24,7 +24,7 @@
 
 						<div class="mb-3">
 							<label asp-for="Email" class="mb-2 text-muted"></label>
-							<input asp-for="Email" type="number" class="form-control" required>
+							<input asp-for="Email" type="email" class="form-control" required>
 							<span asp-validation-for="Email" class="text-danger"></span>
 						</div>
 

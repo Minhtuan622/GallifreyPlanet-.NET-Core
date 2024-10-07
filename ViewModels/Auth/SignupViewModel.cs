@@ -5,19 +5,13 @@ namespace GallifreyPlanet.ViewModels.Auth
 
 	public class SignupViewModel
 	{
-
-		[Key]
-
-		public int Id { get; set; }
-
 		[Display(Name = "Họ và tên")]
 		[Required(ErrorMessage = "Họ và tên là bắt buộc")]
 		[StringLength(100, ErrorMessage = "Họ và tên không được quá 100 ký tự")]
 		public string? Name { get; set; }
 
-		[Display(Name = "Số điện thoại")]
-		[Required(ErrorMessage = "Số điện thoại là bắt buộc")]
-		[StringLength(11, MinimumLength = 9, ErrorMessage = "Số điện thoại phải từ 9 đến 11 ký tự")]
+		[Display(Name = "Email")]
+		[Required(ErrorMessage = "Email là bắt buộc")]
 		public string? Email { get; set; }
 
 		[Display(Name = "Mật khẩu")]
