@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="ViewModels\" />
+    <Folder Include="Views\Account\Manage\" />
   </ItemGroup>
 
 </Project>

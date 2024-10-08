@@ -7,108 +7,125 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class AccountController : Controller
-    {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
-        private readonly GallifreyPlanetContext _context;
+	public class AccountController : Controller
+	{
+		private readonly SignInManager<User> _signInManager;
+		private readonly UserManager<User> _userManager;
+		private readonly GallifreyPlanetContext _context;
 
-        public AccountController(
-                SignInManager<User> signInManager,
-                UserManager<User> userManager,
-                GallifreyPlanetContext context
-            )
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _context = context;
-        }
+		public AccountController(
+			SignInManager<User> signInManager,
+			UserManager<User> userManager,
+			GallifreyPlanetContext context
+		)
+		{
+			_signInManager = signInManager;
+			_userManager = userManager;
+			_context = context;
+		}
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+		[HttpGet]
+		public IActionResult Login()
+		{
+			return View();
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel user)
-        {
-            if (ModelState.IsValid)
-            {
-                SignInResult? result = await _signInManager.PasswordSignInAsync(user.Username!, user.Password!, isPersistent: false, lockoutOnFailure: false);
+		[HttpPost]
+		public async Task<IActionResult> Login(LoginViewModel user)
+		{
+			if (ModelState.IsValid)
+			{
+				SignInResult? result = await _signInManager.PasswordSignInAsync(
+					user.Username!,
+					user.Password!,
+					user.RememberMe,
+					lockoutOnFailure: false
+				);
 
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
-                }
+				if (result == null)
+				{
+					return RedirectToAction(actionName: "Index", controllerName: "Home");
+				}
 
-                ModelState.AddModelError(key: "", errorMessage: "Đăng nhập không thành công.");
-            }
+				if (result.Succeeded)
+				{
+					return RedirectToAction(actionName: "Index", controllerName: "Home");
+				}
 
-            return View(user);
-        }
+				ModelState.AddModelError(key: "", errorMessage: "Đăng nhập không thành công, vui lòng kiểm tra lại tên người dùng hoặc mật khẩu.");
+			}
 
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+			return View(user);
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> Register(SignupViewModel user)
-        {
-            if (ModelState.IsValid)
-            {
-                User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
+		[HttpGet]
+		public IActionResult Register()
+		{
+			return View();
+		}
 
-                if (existingUser != null)
-                {
-                    ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
-                    return View(user);
-                }
+		[HttpPost]
+		public async Task<IActionResult> Register(SignupViewModel user)
+		{
+			if (ModelState.IsValid)
+			{
+				User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
 
-                User? newUser = new User
-                {
-                    Name = user.Name,
-                    UserName = user.Email,
-                    Email = user.Email,
-                };
+				if (existingUser != null)
+				{
+					ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
+					return View(user);
+				}
 
-                IdentityResult? result = await _userManager.CreateAsync(newUser, user.Password!);
+				User? newUser = new User
+				{
+					Name = user.Name,
+					UserName = user.Username,
+					Email = user.Email,
+				};
 
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(newUser, isPersistent: false);
+				IdentityResult? result = await _userManager.CreateAsync(newUser, user.Password!);
 
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
-                }
+				if (result.Succeeded)
+				{
+					await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-                foreach (IdentityError error in result.Errors)
-                {
-                    ModelState.AddModelError(key: "", error.Description);
-                }
-            }
+					return RedirectToAction(actionName: "Index", controllerName: "Home");
+				}
 
-            return View(user);
-        }
+				foreach (IdentityError error in result.Errors)
+				{
+					ModelState.AddModelError(key: "", error.Description);
+				}
+			}
 
-        [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+			return View(user);
+		}
 
-        [HttpGet]
-        public IActionResult ResetPassword()
-        {
-            return View();
-        }
+		[HttpGet]
+		public IActionResult ForgotPassword()
+		{
+			return View();
+		}
 
-        [HttpGet]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction(actionName: "Index", controllerName: "Home");
-        }
-    }
+		[HttpGet]
+		public IActionResult ResetPassword()
+		{
+			return View();
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Logout()
+		{
+			await _signInManager.SignOutAsync();
+			return RedirectToAction(actionName: "Index", controllerName: "Home");
+		}
+
+
+		[HttpGet]
+		public IActionResult Profile()
+		{
+			return View();
+		}
+	}
 }

@@ -23,6 +23,12 @@
 						</div>
 
 						<div class="mb-3">
+							<label asp-for="Username" class="mb-2 text-muted"></label>
+							<input asp-for="Username" type="text" class="form-control" required>
+							<span asp-validation-for="Username" class="text-danger"></span>
+						</div>
+
+						<div class="mb-3">
 							<label asp-for="Email" class="mb-2 text-muted"></label>
 							<input asp-for="Email" type="email" class="form-control" required>
 							<span asp-validation-for="Email" class="text-danger"></span>
