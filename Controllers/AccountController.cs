@@ -42,9 +42,10 @@ namespace GallifreyPlanet.Controllers
 					lockoutOnFailure: false
 				);
 
-				if (result == null)
+				if (result.IsNotAllowed)
 				{
-					return RedirectToAction(actionName: "Index", controllerName: "Home");
+					ModelState.AddModelError(key: "", errorMessage: "Xác thực Email để đăng nhập.");
+					return View(user);
 				}
 
 				if (result.Succeeded)
@@ -52,7 +53,7 @@ namespace GallifreyPlanet.Controllers
 					return RedirectToAction(actionName: "Index", controllerName: "Home");
 				}
 
-				ModelState.AddModelError(key: "", errorMessage: "Đăng nhập không thành công, vui lòng kiểm tra lại tên người dùng hoặc mật khẩu.");
+				ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
 			}
 
 			return View(user);
@@ -119,13 +120,6 @@ namespace GallifreyPlanet.Controllers
 		{
 			await _signInManager.SignOutAsync();
 			return RedirectToAction(actionName: "Index", controllerName: "Home");
-		}
-
-
-		[HttpGet]
-		public IActionResult Profile()
-		{
-			return View();
 		}
 	}
 }
