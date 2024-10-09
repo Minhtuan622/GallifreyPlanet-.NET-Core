@@ -185,6 +185,11 @@ namespace GallifreyPlanet.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult ResetPassword(ResetPasswordViewModel viewModel)
