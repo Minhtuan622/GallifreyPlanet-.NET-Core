@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GallifreyPlanet.ViewModels.Auth
+namespace GallifreyPlanet.ViewModels.Account
 {
     public class ForgotPasswordViewModel
     {
