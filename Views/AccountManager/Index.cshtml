@@ -1,6 +1,26 @@
-﻿
+﻿@model GallifreyPlanet.ViewModels.AccountManager.AccountInfoViewModel
+
 @{
     ViewData["Title"] = "Quản lý tài khoản";
+    Layout = "~/Views/AccountManager/_Layout.cshtml";
 }
 
-<h2>Quản lý tài khoản</h2>
+<h3>Thông tin tài khoản</h3>
+@if (!string.IsNullOrEmpty(Model.Avatar))
+{
+    <div class="mb-3">
+        <img src="@Model.Avatar" alt="Avatar" class="img-thumbnail" style="max-width: 150px;" />
+    </div>
+}
+<div class="mb-3">
+    <label class="form-label">Tên</label>
+    <p class="form-control-static">@Model.Name</p>
+</div>
+<div class="mb-3">
+    <label class="form-label">Tên đăng nhập</label>
+    <p class="form-control-static">@Model.Username</p>
+</div>
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <p class="form-control-static">@Model.Email</p>
+</div>
