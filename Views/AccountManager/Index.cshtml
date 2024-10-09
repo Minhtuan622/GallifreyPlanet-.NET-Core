@@ -5,22 +5,24 @@
     Layout = "~/Views/AccountManager/_Layout.cshtml";
 }
 
-<h3>Thông tin tài khoản</h3>
+<h2>Thông tin tài khoản</h2>
 @if (!string.IsNullOrEmpty(Model.Avatar))
 {
     <div class="mb-3">
-        <img src="@Model.Avatar" alt="Avatar" class="img-thumbnail" style="max-width: 150px;" />
+        <img src="@Model.Avatar" alt="Avatar" class="rounded-3" style="max-width: 150px;" />
     </div>
 }
-<div class="mb-3">
-    <label class="form-label">Tên</label>
-    <p class="form-control-static">@Model.Name</p>
-</div>
-<div class="mb-3">
-    <label class="form-label">Tên đăng nhập</label>
-    <p class="form-control-static">@Model.Username</p>
-</div>
-<div class="mb-3">
-    <label class="form-label">Email</label>
-    <p class="form-control-static">@Model.Email</p>
-</div>
+<table class="table table-bordered">
+    <tr>
+        <th>Tên</th>
+        <td>@Model.Name</td>
+    </tr>
+    <tr>
+        <th>Tên đăng nhập</th>
+        <td>@Model.Username</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>@Model.Email</td>
+    </tr>
+</table>

@@ -30,6 +30,7 @@ namespace GallifreyPlanet.Controllers
                 Name = user.Name!,
                 Username = user.UserName!,
                 Email = user.Email!,
+                Avatar = user.Avatar,
             };
 
             return View(model);
