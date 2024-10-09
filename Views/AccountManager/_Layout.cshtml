@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Quản lý tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Quản lý tài khoản</h1>
+
+<div class="d-flex align-items-start">
+    <div class="nav flex-column nav-pills me-3" role="tablist" aria-orientation="vertical">
+        <a class="nav-link text-decoration-none" asp-action="Index" asp-controller="AccountManager">Tài khoản</a>
+        <a class="nav-link text-decoration-none" asp-action="AccountSetting" asp-controller="AccountManager">Cài đặt tài khoản</a>
+    </div>
+    <div class="tab-content">
+        @RenderBody()
+    </div>
+</div>

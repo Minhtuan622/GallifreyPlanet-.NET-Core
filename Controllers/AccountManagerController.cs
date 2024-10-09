@@ -2,11 +2,18 @@
 
 namespace GallifreyPlanet.Controllers
 {
-	public class AccountManagerController : Controller
-	{
-		public IActionResult Index()
-		{
-			return View();
-		}
-	}
+    public class AccountManagerController : Controller
+    {
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AccountSetting()
+        {
+            return View();
+        }
+    }
 }
