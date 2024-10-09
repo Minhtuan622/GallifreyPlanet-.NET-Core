@@ -3,6 +3,7 @@ using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers
@@ -29,30 +30,53 @@ namespace GallifreyPlanet.Controllers
 		{
 			return View();
 		}
+		public bool IsValidEmail(string emailaddress)
+		{
+			try
+			{
+				MailAddress m = new MailAddress(emailaddress);
+				return true;
+			}
+			catch (FormatException)
+			{
+				return false;
+			}
+		}
 
 		[HttpPost]
 		public async Task<IActionResult> Login(LoginViewModel user)
 		{
 			if (ModelState.IsValid)
 			{
+				string? userNameOrEmail = user.UsernameOrEmail;
+
+				if (IsValidEmail(user.UsernameOrEmail!))
+				{
+					User? getUser = await _userManager.FindByEmailAsync(user.UsernameOrEmail!);
+					if (getUser != null)
+					{
+						userNameOrEmail = getUser.UserName;
+					}
+				}
+
 				SignInResult? result = await _signInManager.PasswordSignInAsync(
-					user.Username!,
+					userNameOrEmail!,
 					user.Password!,
 					user.RememberMe,
 					lockoutOnFailure: false
 				);
 
-				if (result == null)
+				if (result.IsNotAllowed)
 				{
-					return RedirectToAction(actionName: "Index", controllerName: "Home");
+					ModelState.AddModelError(key: "", errorMessage: "Xác thực Email để đăng nhập.");
+					return View(user);
 				}
 
 				if (result.Succeeded)
 				{
 					return RedirectToAction(actionName: "Index", controllerName: "Home");
 				}
-
-				ModelState.AddModelError(key: "", errorMessage: "Đăng nhập không thành công, vui lòng kiểm tra lại tên người dùng hoặc mật khẩu.");
+				ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
 			}
 
 			return View(user);
@@ -119,13 +143,6 @@ namespace GallifreyPlanet.Controllers
 		{
 			await _signInManager.SignOutAsync();
 			return RedirectToAction(actionName: "Index", controllerName: "Home");
-		}
-
-
-		[HttpGet]
-		public IActionResult Profile()
-		{
-			return View();
 		}
 	}
 }

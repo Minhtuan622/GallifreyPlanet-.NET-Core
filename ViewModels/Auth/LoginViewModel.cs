@@ -6,9 +6,9 @@ namespace GallifreyPlanet.ViewModels.Auth
 
 	public class LoginViewModel
 	{
-		[Display(Name = "Tên người dùng")]
-		[Required(ErrorMessage = "Tên người dùng là bắt buộc.")]
-		public string? Username { get; set; }
+		[Display(Name = "Tên người dùng hoặc Email")]
+		[Required(ErrorMessage = "Tên người dùng hoặc Email là bắt buộc.")]
+		public string? UsernameOrEmail { get; set; }
 
 		[Display(Name = "Mật khẩu")]
 		[Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
