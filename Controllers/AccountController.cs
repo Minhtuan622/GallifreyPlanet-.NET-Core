@@ -133,10 +133,23 @@ namespace GallifreyPlanet.Controllers
 			return View();
 		}
 
+		[HttpPost]
+		public IActionResult ForgotPassword(ForgotPasswordViewModel viewModel)
+		{
+			return View(viewModel);
+		}
+
 		[HttpGet]
 		public IActionResult ResetPassword()
 		{
 			return View();
+		}
+
+
+		[HttpPost]
+		public IActionResult ResetPassword(ResetPasswordViewModel viewModel)
+		{
+			return View(viewModel);
 		}
 
 		[HttpGet]
