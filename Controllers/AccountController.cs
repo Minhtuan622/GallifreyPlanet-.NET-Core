@@ -76,6 +76,7 @@ namespace GallifreyPlanet.Controllers
 				{
 					return RedirectToAction(actionName: "Index", controllerName: "Home");
 				}
+
 				ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
 			}
 
