@@ -5,8 +5,8 @@ namespace GallifreyPlanet.Models
 {
     public class User : IdentityUser
     {
-        [Required(ErrorMessage = "Họ và tên là bắt buộc")]
         public string? Name { get; set; }
         public string? Avatar { get; set; }
+        public string? Address { get; set; }
     }
 }

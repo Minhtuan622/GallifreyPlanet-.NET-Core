@@ -10,7 +10,10 @@ namespace GallifreyPlanet.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AccountManagerController(UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
+        public AccountManagerController(
+            UserManager<User> userManager,
+            IWebHostEnvironment webHostEnvironment
+        )
         {
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
@@ -39,18 +42,12 @@ namespace GallifreyPlanet.Controllers
 
             AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
-                AccountInfo = new AccountInfoViewModel
-                {
-                    Name = user.Name!,
-                    Username = user.UserName!,
-                    Email = user.Email!,
-                    Avatar = user.Avatar
-                },
                 ChangePassword = new ChangePasswordViewModel(),
                 EditProfile = new EditProfileViewModel
                 {
                     Name = user.Name,
                     Email = user.Email,
+                    Address = user.Address,
                     CurrentAvatar = user.Avatar
                 }
             };
@@ -59,7 +56,7 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword(AccountManagerViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -69,10 +66,13 @@ namespace GallifreyPlanet.Controllers
                     return NotFound();
                 }
 
-                IdentityResult? result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword!, model.NewPassword!);
+                IdentityResult? result = await _userManager.ChangePasswordAsync(
+                    user,
+                    viewModel.ChangePassword.CurrentPassword,
+                    viewModel.ChangePassword.NewPassword
+                );
                 if (result.Succeeded)
                 {
-                    // Password changed successfully
                     return RedirectToAction(nameof(Index));
                 }
                 foreach (IdentityError error in result.Errors)
@@ -80,11 +80,11 @@ namespace GallifreyPlanet.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View(model);
+            return RedirectToAction(nameof(AccountSetting));
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        public async Task<IActionResult> EditProfile(AccountManagerViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -94,18 +94,19 @@ namespace GallifreyPlanet.Controllers
                     return NotFound();
                 }
 
-                user.Name = model.Name;
-                user.Email = model.Email;
+                user.Name = viewModel.EditProfile!.Name;
+                user.Email = viewModel.EditProfile!.Email;
+                user.Address = viewModel.EditProfile!.Address;
 
-                if (model.AvatarFile != null)
+                if (viewModel.EditProfile.AvatarFile != null)
                 {
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.AvatarFile.FileName;
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + viewModel.EditProfile!.AvatarFile.FileName;
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                     using (FileStream? fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await model.AvatarFile.CopyToAsync(fileStream);
+                        await viewModel.EditProfile!.AvatarFile.CopyToAsync(fileStream);
                     }
 
                     user.Avatar = "/uploads/" + uniqueFileName;
@@ -114,7 +115,6 @@ namespace GallifreyPlanet.Controllers
                 IdentityResult? result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    // Profile updated successfully
                     return RedirectToAction(nameof(Index));
                 }
                 foreach (IdentityError error in result.Errors)
@@ -122,15 +122,7 @@ namespace GallifreyPlanet.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult PrivacySettings()
-        {
-            // Load current privacy settings
-            PrivacySettingsViewModel? model = new PrivacySettingsViewModel();
-            return View(model);
+            return RedirectToAction(nameof(AccountSetting));
         }
 
         [HttpPost]
@@ -141,15 +133,7 @@ namespace GallifreyPlanet.Controllers
                 // Save privacy settings
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult NotificationSettings()
-        {
-            // Load current notification settings
-            NotificationSettingsViewModel? model = new NotificationSettingsViewModel();
-            return View(model);
+            return RedirectToAction(nameof(AccountSetting));
         }
 
         [HttpPost]
@@ -160,7 +144,7 @@ namespace GallifreyPlanet.Controllers
                 // Save notification settings
                 return RedirectToAction(nameof(Index));
             }
-            return View(model);
+            return RedirectToAction(nameof(AccountSetting));
         }
     }
 }

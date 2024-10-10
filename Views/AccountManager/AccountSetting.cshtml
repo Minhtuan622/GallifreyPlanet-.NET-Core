@@ -22,6 +22,11 @@
             <span asp-validation-for="EditProfile.Email" class="text-danger"></span>
         </div>
         <div class="mb-3">
+            <label asp-for="EditProfile.Address" class="form-label"></label>
+            <input asp-for="EditProfile.Address" class="form-control" />
+            <span asp-validation-for="EditProfile.Address" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
             <label asp-for="EditProfile.AvatarFile" class="form-label"></label>
             <input asp-for="EditProfile.AvatarFile" type="file" class="form-control" accept="image/*" />
             <span asp-validation-for="EditProfile.AvatarFile" class="text-danger"></span>
