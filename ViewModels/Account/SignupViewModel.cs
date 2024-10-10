@@ -12,7 +12,7 @@ namespace GallifreyPlanet.ViewModels.Account
 
         [Display(Name = "Tên người dùng")]
         [Required(ErrorMessage = "Tên người dùng là bắt buộc")]
-        public string? Username { get; set; }
+        public string? UserName { get; set; }
 
         [Display(Name = "Email")]
         [Required(ErrorMessage = "Email là bắt buộc")]

@@ -25,18 +25,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            AccountManagerViewModel viewModel = new AccountManagerViewModel
-            {
-                AccountInfo = new AccountInfoViewModel
-                {
-                    Name = user.Name!,
-                    Username = user.UserName!,
-                    Email = user.Email!,
-                    Avatar = user.Avatar
-                },
-            };
-
-            return View(viewModel);
+            return View(user);
         }
 
         [HttpGet]

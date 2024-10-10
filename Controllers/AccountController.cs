@@ -112,7 +112,7 @@ namespace GallifreyPlanet.Controllers
 				User? newUser = new User
 				{
 					Name = user.Name,
-					UserName = user.Username,
+					UserName = user.UserName,
 					Email = user.Email,
 					EmailConfirmed = true,
 				};

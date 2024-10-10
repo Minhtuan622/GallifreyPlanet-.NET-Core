@@ -8,31 +8,6 @@
 
 <hr />
 <div class="my-2">
-    <h3>Đổi mật khẩu</h3>
-    <form asp-action="ChangePassword" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="mb-3">
-            <label asp-for="ChangePassword.CurrentPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.CurrentPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.CurrentPassword" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="ChangePassword.NewPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.NewPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="ChangePassword.ConfirmNewPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.ConfirmNewPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.ConfirmNewPassword" class="text-danger"></span>
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-        </div>
-    </form>
-</div>
-<hr />
-<div class="my-2">
     <h3>Chỉnh sửa thông tin cá nhân</h3>
     <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -59,6 +34,31 @@
         }
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>
+<hr />
+<div class="my-2">
+    <h3>Đổi mật khẩu</h3>
+    <form asp-action="ChangePassword" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="ChangePassword.CurrentPassword" class="form-label"></label>
+            <input asp-for="ChangePassword.CurrentPassword" class="form-control" />
+            <span asp-validation-for="ChangePassword.CurrentPassword" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ChangePassword.NewPassword" class="form-label"></label>
+            <input asp-for="ChangePassword.NewPassword" class="form-control" />
+            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ChangePassword.ConfirmNewPassword" class="form-label"></label>
+            <input asp-for="ChangePassword.ConfirmNewPassword" class="form-control" />
+            <span asp-validation-for="ChangePassword.ConfirmNewPassword" class="text-danger"></span>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
         </div>
     </form>
 </div>
