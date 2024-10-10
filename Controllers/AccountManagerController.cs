@@ -25,27 +25,48 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            AccountInfoViewModel? model = new AccountInfoViewModel()
+            AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
-                Name = user.Name!,
-                Username = user.UserName!,
-                Email = user.Email!,
-                Avatar = user.Avatar,
+                AccountInfo = new AccountInfoViewModel
+                {
+                    Name = user.Name!,
+                    Username = user.UserName!,
+                    Email = user.Email!,
+                    Avatar = user.Avatar
+                },
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpGet]
-        public IActionResult AccountSetting()
+        public async Task<IActionResult> AccountSetting()
         {
-            return View();
-        }
+            User? user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
+            AccountManagerViewModel viewModel = new AccountManagerViewModel
+            {
+                AccountInfo = new AccountInfoViewModel
+                {
+                    Name = user.Name!,
+                    Username = user.UserName!,
+                    Email = user.Email!,
+                    Avatar = user.Avatar
+                },
+                ChangePassword = new ChangePasswordViewModel(),
+                EditProfile = new EditProfileViewModel
+                {
+                    Name = user.Name,
+                    Email = user.Email,
+                    CurrentAvatar = user.Avatar
+                }
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -70,24 +91,6 @@ namespace GallifreyPlanet.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> EditProfile()
-        {
-            User? user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            EditProfileViewModel? model = new EditProfileViewModel
-            {
-                Name = user.Name,
-                Email = user.Email,
-                CurrentAvatar = user.Avatar
-            };
             return View(model);
         }
 

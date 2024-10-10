@@ -9,10 +9,6 @@
     <div class="nav flex-column nav-pills me-3" role="tablist" aria-orientation="vertical">
         <a class="nav-link text-decoration-none" asp-action="Index" asp-controller="AccountManager">Tài khoản</a>
         <a class="nav-link text-decoration-none" asp-action="AccountSetting" asp-controller="AccountManager">Cài đặt tài khoản</a>
-        <a class="nav-link text-decoration-none" asp-action="ChangePassword" asp-controller="AccountManager">Đổi mật khẩu</a>
-        <a class="nav-link text-decoration-none" asp-action="EditProfile" asp-controller="AccountManager">Chỉnh sửa thông tin cá nhân</a>
-        <a class="nav-link text-decoration-none" asp-action="PrivacySettings" asp-controller="AccountManager">Cài đặt quyền riêng tư</a>
-        <a class="nav-link text-decoration-none" asp-action="NotificationSettings" asp-controller="AccountManager">Cài đặt thông báo</a>
     </div>
     <div class="tab-content">
         @RenderBody()
