@@ -49,7 +49,17 @@ namespace GallifreyPlanet.Controllers
                     Email = user.Email,
                     Address = user.Address,
                     CurrentAvatar = user.Avatar
-                }
+                },
+                PrivacySettings = new PrivacySettingsViewModel
+                {
+                    ShowEmail = user.ShowEmail,
+                    AllowMessagesFromNonFriends = user.AllowMessagesFromNonFriends,
+                },
+                NotificationSettings = new NotificationSettingsViewModel
+                {
+                    EmailNotifications = user.EmailNotifications,
+                    PushNotifications = user.PushNotifications,
+                },
             };
 
             return View(viewModel);
@@ -68,8 +78,8 @@ namespace GallifreyPlanet.Controllers
 
                 IdentityResult? result = await _userManager.ChangePasswordAsync(
                     user,
-                    viewModel.ChangePassword.CurrentPassword,
-                    viewModel.ChangePassword.NewPassword
+                    viewModel.ChangePassword!.CurrentPassword!,
+                    viewModel.ChangePassword!.NewPassword!
                 );
                 if (result.Succeeded)
                 {
@@ -77,7 +87,7 @@ namespace GallifreyPlanet.Controllers
                 }
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(key: "", error.Description);
                 }
             }
             return RedirectToAction(nameof(AccountSetting));
@@ -119,29 +129,64 @@ namespace GallifreyPlanet.Controllers
                 }
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(key: "", error.Description);
                 }
             }
             return RedirectToAction(nameof(AccountSetting));
         }
 
         [HttpPost]
-        public IActionResult PrivacySettings(PrivacySettingsViewModel model)
+        public async Task<IActionResult> PrivacySettings(AccountManagerViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                // Save privacy settings
+                User? user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.ShowEmail = viewModel.PrivacySettings!.ShowEmail;
+                user.AllowMessagesFromNonFriends = viewModel.PrivacySettings!.AllowMessagesFromNonFriends;
+
+                IdentityResult? result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError(key: "", error.Description);
+                }
                 return RedirectToAction(nameof(Index));
             }
             return RedirectToAction(nameof(AccountSetting));
         }
 
         [HttpPost]
-        public IActionResult NotificationSettings(NotificationSettingsViewModel model)
+        public async Task<IActionResult> NotificationSettings(AccountManagerViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                // Save notification settings
+                User? user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.EmailNotifications = viewModel.NotificationSettings!.EmailNotifications;
+                user.PushNotifications = viewModel.NotificationSettings!.PushNotifications;
+
+                IdentityResult? result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError(key: "", error.Description);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return RedirectToAction(nameof(AccountSetting));
