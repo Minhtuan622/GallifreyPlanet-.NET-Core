@@ -4,18 +4,178 @@
     ViewData["Title"] = $"Hồ sơ của {Model.Name}";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row">
-        <div class="col-md-4">
-            <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/images/default-avatar.png" : Model.Avatar)" alt="Avatar" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/images/default-avatar.png" : Model.Avatar)" 
+                         alt="Avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                    <h5 class="my-3">@Model.Name</h5>
+                    <p class="text-muted mb-1">@Model.UserName</p>
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <p class="text-muted mb-4">@Model.Email</p>
+                    }
+                    <div class="d-flex justify-content-center mb-2">
+                        <button type="button" class="btn btn-primary">Theo dõi</button>
+                        <button type="button" class="btn btn-outline-primary ms-1">Nhắn tin</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4 mb-lg-0">
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush rounded-3">
+                        @if (!string.IsNullOrEmpty(Model.Website))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fas fa-globe fa-lg text-warning"></i>
+                                <p class="mb-0"><a href="@Model.Website" target="_blank">Website</a></p>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Github))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-github fa-lg" style="color: #333333;"></i>
+                                <p class="mb-0"><a href="@Model.Github" target="_blank">Github</a></p>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Twitter))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                                <p class="mb-0"><a href="@Model.Twitter" target="_blank">Twitter</a></p>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Instagram))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                                <p class="mb-0"><a href="@Model.Instagram" target="_blank">Instagram</a></p>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Facebook))
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                                <p class="mb-0"><a href="@Model.Facebook" target="_blank">Facebook</a></p>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="col-md-8">
-            <h2>@Model.Name</h2>
-            <p>Tên người dùng: @Model.UserName</p>
-            @if (!string.IsNullOrEmpty(Model.Email))
-            {
-                <p>Email: @Model.Email</p>
-            }
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Họ và tên</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.Name</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Tên người dùng</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.UserName</p>
+                        </div>
+                    </div>
+                    <hr>
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Email</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Email</p>
+                            </div>
+                        </div>
+                        <hr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Số điện thoại</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.PhoneNumber</p>
+                            </div>
+                        </div>
+                        <hr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Địa chỉ</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.Address</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                            <p class="mb-4"><span class="text-primary font-italic me-1">Bài viết</span> Gần đây</p>
+                            @foreach (var post in Model.RecentPosts)
+                            {
+                                <p class="mb-1" style="font-size: .77rem;">@post.Title</p>
+                                <div class="progress rounded" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: @(post.ViewPercentage)%" aria-valuenow="@post.ViewPercentage"
+                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                            <p class="mb-4"><span class="text-primary font-italic me-1">Hoạt động</span> Gần đây</p>
+                            <p class="mb-1" style="font-size: .77rem;">Bình luận</p>
+                            <div class="progress rounded" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.RecentActivities.CommentPercentage)%" aria-valuenow="@Model.RecentActivities.CommentPercentage"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mt-4 mb-1" style="font-size: .77rem;">Thích</p>
+                            <div class="progress rounded" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.RecentActivities.LikePercentage)%" aria-valuenow="@Model.RecentActivities.LikePercentage"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mt-4 mb-1" style="font-size: .77rem;">Chia sẻ</p>
+                            <div class="progress rounded" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.RecentActivities.SharePercentage)%" aria-valuenow="@Model.RecentActivities.SharePercentage"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mt-4 mb-1" style="font-size: .77rem;">Đánh giá</p>
+                            <div class="progress rounded" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.RecentActivities.RatingPercentage)%" aria-valuenow="@Model.RecentActivities.RatingPercentage"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <p class="mt-4 mb-1" style="font-size: .77rem;">Theo dõi</p>
+                            <div class="progress rounded mb-2" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: @(Model.RecentActivities.FollowPercentage)%" aria-valuenow="@Model.RecentActivities.FollowPercentage"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+}

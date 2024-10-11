@@ -5,127 +5,203 @@
     Layout = "~/Views/AccountManager/_Layout.cshtml";
 }
 
-<h2>Thông tin tài khoản</h2>
-<div class="mb-3">
-    @if (!string.IsNullOrEmpty(Model.User!.Avatar))
-    {
-        <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
-    }
-    else
-    {
-        <img src="/images/default-avatar.png" alt="Default Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
-    }
-    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#avatarModal">
-        Thay đổi ảnh đại diện
-    </button>
-</div>
-<table class="table table-bordered">
-    <tr>
-        <th>Tên</th>
-        <td>@Model.User!.Name</td>
-    </tr>
-    <tr>
-        <th>Tên đăng nhập</th>
-        <td>@Model.User!.UserName</td>
-    </tr>
-    <tr>
-        <th>Email</th>
-        <td>@Model.User!.Email</td>
-    </tr>
-    <tr>
-        <th>Địa chỉ</th>
-        <td>@Model.User!.Address</td>
-    </tr>
-    <tr>
-        <th>Xác thực hai yếu tố (2FA)</th>
-        <td>
-            @if (User.Identity!.IsAuthenticated)
-            {
-                <span class="text-success">Đã bật</span>
-            }
-            else
-            {
-                <a asp-action="EnableTwoFactorAuthentication" class="btn btn-primary">Bật xác thực hai yếu tố</a>
-            }
-        </td>
-    </tr>
-</table>
+<div class="container mt-4">
+    <h2 class="mb-4">Thông tin tài khoản</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.User!.Avatar))
+                    {
+                        <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                    }
+                    else
+                    {
+                        <img src="/images/default-avatar.png" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                    }
+                    <h5 class="my-3">@Model.User!.Name</h5>
+                    <p class="text-muted mb-1">@Model.User!.UserName</p>
+                    <p class="text-muted mb-4">@Model.User!.Address</p>
+                    <div class="d-flex justify-content-center mb-2">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#avatarModal">
+                            Thay đổi ảnh đại diện
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Tên</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.User!.Name</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Tên đăng nhập</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.User!.UserName</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Email</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.User!.Email</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Địa chỉ</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">@Model.User!.Address</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Xác thực hai yếu tố (2FA)</p>
+                        </div>
+                        <div class="col-sm-9">
+                            @if (User.Identity!.IsAuthenticated)
+                            {
+                                <p class="text-success mb-0">Đã bật</p>
+                            }
+                            else
+                            {
+                                <a asp-action="EnableTwoFactorAuthentication" class="btn btn-primary btn-sm">Bật xác thực hai yếu tố</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h3>Lịch sử đăng nhập</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Thời gian</th>
-            <th>IP</th>
-            <th>Thiết bị</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var login in Model.LoginHistory)
-        {
-            <tr>
-                <td>@login.LoginTime</td>
-                <td>@login.IpAddress</td>
-                <td>@login.UserAgent</td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Lịch sử đăng nhập</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>IP</th>
+                                    <th>Thiết bị</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var login in Model.LoginHistory)
+                                {
+                                    <tr>
+                                        <td>@login.LoginTime</td>
+                                        <td>@login.IpAddress</td>
+                                        <td>@login.UserAgent</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h3>Quản lý phiên đăng nhập</h3>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Thiết bị</th>
-            <th>Địa điểm</th>
-            <th>Thời gian đăng nhập</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var session in Model.ActiveSessions)
-        {
-            <tr>
-                <td>@session.DeviceName</td>
-                <td>@session.Location</td>
-                <td>@session.LoginTime</td>
-                <td>
-                    <form asp-action="TerminateSession" method="post">
-                        <input type="hidden" name="sessionId" value="@session.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">Đăng xuất</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Quản lý phiên đăng nhập</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Thiết bị</th>
+                                    <th>Địa điểm</th>
+                                    <th>Thời gian đăng nhập</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var session in Model.ActiveSessions)
+                                {
+                                    <tr>
+                                        <td>@session.DeviceName</td>
+                                        <td>@session.Location</td>
+                                        <td>@session.LoginTime</td>
+                                        <td>
+                                            <form asp-action="TerminateSession" method="post">
+                                                <input type="hidden" name="sessionId" value="@session.Id" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Đăng xuất</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h3>Liên kết tài khoản mạng xã hội</h3>
-<div class="mb-3">
-    @if (Model.LinkedAccounts.Contains("Google"))
-    {
-        <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
-    }
-    else
-    {
-        <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
-    }
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Liên kết tài khoản mạng xã hội</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.LinkedAccounts.Contains("Google"))
+                    {
+                        <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
+                    }
 
-    @if (Model.LinkedAccounts.Contains("Facebook"))
-    {
-        <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
-    }
-    else
-    {
-        <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
-    }
-</div>
+                    @if (Model.LinkedAccounts.Contains("Facebook"))
+                    {
+                        <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
+                    }
+                </div>
+            </div>
+        </div>
 
-<h3>Xóa tài khoản</h3>
-<div class="mb-3">
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-        Xóa tài khoản
-    </button>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Xóa tài khoản</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-danger">Cảnh báo: Hành động này không thể hoàn tác.</p>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        Xóa tài khoản
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for deleting account -->
