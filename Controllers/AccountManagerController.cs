@@ -25,7 +25,13 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> Index()
         {
             User? user = await _userService.GetCurrentUserAsync();
-            return user == null ? NotFound() : View(user);
+
+            AccountManagerViewModel viewModel = new AccountManagerViewModel
+            {
+                User = user,
+            };
+
+            return user == null ? NotFound() : View(viewModel);
         }
 
         [HttpGet]
@@ -189,6 +195,19 @@ namespace GallifreyPlanet.Controllers
             }
 
             return "/uploads/" + uniqueFileName;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TerminateSession(string sessionId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userService.TerminateSessionAsync(user.Id, sessionId);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@model GallifreyPlanet.ViewModels.AccountManager.AccountManagerViewModel
 @{
     ViewData["Title"] = "Quản lý tài khoản";
     Layout = "~/Views/AccountManager/_Layout.cshtml";
@@ -6,9 +7,9 @@
 
 <h2>Thông tin tài khoản</h2>
 <div class="mb-3">
-    @if (!string.IsNullOrEmpty(Model.Avatar))
+    @if (!string.IsNullOrEmpty(Model.User!.Avatar))
     {
-        <img src="@Model.Avatar" alt="Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
+        <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
     }
     else
     {
@@ -21,22 +22,22 @@
 <table class="table table-bordered">
     <tr>
         <th>Tên</th>
-        <td>@Model.Name</td>
+        <td>@Model.User!.Name</td>
     </tr>
     <tr>
         <th>Tên đăng nhập</th>
-        <td>@Model.UserName</td>
+        <td>@Model.User!.UserName</td>
     </tr>
     <tr>
         <th>Email</th>
-        <td>@Model.Email</td>
+        <td>@Model.User!.Email</td>
     </tr>
     <tr>
         <th>Địa chỉ</th>
-        <td>@Model.Address</td>
+        <td>@Model.User!.Address</td>
     </tr>
     <tr>
-        <th>Xác thực hai yếu tố</th>
+        <th>Xác thực hai yếu tố (2FA)</th>
         <td>
             @if (User.Identity!.IsAuthenticated)
             {
@@ -49,6 +50,105 @@
         </td>
     </tr>
 </table>
+
+<h3>Lịch sử đăng nhập</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Thời gian</th>
+            <th>IP</th>
+            <th>Thiết bị</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var login in Model.LoginHistory)
+        {
+            <tr>
+                <td>@login.LoginTime</td>
+                <td>@login.IpAddress</td>
+                <td>@login.UserAgent</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Quản lý phiên đăng nhập</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Thiết bị</th>
+            <th>Địa điểm</th>
+            <th>Thời gian đăng nhập</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var session in Model.ActiveSessions)
+        {
+            <tr>
+                <td>@session.DeviceName</td>
+                <td>@session.Location</td>
+                <td>@session.LoginTime</td>
+                <td>
+                    <form asp-action="TerminateSession" method="post">
+                        <input type="hidden" name="sessionId" value="@session.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Đăng xuất</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Liên kết tài khoản mạng xã hội</h3>
+<div class="mb-3">
+    @if (Model.LinkedAccounts.Contains("Google"))
+    {
+        <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
+    }
+    else
+    {
+        <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
+    }
+
+    @if (Model.LinkedAccounts.Contains("Facebook"))
+    {
+        <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
+    }
+    else
+    {
+        <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
+    }
+</div>
+
+<h3>Xóa tài khoản</h3>
+<div class="mb-3">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+        Xóa tài khoản
+    </button>
+</div>
+
+<!-- Modal for deleting account -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Xác nhận xóa tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.</p>
+                <form asp-action="DeleteAccount" method="post">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nhập mật khẩu để xác nhận:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Xóa tài khoản</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal for avatar upload and crop -->
 <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">

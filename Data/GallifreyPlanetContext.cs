@@ -11,6 +11,8 @@ namespace GallifreyPlanet.Data
 
         }
 
-        public DbSet<GallifreyPlanet.Models.User> User { get; set; }
+        public DbSet<User> User { get; set; }
+        public DbSet<LoginHistory> LoginHistories { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
     }
 }

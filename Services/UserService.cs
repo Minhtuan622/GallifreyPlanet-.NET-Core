@@ -1,7 +1,9 @@
-﻿using GallifreyPlanet.Models;
+﻿using GallifreyPlanet.Data;
+using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.AccountManager;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services
 {
@@ -9,16 +11,36 @@ namespace GallifreyPlanet.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly GallifreyPlanetContext _gallifreyPlanetContext;
 
-        public UserService(UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
+        public UserService(
+            UserManager<User> userManager,
+            IHttpContextAccessor httpContextAccessor,
+            GallifreyPlanetContext gallifreyPlanetContext
+        )
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _gallifreyPlanetContext = gallifreyPlanetContext;
         }
 
         public async Task<User?> GetCurrentUserAsync()
         {
             return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
+        }
+
+        public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsync(User user)
+        {
+            return await _gallifreyPlanetContext.UserSessions
+                .Where(us => us.UserId == user.Id && us.LogoutTime == null)
+                .Select(us => new ActiveSessionViewModel
+                {
+                    Id = us.Id.ToString(),
+                    DeviceName = us.DeviceName,
+                    Location = us.Location,
+                    LoginTime = us.LoginTime
+                })
+                .ToListAsync();
         }
 
         public EditProfileViewModel CreateEditProfileViewModel(User user)
@@ -101,6 +123,32 @@ namespace GallifreyPlanet.Services
         public async Task<IdentityResult> SetTwoFactorEnabledAsync(User user, bool enabled)
         {
             return await _userManager.SetTwoFactorEnabledAsync(user, enabled);
+        }
+
+        public async Task TerminateSessionAsync(string userId, string sessionId)
+        {
+            UserSession? session = await _gallifreyPlanetContext.UserSessions
+                .FirstOrDefaultAsync(us => us.Id.ToString() == sessionId && us.UserId == userId);
+
+            if (session != null)
+            {
+                session.LogoutTime = DateTime.UtcNow;
+                await _gallifreyPlanetContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddLoginHistoryAsync(string userId, string ipAddress, string userAgent)
+        {
+            LoginHistory? loginHistory = new LoginHistory
+            {
+                UserId = userId,
+                LoginTime = DateTime.UtcNow,
+                IpAddress = ipAddress,
+                UserAgent = userAgent
+            };
+
+            _gallifreyPlanetContext.LoginHistories.Add(loginHistory);
+            await _gallifreyPlanetContext.SaveChangesAsync();
         }
     }
 }
