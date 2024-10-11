@@ -1,15 +1,23 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@{
     ViewData["Title"] = "Quản lý tài khoản";
     Layout = "~/Views/AccountManager/_Layout.cshtml";
 }
 
 <h2>Thông tin tài khoản</h2>
-@if (!string.IsNullOrEmpty(Model.Avatar))
-{
-    <div class="mb-3">
-        <img src="@Model.Avatar" alt="Avatar" class="rounded-circle" style="max-width: 150px;" />
-    </div>
-}
+<div class="mb-3">
+    @if (!string.IsNullOrEmpty(Model.Avatar))
+    {
+        <img src="@Model.Avatar" alt="Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
+    }
+    else
+    {
+        <img src="/images/default-avatar.png" alt="Default Avatar" id="avatar" class="rounded-circle" style="max-width: 150px;" />
+    }
+    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#avatarModal">
+        Thay đổi ảnh đại diện
+    </button>
+</div>
 <table class="table table-bordered">
     <tr>
         <th>Tên</th>
@@ -27,4 +35,43 @@
         <th>Địa chỉ</th>
         <td>@Model.Address</td>
     </tr>
+    <tr>
+        <th>Xác thực hai yếu tố</th>
+        <td>
+            @if (User.Identity!.IsAuthenticated)
+            {
+                <span class="text-success">Đã bật</span>
+            }
+            else
+            {
+                <a asp-action="EnableTwoFactorAuthentication" class="btn btn-primary">Bật xác thực hai yếu tố</a>
+            }
+        </td>
+    </tr>
 </table>
+
+<!-- Modal for avatar upload and crop -->
+<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="avatarModalLabel">Thay đổi ảnh đại diện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="file" id="avatarInput" accept="image/*" class="form-control mb-3">
+                <div id="avatarCropper" style="max-width: 100%; max-height: 300px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="saveAvatar">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script>
+    <script src="~/js/account_manager.js"></script>
+}

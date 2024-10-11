@@ -1,0 +1,21 @@
+@model GallifreyPlanet.ViewModels.PublicProfileViewModel
+
+@{
+    ViewData["Title"] = $"Hồ sơ của {Model.Name}";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/images/default-avatar.png" : Model.Avatar)" alt="Avatar" class="img-fluid rounded-circle mb-3" style="max-width: 200px;">
+        </div>
+        <div class="col-md-8">
+            <h2>@Model.Name</h2>
+            <p>Tên người dùng: @Model.UserName</p>
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <p>Email: @Model.Email</p>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+@model GallifreyPlanet.ViewModels.EnableTwoFactorAuthenticationViewModel
+
+@{
+    ViewData["Title"] = "Bật xác thực hai yếu tố";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <p>Quét mã QR bên dưới bằng ứng dụng xác thực trên điện thoại của bạn (như Google Authenticator) hoặc nhập mã này vào ứng dụng:</p>
+        <p><strong>@Model.Token</strong></p>
+        <div id="qrCode"></div>
+        <form asp-action="EnableTwoFactorAuthentication" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="VerificationCode" class="control-label"></label>
+                <input asp-for="VerificationCode" class="form-control" />
+                <span asp-validation-for="VerificationCode" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Xác nhận" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script>
+        new QRCode(document.getElementById("qrCode"), {
+            text: "@Model.Token",
+            width: 200,
+            height: 200
+        });
+    </script>
+}

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Cài đặt tài khoản";
 }
 
-<h2>Cài đặt tài khoản.</h2>
+<h2>Cài đặt tài khoản</h2>
 
 <hr />
 <div class="my-2">
@@ -12,24 +12,24 @@
     <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="mb-3">
-            <label asp-for="EditProfile.Name" class="form-label"></label>
-            <input asp-for="EditProfile.Name" class="form-control" />
-            <span asp-validation-for="EditProfile.Name" class="text-danger"></span>
+            <label asp-for="EditProfile!.Name" class="form-label"></label>
+            <input asp-for="EditProfile!.Name" class="form-control" />
+            <span asp-validation-for="EditProfile!.Name" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="EditProfile.Email" class="form-label"></label>
-            <input asp-for="EditProfile.Email" class="form-control" />
-            <span asp-validation-for="EditProfile.Email" class="text-danger"></span>
+            <label asp-for="EditProfile!.Email" class="form-label"></label>
+            <input asp-for="EditProfile!.Email" class="form-control" />
+            <span asp-validation-for="EditProfile!.Email" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="EditProfile.Address" class="form-label"></label>
-            <input asp-for="EditProfile.Address" class="form-control" />
-            <span asp-validation-for="EditProfile.Address" class="text-danger"></span>
+            <label asp-for="EditProfile!.Address" class="form-label"></label>
+            <input asp-for="EditProfile!.Address" class="form-control" />
+            <span asp-validation-for="EditProfile!.Address" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="EditProfile.AvatarFile" class="form-label"></label>
-            <input asp-for="EditProfile.AvatarFile" type="file" class="form-control" accept="image/*" />
-            <span asp-validation-for="EditProfile.AvatarFile" class="text-danger"></span>
+            <label asp-for="EditProfile!.AvatarFile" class="form-label"></label>
+            <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" accept="image/*" />
+            <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
         </div>
         @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
         {
@@ -48,19 +48,19 @@
     <form asp-action="ChangePassword" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="mb-3">
-            <label asp-for="ChangePassword.CurrentPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.CurrentPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.CurrentPassword" class="text-danger"></span>
+            <label asp-for="ChangePassword!.CurrentPassword" class="form-label"></label>
+            <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
+            <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="ChangePassword.NewPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.NewPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.NewPassword" class="text-danger"></span>
+            <label asp-for="ChangePassword!.NewPassword" class="form-label"></label>
+            <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
+            <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="ChangePassword.ConfirmNewPassword" class="form-label"></label>
-            <input asp-for="ChangePassword.ConfirmNewPassword" class="form-control" />
-            <span asp-validation-for="ChangePassword.ConfirmNewPassword" class="text-danger"></span>
+            <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label"></label>
+            <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
+            <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
         </div>
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
@@ -73,12 +73,12 @@
     <form asp-action="PrivacySettings" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="mb-3 form-check">
-            <input asp-for="PrivacySettings.ShowEmail" type="checkbox" class="form-check-input" />
-            <label asp-for="PrivacySettings.ShowEmail" class="form-check-label"></label>
+            <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
+            <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label"></label>
         </div>
         <div class="mb-3 form-check">
-            <input asp-for="PrivacySettings.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
-            <label asp-for="PrivacySettings.AllowMessagesFromNonFriends" class="form-check-label"></label>
+            <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
+            <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label"></label>
         </div>
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
@@ -91,12 +91,12 @@
     <form asp-action="NotificationSettings" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="mb-3 form-check">
-            <input asp-for="NotificationSettings.EmailNotifications" type="checkbox" class="form-check-input" />
-            <label asp-for="NotificationSettings.EmailNotifications" class="form-check-label"></label>
+            <input asp-for="NotificationSettings!.EmailNotifications" type="checkbox" class="form-check-input" />
+            <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label"></label>
         </div>
         <div class="mb-3 form-check">
-            <input asp-for="NotificationSettings.PushNotifications" type="checkbox" class="form-check-input" />
-            <label asp-for="NotificationSettings.PushNotifications" class="form-check-label"></label>
+            <input asp-for="NotificationSettings!.PushNotifications" type="checkbox" class="form-check-input" />
+            <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label"></label>
         </div>
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary">Lưu cài đặt</button>

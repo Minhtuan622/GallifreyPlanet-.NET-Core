@@ -15,6 +15,7 @@ namespace GallifreyPlanet.ViewModels.AccountManager
         [Display(Name = "Mật khẩu mới")]
         public string? NewPassword { get; set; }
 
+        [Required(ErrorMessage = "Vui lòng xác nhận mật khẩu mới")]
         [DataType(DataType.Password)]
         [Display(Name = "Xác nhận mật khẩu mới")]
         [Compare(otherProperty: "NewPassword", ErrorMessage = "Mật khẩu mới và xác nhận mật khẩu không khớp.")]

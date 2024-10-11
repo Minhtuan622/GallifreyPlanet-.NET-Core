@@ -20,7 +20,7 @@ namespace GallifreyPlanet.ViewModels.Account
 
         [Display(Name = "Mật khẩu")]
         [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Mật khẩu phải từ 6 đến 100 ký tự")]        
+        [StringLength(maximumLength: 100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và tối đa {1} ký tự.", MinimumLength = 6)]
         public string? Password { get; set; }
 
 
