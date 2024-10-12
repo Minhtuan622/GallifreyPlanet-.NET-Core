@@ -1,4 +1,5 @@
-﻿using GallifreyPlanet.Models;
+﻿using GallifreyPlanet.Data;
+using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.AccountManager;
@@ -11,27 +12,39 @@ namespace GallifreyPlanet.Controllers
     {
         private readonly UserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<User> _userManager;
+        private readonly GallifreyPlanetContext _context;
 
         public AccountManagerController(
             UserService userService,
-            IWebHostEnvironment webHostEnvironment
+            IWebHostEnvironment webHostEnvironment,
+            UserManager<User> userManager,
+            GallifreyPlanetContext context
         )
         {
             _userService = userService;
             _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             User? user = await _userService.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-            AccountManagerViewModel viewModel = new AccountManagerViewModel
+            AccountManagerViewModel? viewModel = new AccountManagerViewModel
             {
                 User = user,
+                LoginHistory = await _userService.GetLoginHistoriesAsync(user),
+                ActiveSessions = await _userService.GetActiveSessionsAsync(user),
             };
 
-            return user == null ? NotFound() : View(viewModel);
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -57,10 +70,16 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangePassword(AccountManagerViewModel viewModel)
         {
-            if (!ModelState.IsValid) return RedirectToAction(nameof(AccountSetting), viewModel);
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AccountSetting), viewModel);
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             IdentityResult? result = await _userService.ChangePasswordAsync(
                 user,
@@ -68,7 +87,10 @@ namespace GallifreyPlanet.Controllers
                 viewModel.ChangePassword!.NewPassword!
             );
 
-            if (result.Succeeded) return RedirectToAction(nameof(Index));
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             AddErrors(result);
             return RedirectToAction(nameof(AccountSetting), viewModel);
@@ -77,10 +99,16 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProfile(AccountManagerViewModel viewModel)
         {
-            if (!ModelState.IsValid) return RedirectToAction(nameof(AccountSetting));
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AccountSetting));
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             IdentityResult? result = await _userService.UpdateProfileAsync(user, viewModel.EditProfile!);
 
@@ -90,7 +118,10 @@ namespace GallifreyPlanet.Controllers
                 await _userService.UpdateProfileAsync(user, viewModel.EditProfile);
             }
 
-            if (result.Succeeded) return RedirectToAction(nameof(Index));
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             AddErrors(result);
             return RedirectToAction(nameof(AccountSetting));
@@ -99,14 +130,23 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> PrivacySettings(AccountManagerViewModel viewModel)
         {
-            if (!ModelState.IsValid) return RedirectToAction(nameof(AccountSetting));
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AccountSetting));
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             IdentityResult? result = await _userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
 
-            if (result.Succeeded) return RedirectToAction(nameof(Index));
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             AddErrors(result);
             return RedirectToAction(nameof(AccountSetting));
@@ -115,14 +155,23 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> NotificationSettings(AccountManagerViewModel viewModel)
         {
-            if (!ModelState.IsValid) return RedirectToAction(nameof(AccountSetting));
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(AccountSetting));
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             IdentityResult? result = await _userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
 
-            if (result.Succeeded) return RedirectToAction(nameof(Index));
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             AddErrors(result);
             return RedirectToAction(nameof(AccountSetting));
@@ -131,10 +180,16 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(IFormFile avatar)
         {
-            if (avatar == null || avatar.Length == 0) return Json(new { success = false });
+            if (avatar == null || avatar.Length == 0)
+            {
+                return Json(new { success = false });
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return Json(new { success = false });
+            if (user == null)
+            {
+                return Json(new { success = false });
+            }
 
             string? avatarPath = await UploadAvatarAsync(avatar);
             user.Avatar = avatarPath;
@@ -146,7 +201,10 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             string? token = await _userService.GenerateTwoFactorTokenAsync(user);
             EnableTwoFactorAuthenticationViewModel? model = new EnableTwoFactorAuthenticationViewModel { Token = token };
@@ -157,10 +215,16 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> EnableTwoFactorAuthentication(EnableTwoFactorAuthenticationViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null) return NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
 
             string verificationCode = model.VerificationCode.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
             bool is2faTokenValid = await _userService.VerifyTwoFactorTokenAsync(user, verificationCode);

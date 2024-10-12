@@ -361,3 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+Controllers/AccountController.cs
+Controllers/AccountManagerController.cs
+Data/GallifreyPlanetContext.cs
+Migrations/20241011062812_AddLoginHistoryAndUserSessions.cs
+Migrations/20241011062812_AddLoginHistoryAndUserSessions.Designer.cs
+Migrations/20241012013539_AddLoginHistoryAndUserSessions.cs
+Migrations/20241012013539_AddLoginHistoryAndUserSessions.Designer.cs
+Models/LoginHistory.cs
+Services/UserService.cs
+ViewModels/AccountManager/AccountManagerViewModel.cs
+Views/AccountManager/_Layout.cshtml
+Views/AccountManager/Index.cshtml

@@ -31,7 +31,7 @@ namespace GallifreyPlanet.Services
 
         public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsync(User user)
         {
-            return await _gallifreyPlanetContext.UserSessions
+            return await _gallifreyPlanetContext.UserSession
                 .Where(us => us.UserId == user.Id && us.LogoutTime == null)
                 .Select(us => new ActiveSessionViewModel
                 {
@@ -40,6 +40,15 @@ namespace GallifreyPlanet.Services
                     Location = us.Location,
                     LoginTime = us.LoginTime
                 })
+                .ToListAsync();
+        }
+
+        public async Task<List<LoginHistory>> GetLoginHistoriesAsync(User user)
+        {
+            return await _gallifreyPlanetContext.LoginHistory
+                .Where(lh => lh.UserId == user.Id)
+                .OrderByDescending(lh => lh.LoginTime)
+                .Take(count: 10)
                 .ToListAsync();
         }
 
@@ -127,7 +136,7 @@ namespace GallifreyPlanet.Services
 
         public async Task TerminateSessionAsync(string userId, string sessionId)
         {
-            UserSession? session = await _gallifreyPlanetContext.UserSessions
+            UserSession? session = await _gallifreyPlanetContext.UserSession
                 .FirstOrDefaultAsync(us => us.Id.ToString() == sessionId && us.UserId == userId);
 
             if (session != null)
@@ -147,7 +156,7 @@ namespace GallifreyPlanet.Services
                 UserAgent = userAgent
             };
 
-            _gallifreyPlanetContext.LoginHistories.Add(loginHistory);
+            _gallifreyPlanetContext.LoginHistory.Add(loginHistory);
             await _gallifreyPlanetContext.SaveChangesAsync();
         }
     }

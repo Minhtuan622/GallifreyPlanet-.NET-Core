@@ -112,7 +112,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? existingUser = _context.User.FirstOrDefault(u => u.Email == user.Email);
+                User? existingUser = _context.Users.FirstOrDefault(u => u.Email == user.Email);
 
                 if (existingUser != null)
                 {
