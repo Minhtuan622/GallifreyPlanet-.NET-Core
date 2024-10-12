@@ -1,0 +1,31 @@
+﻿@model GallifreyPlanet.ViewModels.Blog.BlogManagerViewModel
+
+@{
+    ViewData["Title"] = Model.BlogViewModel!.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1>@Model.BlogViewModel.Title</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <img src="@Model.BlogViewModel.CurrentThumbnailPath" class="img-fluid mb-4" alt="@Model.BlogViewModel.Title">
+            <p class="lead">@Model.BlogViewModel.Description</p>
+            <div class="blog-content">
+                @Html.Raw(Model.BlogViewModel.Content)
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Thông tin bài viết</h5>
+                    <p class="card-text mb-1"><strong>Tác giả:</strong> @Model.User!.Name</p>
+                    <p class="card-text mb-1"><strong>Email:</strong> @Model.User!.Email</p>
+                    @* <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Chỉnh sửa</a> *@
+                    <a asp-action="Index" class="btn btn-secondary mt-3">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

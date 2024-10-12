@@ -52,7 +52,7 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
         }
 
-        public EditProfileViewModel CreateEditProfileViewModel(User user)
+        public EditProfileViewModel NewEditProfileViewModel(User user)
         {
             return new EditProfileViewModel
             {
@@ -63,7 +63,7 @@ namespace GallifreyPlanet.Services
             };
         }
 
-        public PrivacySettingsViewModel CreatePrivacySettingsViewModel(User user)
+        public PrivacySettingsViewModel NewPrivacySettingsViewModel(User user)
         {
             return new PrivacySettingsViewModel
             {
@@ -72,7 +72,7 @@ namespace GallifreyPlanet.Services
             };
         }
 
-        public NotificationSettingsViewModel CreateNotificationSettingsViewModel(User user)
+        public NotificationSettingsViewModel NewNotificationSettingsViewModel(User user)
         {
             return new NotificationSettingsViewModel
             {
@@ -81,7 +81,7 @@ namespace GallifreyPlanet.Services
             };
         }
 
-        public PublicProfileViewModel CreatePublicProfileViewModel(User user)
+        public PublicProfileViewModel NewPublicProfileViewModel(User user)
         {
             return new PublicProfileViewModel
             {

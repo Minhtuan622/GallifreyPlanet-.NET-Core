@@ -11,19 +11,20 @@ namespace GallifreyPlanet.Controllers
     public class AccountManagerController : Controller
     {
         private readonly UserService _userService;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly FileService _fileService;
         private readonly UserManager<User> _userManager;
         private readonly GallifreyPlanetContext _context;
 
         public AccountManagerController(
             UserService userService,
+            FileService fileService,
             IWebHostEnvironment webHostEnvironment,
             UserManager<User> userManager,
             GallifreyPlanetContext context
         )
         {
             _userService = userService;
-            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
             _userManager = userManager;
             _context = context;
         }
@@ -59,9 +60,9 @@ namespace GallifreyPlanet.Controllers
             AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
                 ChangePassword = new ChangePasswordViewModel(),
-                EditProfile = _userService.CreateEditProfileViewModel(user),
-                PrivacySettings = _userService.CreatePrivacySettingsViewModel(user),
-                NotificationSettings = _userService.CreateNotificationSettingsViewModel(user),
+                EditProfile = _userService.NewEditProfileViewModel(user),
+                PrivacySettings = _userService.NewPrivacySettingsViewModel(user),
+                NotificationSettings = _userService.NewNotificationSettingsViewModel(user),
             };
 
             return View(viewModel);
@@ -114,7 +115,7 @@ namespace GallifreyPlanet.Controllers
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
-                user.Avatar = await UploadAvatarAsync(viewModel.EditProfile.AvatarFile);
+                user.Avatar = await _fileService.UploadFileAsync(viewModel.EditProfile.AvatarFile);
                 await _userService.UpdateProfileAsync(user, viewModel.EditProfile);
             }
 
@@ -191,7 +192,7 @@ namespace GallifreyPlanet.Controllers
                 return Json(new { success = false });
             }
 
-            string? avatarPath = await UploadAvatarAsync(avatar);
+            string? avatarPath = await _fileService.UploadFileAsync(avatar);
             user.Avatar = avatarPath;
             IdentityResult? result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
@@ -245,20 +246,6 @@ namespace GallifreyPlanet.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-        }
-
-        private async Task<string> UploadAvatarAsync(IFormFile avatarFile)
-        {
-            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + avatarFile.FileName;
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-            using (FileStream? fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await avatarFile.CopyToAsync(fileStream);
-            }
-
-            return "/uploads/" + uniqueFileName;
         }
 
         [HttpPost]

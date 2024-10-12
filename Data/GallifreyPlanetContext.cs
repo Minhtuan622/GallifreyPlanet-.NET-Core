@@ -11,8 +11,9 @@ namespace GallifreyPlanet.Data
 
         }
 
-        public DbSet<User> User { get; set; }
-        public DbSet<LoginHistory> LoginHistory { get; set; }
-        public DbSet<UserSession> UserSession { get; set; }
+        public DbSet<User> User { get; set; } = default!;
+        public DbSet<LoginHistory> LoginHistory { get; set; } = default!;
+        public DbSet<UserSession> UserSession { get; set; } = default!;
+        public DbSet<Blog> Blog { get; set; } = default!;
     }
 }

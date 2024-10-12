@@ -1,0 +1,51 @@
+﻿@using GallifreyPlanet.ViewModels.Blog
+@model BlogViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa bài viết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Content" class="form-label"></label>
+                    <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ThumbnailFile" class="form-label"></label>
+                    <input asp-for="ThumbnailFile" type="file" class="form-control" accept="image/*" />
+                    <span asp-validation-for="ThumbnailFile" class="text-danger"></span>
+                    @if (!string.IsNullOrEmpty(Model.CurrentThumbnailPath))
+                    {
+                        <img src="@Model.CurrentThumbnailPath" alt="Current Thumbnail" class="mt-2" style="max-width: 200px;" />
+                    }
+                </div>
+                <div class="mb-3">
+                    <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
