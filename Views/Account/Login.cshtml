@@ -21,6 +21,7 @@
 							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 							<div class="mb-3">
 								<label asp-for="UsernameOrEmail" class="mb-2 text-muted"></label>
+								<span class="text-danger">*</span>
 								<input asp-for="UsernameOrEmail" type="text" class="form-control" required autofocus>
 								<span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
 							</div>
@@ -28,6 +29,7 @@
 							<div class="mb-3">
 								<div class="mb-2 w-100">
 									<label asp-for="Password" class="text-muted"></label>
+									<span class="text-danger">*</span>
 									<a class="float-end" asp-area="" asp-controller="Account" asp-action="ForgotPassword">
 										Quên mật khẩu?
 									</a>
