@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GallifreyPlanet.ViewModels
+namespace GallifreyPlanet.ViewModels.AccountManager
 {
     public class EnableTwoFactorAuthenticationViewModel
     {

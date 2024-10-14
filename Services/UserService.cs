@@ -59,6 +59,8 @@ namespace GallifreyPlanet.Services
         {
             return new EditProfileViewModel
             {
+                PhoneNumber = user.PhoneNumber,
+                UserName = user.UserName,
                 Name = user.Name,
                 Email = user.Email,
                 Address = user.Address,
@@ -118,6 +120,7 @@ namespace GallifreyPlanet.Services
             user.Name = model.Name;
             user.Email = model.Email;
             user.Address = model.Address;
+            user.PhoneNumber = model.PhoneNumber;
             return await _userManager.UpdateAsync(user);
         }
 

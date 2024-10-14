@@ -1,7 +1,6 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
-using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.AccountManager;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -115,7 +114,7 @@ namespace GallifreyPlanet.Controllers
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
-                user.Avatar = await _fileService.UploadFileAsync(viewModel.EditProfile.AvatarFile);
+                user.Avatar = await _fileService.UploadFileAsync(viewModel.EditProfile.AvatarFile, uploadFolder: "/accounts/avatars");
                 await _userService.UpdateProfileAsync(user, viewModel.EditProfile);
             }
 
@@ -181,6 +180,8 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(IFormFile avatar)
         {
+            Console.WriteLine("=================== ahihi");
+            Console.WriteLine(avatar);
             if (avatar == null || avatar.Length == 0)
             {
                 return Json(new { success = false });
@@ -192,7 +193,7 @@ namespace GallifreyPlanet.Controllers
                 return Json(new { success = false });
             }
 
-            string? avatarPath = await _fileService.UploadFileAsync(avatar);
+            string? avatarPath = await _fileService.UploadFileAsync(avatar, uploadFolder: "/accounts/avatars");
             user.Avatar = avatarPath;
             IdentityResult? result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 

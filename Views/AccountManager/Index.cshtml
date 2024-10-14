@@ -19,14 +19,15 @@
                     {
                         <img src="/images/default-avatar.png" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
                     }
-                    <h5 class="my-3">@Model.User!.Name</h5>
+                    <h5 class="my-3">
+                        @Model.User!.Name
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                        }
+                    </h5>
                     <p class="text-muted mb-1">@Model.User!.UserName</p>
                     <p class="text-muted mb-4">@Model.User!.Address</p>
-                    <div class="d-flex justify-content-center mb-2">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#avatarModal">
-                            Thay đổi ảnh đại diện
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -35,7 +36,9 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-3">
-                            <p class="mb-0">Tên</p>
+                            <p class="mb-0">
+                                <b>Tên</b>
+                            </p>
                         </div>
                         <div class="col-sm-9">
                             <p class="text-muted mb-0">@Model.User!.Name</p>
@@ -44,39 +47,69 @@
                     <hr>
                     <div class="row">
                         <div class="col-sm-3">
-                            <p class="mb-0">Tên đăng nhập</p>
+                            <p class="mb-0">
+                                <b>Tên đăng nhập</b>
+                            </p>
                         </div>
                         <div class="col-sm-9">
                             <p class="text-muted mb-0">@Model.User!.UserName</p>
                         </div>
                     </div>
+                    @if(Model.User!.PhoneNumber != null)
+                    {
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">
+                                    <b>Số điện thoại</b>
+                                </p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.User!.PhoneNumber</p>
+                            </div>
+                        </div>
+                    }
+                    @if(Model.User!.Email != null)
+                    {
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">
+                                    <b>Email</b>
+                                </p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.User!.Email</p>
+                            </div>
+                        </div>
+                    }
+                    @if(Model.User!.Address != null)
+                    {
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">
+                                    <b>Địa chỉ</b>
+                                </p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.User!.Address</p>
+                            </div>
+                        </div>
+                    }
                     <hr>
                     <div class="row">
                         <div class="col-sm-3">
-                            <p class="mb-0">Email</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0">@Model.User!.Email</p>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Địa chỉ</p>
-                        </div>
-                        <div class="col-sm-9">
-                            <p class="text-muted mb-0">@Model.User!.Address</p>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <p class="mb-0">Xác thực hai yếu tố (2FA)</p>
+                            <p class="mb-0">
+                                <b>Xác thực hai yếu tố (2FA)</b>
+                            </p>
                         </div>
                         <div class="col-sm-9">
                             @if (User.Identity!.IsAuthenticated)
                             {
-                                <p class="text-success mb-0">Đã bật</p>
+                                <p class="text-success mb-0">
+                                    <b>Đã bật</b>
+                                </p>
                             }
                             else
                             {
@@ -230,29 +263,3 @@
         </div>
     </div>
 </div>
-
-<!-- Modal for avatar upload and crop -->
-<div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="avatarModalLabel">Thay đổi ảnh đại diện</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="file" id="avatarInput" accept="image/*" class="form-control mb-3">
-                <div id="avatarCropper" style="max-width: 100%; max-height: 300px;"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="saveAvatar">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script>
-    <script src="~/js/account_manager.js"></script>
-}
