@@ -1,3 +1,5 @@
+using GallifreyPlanet.ViewModels.Blog;
+
 namespace GallifreyPlanet.ViewModels
 {
     public class PublicProfileViewModel
@@ -13,14 +15,8 @@ namespace GallifreyPlanet.ViewModels
         public string? Twitter { get; set; }
         public string? Instagram { get; set; }
         public string? Facebook { get; set; }
-        public List<RecentPost> RecentPosts { get; set; } = new List<RecentPost>();
         public RecentActivities RecentActivities { get; set; } = new RecentActivities();
-    }
-
-    public class RecentPost
-    {
-        public string Title { get; set; } = string.Empty;
-        public int ViewPercentage { get; set; }
+        public List<BlogViewModel> RecentBlogs { get; set; } = new List<BlogViewModel>();
     }
 
     public class RecentActivities

@@ -4,6 +4,7 @@ namespace GallifreyPlanet.ViewModels.Blog
 {
     public class BlogViewModel
     {
+        public int Id { get; set; }
         public string? UserId { get; set; }
 
         [Display(Name = "Tiêu đề")]

@@ -10,16 +10,19 @@ namespace GallifreyPlanet.Services
     public class UserService
     {
         private readonly UserManager<User> _userManager;
+        private readonly BlogService _blogService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly GallifreyPlanetContext _gallifreyPlanetContext;
 
         public UserService(
             UserManager<User> userManager,
+            BlogService blogService,
             IHttpContextAccessor httpContextAccessor,
             GallifreyPlanetContext gallifreyPlanetContext
         )
         {
             _userManager = userManager;
+            _blogService = blogService;
             _httpContextAccessor = httpContextAccessor;
             _gallifreyPlanetContext = gallifreyPlanetContext;
         }
@@ -81,14 +84,32 @@ namespace GallifreyPlanet.Services
             };
         }
 
-        public PublicProfileViewModel NewPublicProfileViewModel(User user)
+        public async Task<PublicProfileViewModel> NewPublicProfileViewModel(User user)
         {
             return new PublicProfileViewModel
             {
                 UserName = user.UserName!,
                 Name = user.Name!,
                 Avatar = user.Avatar!,
-                Email = user.ShowEmail ? user.Email : null
+                Email = user.ShowEmail ? user.Email : null,
+                Address = user.Address,
+                PhoneNumber = user.PhoneNumber,
+                RecentBlogs = await _blogService.GetRecentBlogsByUser(user.Id, count: 5),
+
+                // test
+                Website = "https://example.com",
+                Github = "https://github.com/username",
+                Twitter = "https://twitter.com/username",
+                Instagram = "https://instagram.com/nguyenminhtuan622",
+                Facebook = "https://facebook.com/minhtuan622",
+                RecentActivities = new RecentActivities
+                {
+                    CommentPercentage = 80,
+                    LikePercentage = 72,
+                    SharePercentage = 89,
+                    RatingPercentage = 55,
+                    FollowPercentage = 66
+                },
             };
         }
 
