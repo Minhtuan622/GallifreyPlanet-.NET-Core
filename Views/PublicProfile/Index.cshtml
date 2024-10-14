@@ -7,9 +7,15 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body text-center">
-                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/images/default-avatar.png" : Model.Avatar)" 
+                    <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/uploads/accounts/default-avatar.jpg" : Model.Avatar)"
                          alt="Avatar" class="rounded-circle img-fluid" style="width: 150px;">
-                    <h5 class="my-3">@Model.Name</h5>
+                    <h5 class="my-3">
+                        @Model.Name
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <i class="fa-solid fa-circle-check text-success"></i>
+                        }
+                    </h5>
                     <p class="text-muted mb-1">@Model.UserName</p>
                     @if (!string.IsNullOrEmpty(Model.Email))
                     {
@@ -131,10 +137,21 @@
                                        asp-route-id="@blog.Id"
                                         class="list-group-item list-group-item-action"
                                     >
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h5 class="mb-1 text-truncate">@blog.Title</h5>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <img 
+                                                src="@blog.CurrentThumbnailPath"
+                                                alt="Alternate Text" 
+                                                class="w-100 h-100 object-fit-cover"
+                                            />
                                         </div>
-                                        <p class="mb-1 text-truncate">@blog.Description</p>
+                                        <div class="col-9">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1 text-truncate">@blog.Title</h5>
+                                            </div>
+                                            <p class="mb-1 text-truncate">@blog.Description</p>
+                                        </div>
+                                    </div>
                                     </a>
                                 </div>
                             }
@@ -177,7 +194,3 @@
         </div>
     </div>
 </div>
-
-@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-}

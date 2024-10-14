@@ -17,7 +17,7 @@
                     }
                     else
                     {
-                        <img src="/images/default-avatar.png" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                        <img src="/uploads/accounts/default-avatar.jpg" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
                     }
                     <h5 class="my-3">
                         @Model.User!.Name
@@ -113,7 +113,12 @@
                             }
                             else
                             {
-                                <a asp-action="EnableTwoFactorAuthentication" class="btn btn-primary btn-sm">Bật xác thực hai yếu tố</a>
+                                <a 
+                                    asp-action="EnableTwoFactorAuthentication" 
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    Bật xác thực hai yếu tố
+                                </a>
                             }
                         </div>
                     </div>
