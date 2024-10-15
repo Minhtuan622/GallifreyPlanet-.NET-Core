@@ -40,8 +40,8 @@ namespace GallifreyPlanet.Controllers
             AccountManagerViewModel? viewModel = new AccountManagerViewModel
             {
                 User = user,
-                LoginHistory = await _userService.GetLoginHistoriesAsync(user),
-                ActiveSessions = await _userService.GetActiveSessionsAsync(user),
+                LoginHistory = await _userService.GetLoginHistoriesAsyncByUserId(user.Id),
+                ActiveSessions = await _userService.GetActiveSessionsAsyncByUser(user.Id),
             };
 
             return View(viewModel);
@@ -59,9 +59,25 @@ namespace GallifreyPlanet.Controllers
             AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
                 ChangePassword = new ChangePasswordViewModel(),
-                EditProfile = _userService.NewEditProfileViewModel(user),
-                PrivacySettings = _userService.NewPrivacySettingsViewModel(user),
-                NotificationSettings = _userService.NewNotificationSettingsViewModel(user),
+                EditProfile = new EditProfileViewModel
+                {
+                    PhoneNumber = user.PhoneNumber,
+                    UserName = user.UserName,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Address = user.Address,
+                    CurrentAvatar = user.Avatar
+                },
+                PrivacySettings = new PrivacySettingsViewModel
+                {
+                    ShowEmail = user.ShowEmail,
+                    AllowMessagesFromNonFriends = user.AllowMessagesFromNonFriends,
+                },
+                NotificationSettings = new NotificationSettingsViewModel
+                {
+                    EmailNotifications = user.EmailNotifications,
+                    PushNotifications = user.PushNotifications,
+                },
             };
 
             return View(viewModel);

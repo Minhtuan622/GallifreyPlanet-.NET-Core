@@ -1,6 +1,5 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
-using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.AccountManager;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,10 +31,10 @@ namespace GallifreyPlanet.Services
             return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
         }
 
-        public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsync(User user)
+        public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsyncByUser(string userId)
         {
             return await _gallifreyPlanetContext.UserSession
-                .Where(us => us.UserId == user.Id && us.LogoutTime == null)
+                .Where(us => us.UserId == userId && us.LogoutTime == null)
                 .Select(us => new ActiveSessionViewModel
                 {
                     Id = us.Id.ToString(),
@@ -46,73 +45,13 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
         }
 
-        public async Task<List<LoginHistory>> GetLoginHistoriesAsync(User user)
+        public async Task<List<LoginHistory>> GetLoginHistoriesAsyncByUserId(string userId)
         {
             return await _gallifreyPlanetContext.LoginHistory
-                .Where(lh => lh.UserId == user.Id)
+                .Where(lh => lh.UserId == userId)
                 .OrderByDescending(lh => lh.LoginTime)
                 .Take(count: 10)
                 .ToListAsync();
-        }
-
-        public EditProfileViewModel NewEditProfileViewModel(User user)
-        {
-            return new EditProfileViewModel
-            {
-                PhoneNumber = user.PhoneNumber,
-                UserName = user.UserName,
-                Name = user.Name,
-                Email = user.Email,
-                Address = user.Address,
-                CurrentAvatar = user.Avatar
-            };
-        }
-
-        public PrivacySettingsViewModel NewPrivacySettingsViewModel(User user)
-        {
-            return new PrivacySettingsViewModel
-            {
-                ShowEmail = user.ShowEmail,
-                AllowMessagesFromNonFriends = user.AllowMessagesFromNonFriends,
-            };
-        }
-
-        public NotificationSettingsViewModel NewNotificationSettingsViewModel(User user)
-        {
-            return new NotificationSettingsViewModel
-            {
-                EmailNotifications = user.EmailNotifications,
-                PushNotifications = user.PushNotifications,
-            };
-        }
-
-        public async Task<PublicProfileViewModel> NewPublicProfileViewModel(User user)
-        {
-            return new PublicProfileViewModel
-            {
-                UserName = user.UserName!,
-                Name = user.Name!,
-                Avatar = user.Avatar!,
-                Email = user.ShowEmail ? user.Email : null,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                RecentBlogs = await _blogService.GetRecentBlogsByUser(user.Id, count: 5),
-
-                // test
-                Website = "https://example.com",
-                Github = "https://github.com/username",
-                Twitter = "https://twitter.com/username",
-                Instagram = "https://instagram.com/nguyenminhtuan622",
-                Facebook = "https://facebook.com/minhtuan622",
-                RecentActivities = new RecentActivities
-                {
-                    CommentPercentage = 80,
-                    LikePercentage = 72,
-                    SharePercentage = 89,
-                    RatingPercentage = 55,
-                    FollowPercentage = 66
-                },
-            };
         }
 
         public async Task<IdentityResult> UpdateProfileAsync(User user, EditProfileViewModel model)
