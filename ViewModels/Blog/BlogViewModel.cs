@@ -23,5 +23,7 @@ namespace GallifreyPlanet.ViewModels.Blog
         public IFormFile? ThumbnailFile { get; set; }
 
         public string? CurrentThumbnailPath { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

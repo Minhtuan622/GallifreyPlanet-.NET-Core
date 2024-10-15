@@ -14,13 +14,17 @@ namespace GallifreyPlanet.Services
             _gallifreyPlanetContext = gallifreyPlanetContext;
         }
 
-        public async Task<List<BlogViewModel>> GetRecentBlogsByUser(string userId, int count)
+        public async Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int count = 0)
         {
             List<Blog>? blogs = await _gallifreyPlanetContext.Blog
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.Id)
-                .Take(count)
                 .ToListAsync();
+
+            if (count == 0)
+            {
+                blogs.Take(count);
+            }
 
             return blogs.Select(NewBlogViewModel).ToList();
         }
@@ -34,7 +38,9 @@ namespace GallifreyPlanet.Services
                 Content = blog.Content,
                 Description = blog.Description,
                 UserId = blog.UserId,
-                CurrentThumbnailPath = blog.ThumbnailPath
+                CurrentThumbnailPath = blog.ThumbnailPath,
+                CreatedAt = blog.CreatedAt,
+                UpdatedAt = blog.UpdatedAt,
             };
         }
     }

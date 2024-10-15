@@ -35,7 +35,7 @@ namespace GallifreyPlanet.Controllers
                 Email = user.ShowEmail ? user.Email : null,
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
-                RecentBlogs = await _blogService.GetRecentBlogsByUser(user.Id, count: 5),
+                RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 5),
 
                 // test
                 Website = "https://example.com",

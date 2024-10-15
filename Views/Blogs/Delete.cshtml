@@ -1,4 +1,4 @@
-﻿@model GallifreyPlanet.Models.Blog
+﻿@model GallifreyPlanet.ViewModels.Blog.BlogManagerViewModel
 
 @{
     ViewData["Title"] = "Xóa bài viết";
@@ -12,19 +12,20 @@
     </div>
     <div class="card mb-4">
         <div class="card-body">
-            <h3 class="card-title">@Model.Title</h3>
-            <p class="card-text">@Model.Description</p>
-            <img src="@Model.ThumbnailPath" class="img-fluid mb-3" alt="@Model.Title">
+            <h3 class="card-title">@Model.BlogViewModel!.Title</h3>
+            <p class="card-text">@Model.BlogViewModel!.Description</p>
+            <img src="@Model.BlogViewModel!.CurrentThumbnailPath" class="img-fluid mb-3" alt="@Model.BlogViewModel!.Title">
             <dl class="row">
                 <dt class="col-sm-2">Tác giả:</dt>
-                <dd class="col-sm-10">@Model.UserId</dd>
+                <dd class="col-sm-10">@Model.User!.Name</dd>
                 <dt class="col-sm-2">Ngày đăng:</dt>
+                <dd class="col-sm-10">@Model.BlogViewModel!.CreatedAt</dd>
             </dl>
         </div>
     </div>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="@Model.BlogViewModel.Id" />
         <input type="submit" value="Xóa bài viết" class="btn btn-danger" />
         <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
     </form>

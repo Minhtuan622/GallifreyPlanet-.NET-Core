@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GallifreyPlanet.Models.Blog>
+﻿@model List<GallifreyPlanet.ViewModels.Blog.BlogViewModel>
 
 @{
     ViewData["Title"] = "Bài viết";
@@ -16,7 +16,7 @@
         {
             <div class="col">
                 <div class="card h-100 shadow-sm">
-                    <img src="@item.ThumbnailPath" class="card-img-top" alt="@item.Title">
+                    <img src="@item.CurrentThumbnailPath" class="card-img-top" alt="@item.Title">
                     <div class="card-body">
                         <h5 class="card-title">@item.Title</h5>
                         <p class="card-text">@item.Description</p>
@@ -28,7 +28,9 @@
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Xóa</a>
                             </div>
-                            <small class="text-muted">9 mins</small>
+                            <small class="text-muted">
+                                @item.CreatedAt.ToString()
+                            </small>
                         </div>
                     </div>
                 </div>

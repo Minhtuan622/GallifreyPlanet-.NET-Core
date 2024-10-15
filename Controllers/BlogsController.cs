@@ -30,7 +30,14 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Blog.ToListAsync());
+            User? user = await _userService.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            List<BlogViewModel>? blog = await _blogService.GetBlogsByUserId(user.Id);
+            return View(blog);
         }
 
         // GET: Blogs/Details/5
@@ -76,6 +83,8 @@ namespace GallifreyPlanet.Controllers
                     Title = viewModel.Title,
                     Description = viewModel.Description,
                     Content = viewModel.Content,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
                 };
 
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
@@ -134,6 +143,7 @@ namespace GallifreyPlanet.Controllers
                     blog.Title = viewModel.Title;
                     blog.Description = viewModel.Description;
                     blog.Content = viewModel.Content;
+                    blog.UpdatedAt = DateTime.Now;
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
@@ -175,7 +185,13 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            return View(blog);
+            BlogManagerViewModel? blogViewModel = new BlogManagerViewModel
+            {
+                User = await _userService.GetCurrentUserAsync(),
+                BlogViewModel = _blogService.NewBlogViewModel(blog),
+            };
+
+            return View(blogViewModel);
         }
 
         // POST: Blogs/Delete/5

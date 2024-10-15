@@ -47,7 +47,7 @@
                         <div class="mb-3">
                             <label asp-for="EditProfile!.AvatarFile" class="form-label"></label>
                             <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" id="avatarInput" accept="image/*" />
-                            <small>Upload ảnh tỉ lệ 1:1 để kích thước phù hợp nhất</small>
+                            <small>Upload tỉ lệ 1:1 để phù hợp nhất</small>
                             <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
                         </div>
                         @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
