@@ -55,8 +55,6 @@
                             <p class="text-muted mb-0">@Model.User!.UserName</p>
                         </div>
                     </div>
-                    @if(Model.User!.PhoneNumber != null)
-                    {
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
@@ -65,12 +63,17 @@
                                 </p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">@Model.User!.PhoneNumber</p>
+                                <p class="text-muted mb-0">
+                                @if(Model.User!.PhoneNumber != null)
+                                {
+                                    @Model.User!.PhoneNumber
+                                } else
+                                {
+                                    <small class="text-warning">Chưa cập nhật số điện thoại</small>
+                                }
+                            </p>
                             </div>
                         </div>
-                    }
-                    @if(Model.User!.Email != null)
-                    {
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
@@ -82,7 +85,6 @@
                                 <p class="text-muted mb-0">@Model.User!.Email</p>
                             </div>
                         </div>
-                    }
                     @if(Model.User!.Address != null)
                     {
                         <hr>
