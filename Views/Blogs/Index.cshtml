@@ -11,15 +11,15 @@
         <a asp-action="Create" class="btn btn-primary">Tạo bài viết mới</a>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
         @foreach (var item in Model)
         {
             <div class="col">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100">
                     <img src="@item.CurrentThumbnailPath" class="card-img-top" alt="@item.Title">
                     <div class="card-body">
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text">@item.Description</p>
+                        <h5 class="card-title text-truncate">@item.Title</h5>
+                        <p class="card-text content">@item.Description</p>
                     </div>
                     <div class="card-footer bg-transparent border-top-0">
                         <div class="d-flex justify-content-between align-items-center">
@@ -28,9 +28,6 @@
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Xóa</a>
                             </div>
-                            <small class="text-muted">
-                                @item.CreatedAt.ToString()
-                            </small>
                         </div>
                     </div>
                 </div>
@@ -44,6 +41,13 @@
         .card-img-top {
             height: 200px;
             object-fit: cover;
+        }
+
+        .content {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 }
