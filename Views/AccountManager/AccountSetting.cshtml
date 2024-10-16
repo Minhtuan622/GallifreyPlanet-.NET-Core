@@ -4,192 +4,165 @@
     ViewData["Title"] = "Cài đặt tài khoản";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+<div class="container my-5">
+    <h1 class="mb-4 text-center">@ViewData["Title"]</h1>
 
-    <div class="row">
-        <!-- Bảng thông tin cá nhân -->
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <div class="card mb-4">
-                <div class="card-header bg-primary-subtle">
-                    <h5 class="card-title mb-0">Thông tin cá nhân</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.UserName" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="EditProfile!.UserName" class="form-control" required readonly />
-                            <span asp-validation-for="EditProfile!.UserName" class="text-danger"></span>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-0">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Thông tin cá nhân</button>
+                            <button class="nav-link" id="nav-password-tab" data-bs-toggle="tab" data-bs-target="#nav-password" type="button" role="tab" aria-controls="nav-password" aria-selected="false">Đổi mật khẩu</button>
+                            <button class="nav-link" id="nav-privacy-tab" data-bs-toggle="tab" data-bs-target="#nav-privacy" type="button" role="tab" aria-controls="nav-privacy" aria-selected="false">Quyền riêng tư</button>
+                            <button class="nav-link" id="nav-notifications-tab" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="false">Thông báo</button>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.Name" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="EditProfile!.Name" class="form-control" required />
-                            <span asp-validation-for="EditProfile!.Name" class="text-danger"></span>
+                    </nav>
+                    <div class="tab-content p-4" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.UserName" class="form-label">Tên người dùng</label>
+                                    <input asp-for="EditProfile!.UserName" class="form-control" required readonly />
+                                    <span asp-validation-for="EditProfile!.UserName" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.Name" class="form-label">Họ và tên</label>
+                                    <input asp-for="EditProfile!.Name" class="form-control" required />
+                                    <span asp-validation-for="EditProfile!.Name" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.Email" class="form-label">Email</label>
+                                    <input asp-for="EditProfile!.Email" class="form-control" required />
+                                    <span asp-validation-for="EditProfile!.Email" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.PhoneNumber" class="form-label">Số điện thoại</label>
+                                    <input asp-for="EditProfile!.PhoneNumber" class="form-control" />
+                                    <span asp-validation-for="EditProfile!.PhoneNumber" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.Address" class="form-label">Địa chỉ</label>
+                                    <input asp-for="EditProfile!.Address" class="form-control" />
+                                    <span asp-validation-for="EditProfile!.Address" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="EditProfile!.AvatarFile" class="form-label">Ảnh đại diện</label>
+                                    <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" id="avatarInput" accept="image/*" />
+                                    <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
+                                    <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
+                                {
+                                    <div class="mb-3">
+                                        <img src="@Model.EditProfile!.CurrentAvatar" alt="Current Avatar" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
+                                    </div>
+                                }
+                                <div id="avatarCropper" class="mb-3"></div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.PhoneNumber" class="form-label"></label>
-                            <input asp-for="EditProfile!.PhoneNumber" class="form-control" />
-                            <span asp-validation-for="EditProfile!.PhoneNumber" class="text-danger"></span>
+                        <div class="tab-pane fade" id="nav-password" role="tabpanel" aria-labelledby="nav-password-tab">
+                            <form asp-action="ChangePassword" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-3">
+                                    <label asp-for="ChangePassword!.CurrentPassword" class="form-label">Mật khẩu hiện tại</label>
+                                    <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
+                                    <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="ChangePassword!.NewPassword" class="form-label">Mật khẩu mới</label>
+                                    <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
+                                    <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                                    <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
+                                    <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.Email" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="EditProfile!.Email" class="form-control" required />
-                            <span asp-validation-for="EditProfile!.Email" class="text-danger"></span>
+                        <div class="tab-pane fade" id="nav-privacy" role="tabpanel" aria-labelledby="nav-privacy-tab">
+                            <form asp-action="PrivacySettings" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-3 form-check">
+                                    <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
+                                    <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label">Hiển thị email công khai</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
+                                    <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label">Cho phép nhận tin nhắn từ người lạ</label>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.Address" class="form-label"></label>
-                            <input asp-for="EditProfile!.Address" class="form-control" />
-                            <span asp-validation-for="EditProfile!.Address" class="text-danger"></span>
+                        <div class="tab-pane fade" id="nav-notifications" role="tabpanel" aria-labelledby="nav-notifications-tab">
+                            <form asp-action="NotificationSettings" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-3 form-check">
+                                    <input asp-for="NotificationSettings!.EmailNotifications" type="checkbox" class="form-check-input" />
+                                    <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label">Nhận thông báo qua email</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input asp-for="NotificationSettings!.PushNotifications" type="checkbox" class="form-check-input" />
+                                    <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label">Nhận thông báo đẩy</label>
+                                </div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="EditProfile!.AvatarFile" class="form-label"></label>
-                            <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" id="avatarInput" accept="image/*" />
-                            <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
-                            <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
-                        </div>
-                        @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
-                        {
-                            <div class="mb-3">
-                                <img src="@Model.EditProfile!.CurrentAvatar" alt="Current Avatar" class="rounded-3 border" style="max-width: 150px;" />
-                            </div>
-                        }
-                        <div id="avatarCropper" class="mb-3"></div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <!-- Bảng đổi mật khẩu -->
-            <div class="">
-                <div class="card mb-4">
-                    <div class="card-header bg-primary-subtle">
-                        <h5 class="card-title mb-0">Đổi mật khẩu</h5>
-                    </div>
-                    <div class="card-body">
-                        <form asp-action="ChangePassword" method="post">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="form-group mb-3">
-                                <label asp-for="ChangePassword!.CurrentPassword" class="form-label"></label>
-                                <span class="text-danger">*</span>
-                                <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
-                                <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label asp-for="ChangePassword!.NewPassword" class="form-label"></label>
-                                <span class="text-danger">*</span>
-                                <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
-                                <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label"></label>
-                                <span class="text-danger">*</span>
-                                <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
-                                <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Liên kết tài khoản mạng xã hội -->
-            <div class="">
-                <div class="card mb-4">
-                    <div class="card-header bg-primary-subtle">
-                        <h5 class="card-title mb-0">Liên kết tài khoản mạng xã hội</h5>
-                    </div>
-                    <div class="card-body">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Liên kết tài khoản mạng xã hội</h5>
+                    <div class="d-grid gap-2">
                         @if (Model.LinkedAccounts.Contains("Google"))
                         {
-                            <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
+                            <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Google">
+                                <i class="fab fa-google me-2"></i> Hủy liên kết Google
+                            </button>
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
+                            <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Google">
+                                <i class="fab fa-google me-2"></i> Liên kết với Google
+                            </button>
                         }
 
                         @if (Model.LinkedAccounts.Contains("Facebook"))
                         {
-                            <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
+                            <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Facebook">
+                                <i class="fab fa-facebook-f me-2"></i> Hủy liên kết Facebook
+                            </button>
                         }
                         else
                         {
-                            <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
+                            <button class="btn btn-outline-primary" asp-action="LinkAccount" asp-route-provider="Facebook">
+                                <i class="fab fa-facebook-f me-2"></i> Liên kết với Facebook
+                            </button>
                         }
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Bảng quyền riêng tư -->
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <div class="card mb-4">
-                <div class="card-header bg-info-subtle">
-                    <h5 class="card-title mb-0">Quyền riêng tư</h5>
-                </div>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-body">
-                    <form asp-action="PrivacySettings" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-check mb-3">
-                            <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
-                            <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label"></label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
-                            <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label"></label>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-info">Lưu cài đặt</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bảng thông báo -->
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <div class="card mb-4">
-                <div class="card-header bg-info-subtle">
-                    <h5 class="card-title mb-0">Thông báo</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-action="NotificationSettings" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-check mb-3">
-                            <input asp-for="NotificationSettings!.EmailNotifications" type="checkbox" class="form-check-input" />
-                            <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label"></label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input asp-for="NotificationSettings!.PushNotifications" type="checkbox" class="form-check-input" />
-                            <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label"></label>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-info">Lưu cài đặt</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Xóa tài khoản -->
-        <div class="col-lg-6 col-md-8 col-sm-12">
-            <div class="card mb-4">
-                <div class="card-header bg-danger-subtle">
-                    <h5 class="card-title mb-0">Xóa tài khoản</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-danger">Cảnh báo: Hành động này không thể hoàn tác.</p>
-                    <div class="d-flex justify-content-end">
+                    <h5 class="card-title text-danger mb-4">Xóa tài khoản</h5>
+                    <p class="text-muted">Cảnh báo: Hành động này không thể hoàn tác.</p>
+                    <div class="d-grid">
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                             Xóa tài khoản
                         </button>
@@ -202,21 +175,21 @@
 
 <!-- Modal for deleting account -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="deleteAccountModalLabel">Xác nhận xóa tài khoản</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body pt-0">
-                <p>Bạn có chắc chắn muốn xóa tài khoản?</p>
-                <p class="text-danger">* Lưu ý: Hành động này không thể hoàn tác.</p>
+            <div class="modal-body">
+                <p class="text-danger mb-4">Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.</p>
                 <form asp-action="DeleteAccount" method="post">
                     <div class="mb-3">
                         <label for="password" class="form-label">Nhập mật khẩu để xác nhận:</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <div class="d-flex justify-content-end">
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-danger">Xóa tài khoản</button>
                     </div>
                 </form>
@@ -224,6 +197,32 @@
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+    }
+
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+    .btn-outline-primary:hover, .btn-outline-danger:hover {
+        transform: translateY(-2px);
+    }
+</style>
 
 @section Scripts {
     <script src="~/js/account_manager.js"></script>
