@@ -27,12 +27,15 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="~/lib/qrcodejs/qrcode.min.js"></script>
+    
     <script>
-        new QRCode(document.getElementById("qrCode"), {
-            text: "@Model.Token",
-            width: 200,
-            height: 200
+        window.addEventListener("load", () => {
+            new QRCode(document.getElementById("qrCode"), {
+                text: "@Model.Token",
+                width: 200,
+                height: 200
+            });
         });
     </script>
 }
