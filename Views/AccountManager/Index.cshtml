@@ -1,23 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @model GallifreyPlanet.ViewModels.AccountManager.AccountManagerViewModel
+
 @{
     ViewData["Title"] = "Quản lý tài khoản";
     Layout = "~/Views/AccountManager/_Layout.cshtml";
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">Thông tin tài khoản</h2>
-    <div class="row">
+    <h2 class="mb-4 text-center">Thông tin tài khoản</h2>
+
+    <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body text-center">
                     @if (!string.IsNullOrEmpty(Model.User!.Avatar))
                     {
-                        <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                        <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle img-fluid mb-3" style="width: 150px;" />
                     }
                     else
                     {
-                        <img src="/uploads/accounts/default-avatar.jpg" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                        <img src="/uploads/accounts/default-avatar.jpg" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid mb-3" style="width: 150px;" />
                     }
                     <h5 class="my-3">
                         @Model.User!.Name
@@ -31,94 +33,80 @@
                 </div>
             </div>
         </div>
+
         <div class="col-md-8">
             <div class="card mb-4">
                 <div class="card-body">
-                    <div class="row">
+                    <!-- Thông tin cá nhân -->
+                    <div class="row mb-3">
                         <div class="col-sm-3">
-                            <p class="mb-0">
-                                <b>Tên</b>
-                            </p>
+                            <b>Tên</b>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">@Model.User!.Name</p>
+                            <p class="text-muted">@Model.User!.Name</p>
                         </div>
                     </div>
-                    <hr>
-                    <div class="row">
+
+                    <div class="row mb-3">
                         <div class="col-sm-3">
-                            <p class="mb-0">
-                                <b>Tên đăng nhập</b>
-                            </p>
+                            <b>Tên đăng nhập</b>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">@Model.User!.UserName</p>
+                            <p class="text-muted">@Model.User!.UserName</p>
                         </div>
                     </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">
-                                    <b>Số điện thoại</b>
-                                </p>
-                            </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">
-                                @if(Model.User!.PhoneNumber != null)
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <b>Số điện thoại</b>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted">
+                                @if (Model.User!.PhoneNumber != null)
                                 {
                                     @Model.User!.PhoneNumber
-                                } else
+                                }
+                                else
                                 {
                                     <b class="text-warning">Chưa cập nhật số điện thoại</b>
                                 }
                             </p>
-                            </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <p class="mb-0">
-                                    <b>Email</b>
-                                </p>
-                            </div>
-                            <div class="col-sm-9">
-                                <p class="text-muted mb-0">@Model.User!.Email</p>
-                            </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <b>Email</b>
                         </div>
-                    @if(Model.User!.Address != null)
+                        <div class="col-sm-9">
+                            <p class="text-muted">@Model.User!.Email</p>
+                        </div>
+                    </div>
+
+                    @if (Model.User!.Address != null)
                     {
-                        <hr>
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-sm-3">
-                                <p class="mb-0">
-                                    <b>Địa chỉ</b>
-                                </p>
+                                <b>Địa chỉ</b>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">@Model.User!.Address</p>
+                                <p class="text-muted">@Model.User!.Address</p>
                             </div>
                         </div>
                     }
-                    <hr>
+
                     <div class="row">
                         <div class="col-sm-3">
-                            <p class="mb-0">
-                                <b>Xác thực hai yếu tố (2FA)</b>
-                            </p>
+                            <b>Xác thực hai yếu tố (2FA)</b>
                         </div>
                         <div class="col-sm-9">
                             @if (User.Identity!.IsAuthenticated)
                             {
-                                <p class="text-success mb-0">
-                                    <b>Đã bật</b>
-                                </p>
+                                <p class="text-success mb-0"><b>Đã bật</b></p>
                             }
                             else
                             {
-                                <a 
-                                    asp-action="EnableTwoFactorAuthentication" 
-                                    class="btn btn-primary btn-sm"
-                                >
+                                <a asp-action="EnableTwoFactorAuthentication" class="btn btn-primary btn-sm">
                                     Bật xác thực hai yếu tố
                                 </a>
                             }
@@ -129,13 +117,14 @@
         </div>
     </div>
 
-    <div class="row">
-        @if (Model.LoginHistory!.Count > 0)
-        {
+    <!-- Lịch sử đăng nhập -->
+    @if (Model.LoginHistory!.Count > 0)
+    {
+        <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="card-title">Lịch sử đăng nhập</h3>
+                    <div class="card-header bg-primary-subtle">
+                        <h5 class="card-title mb-0">Lịch sử đăng nhập</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -162,13 +151,17 @@
                     </div>
                 </div>
             </div>
-        }
-        @if(Model.ActiveSessions!.Count > 0)
-        {
+        </div>
+    }
+
+    <!-- Phiên đăng nhập -->
+    @if (Model.ActiveSessions!.Count > 0)
+    {
+        <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header">
-                        <h3 class="card-title">Quản lý phiên đăng nhập</h3>
+                    <div class="card-header bg-primary-subtle">
+                        <h5 class="card-title mb-0">Quản lý phiên đăng nhập</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -202,71 +195,6 @@
                     </div>
                 </div>
             </div>
-        }
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Liên kết tài khoản mạng xã hội</h3>
-                </div>
-                <div class="card-body">
-                    @if (Model.LinkedAccounts.Contains("Google"))
-                    {
-                        <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
-                    }
-
-                    @if (Model.LinkedAccounts.Contains("Facebook"))
-                    {
-                        <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
-                    }
-                </div>
-            </div>
         </div>
-
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Xóa tài khoản</h3>
-                </div>
-                <div class="card-body">
-                    <p class="text-danger">Cảnh báo: Hành động này không thể hoàn tác.</p>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
-                        Xóa tài khoản
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal for deleting account -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountModalLabel">Xác nhận xóa tài khoản</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể hoàn tác.</p>
-                <form asp-action="DeleteAccount" method="post">
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Nhập mật khẩu để xác nhận:</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-danger">Xóa tài khoản</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    }
 </div>

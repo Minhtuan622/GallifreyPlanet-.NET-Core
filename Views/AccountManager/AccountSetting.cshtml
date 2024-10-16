@@ -5,49 +5,50 @@
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4">@ViewData["Title"]</h2>
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
     <div class="row">
-        <div class="col-md-8">
+        <!-- Bảng thông tin cá nhân -->
+        <div class="col-lg-6 col-md-8 col-sm-12">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Thông tin cá nhân</h3>
+                <div class="card-header bg-primary-subtle">
+                    <h5 class="card-title mb-0">Thông tin cá nhân</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.UserName" class="form-label"></label>
                             <span class="text-danger">*</span>
                             <input asp-for="EditProfile!.UserName" class="form-control" required readonly />
                             <span asp-validation-for="EditProfile!.UserName" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.Name" class="form-label"></label>
                             <span class="text-danger">*</span>
                             <input asp-for="EditProfile!.Name" class="form-control" required />
                             <span asp-validation-for="EditProfile!.Name" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.PhoneNumber" class="form-label"></label>
                             <input asp-for="EditProfile!.PhoneNumber" class="form-control" />
                             <span asp-validation-for="EditProfile!.PhoneNumber" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.Email" class="form-label"></label>
                             <span class="text-danger">*</span>
                             <input asp-for="EditProfile!.Email" class="form-control" required />
                             <span asp-validation-for="EditProfile!.Email" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.Address" class="form-label"></label>
                             <input asp-for="EditProfile!.Address" class="form-control" />
                             <span asp-validation-for="EditProfile!.Address" class="text-danger"></span>
                         </div>
-                        <div class="mb-3">
+                        <div class="form-group mb-3">
                             <label asp-for="EditProfile!.AvatarFile" class="form-label"></label>
                             <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" id="avatarInput" accept="image/*" />
-                            <small>Upload tỉ lệ 1:1 để phù hợp nhất</small>
+                            <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
                             <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
                         </div>
                         @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
@@ -63,83 +64,162 @@
                     </form>
                 </div>
             </div>
+        </div>
 
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <!-- Bảng đổi mật khẩu -->
+            <div class="">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary-subtle">
+                        <h5 class="card-title mb-0">Đổi mật khẩu</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="ChangePassword" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group mb-3">
+                                <label asp-for="ChangePassword!.CurrentPassword" class="form-label"></label>
+                                <span class="text-danger">*</span>
+                                <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
+                                <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="ChangePassword!.NewPassword" class="form-label"></label>
+                                <span class="text-danger">*</span>
+                                <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
+                                <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label"></label>
+                                <span class="text-danger">*</span>
+                                <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
+                                <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liên kết tài khoản mạng xã hội -->
+            <div class="">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary-subtle">
+                        <h5 class="card-title mb-0">Liên kết tài khoản mạng xã hội</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.LinkedAccounts.Contains("Google"))
+                        {
+                            <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Google">Hủy liên kết Google</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Google">Liên kết với Google</button>
+                        }
+
+                        @if (Model.LinkedAccounts.Contains("Facebook"))
+                        {
+                            <button class="btn btn-outline-danger mb-2" asp-action="UnlinkAccount" asp-route-provider="Facebook">Hủy liên kết Facebook</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-primary mb-2" asp-action="LinkAccount" asp-route-provider="Facebook">Liên kết với Facebook</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng quyền riêng tư -->
+        <div class="col-lg-6 col-md-8 col-sm-12">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Đổi mật khẩu</h3>
+                <div class="card-header bg-info-subtle">
+                    <h5 class="card-title mb-0">Quyền riêng tư</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="ChangePassword" method="post">
+                    <form asp-action="PrivacySettings" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="mb-3">
-                            <label asp-for="ChangePassword!.CurrentPassword" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
-                            <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
+                        <div class="form-check mb-3">
+                            <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
+                            <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label"></label>
                         </div>
-                        <div class="mb-3">
-                            <label asp-for="ChangePassword!.NewPassword" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
-                            <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label"></label>
-                            <span class="text-danger">*</span>
-                            <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
-                            <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
+                        <div class="form-check mb-3">
+                            <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
+                            <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label"></label>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                            <button type="submit" class="btn btn-info">Lưu cài đặt</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <!-- Bảng thông báo -->
+        <div class="col-lg-6 col-md-8 col-sm-12">
             <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Quyền riêng tư</h3>
-                </div>
-                <div class="card-body">
-                    <form asp-action="PrivacySettings" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="mb-3 form-check">
-                            <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
-                            <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label"></label>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
-                            <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label"></label>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title">Thông báo</h3>
+                <div class="card-header bg-info-subtle">
+                    <h5 class="card-title mb-0">Thông báo</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="NotificationSettings" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="mb-3 form-check">
+                        <div class="form-check mb-3">
                             <input asp-for="NotificationSettings!.EmailNotifications" type="checkbox" class="form-check-input" />
                             <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label"></label>
                         </div>
-                        <div class="mb-3 form-check">
+                        <div class="form-check mb-3">
                             <input asp-for="NotificationSettings!.PushNotifications" type="checkbox" class="form-check-input" />
                             <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label"></label>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+                            <button type="submit" class="btn btn-info">Lưu cài đặt</button>
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+
+        <!-- Xóa tài khoản -->
+        <div class="col-lg-6 col-md-8 col-sm-12">
+            <div class="card mb-4">
+                <div class="card-header bg-danger-subtle">
+                    <h5 class="card-title mb-0">Xóa tài khoản</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-danger">Cảnh báo: Hành động này không thể hoàn tác.</p>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                            Xóa tài khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for deleting account -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Xác nhận xóa tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <p>Bạn có chắc chắn muốn xóa tài khoản?</p>
+                <p class="text-danger">* Lưu ý: Hành động này không thể hoàn tác.</p>
+                <form asp-action="DeleteAccount" method="post">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nhập mật khẩu để xác nhận:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-danger">Xóa tài khoản</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

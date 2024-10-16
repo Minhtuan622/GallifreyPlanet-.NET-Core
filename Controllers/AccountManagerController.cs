@@ -196,8 +196,6 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(IFormFile avatar)
         {
-            Console.WriteLine("=================== ahihi");
-            Console.WriteLine(avatar);
             if (avatar == null || avatar.Length == 0)
             {
                 return Json(new { success = false });
@@ -244,7 +242,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            string verificationCode = model.VerificationCode.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
+            string verificationCode = model.VerificationCode!.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
             bool is2faTokenValid = await _userService.VerifyTwoFactorTokenAsync(user, verificationCode);
 
             if (!is2faTokenValid)
