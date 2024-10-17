@@ -1,32 +1,157 @@
 ﻿@model GallifreyPlanet.ViewModels.Blog.BlogManagerViewModel
-
 @{
     ViewData["Title"] = "Xóa bài viết";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h1>@ViewData["Title"]</h1>
-    <div class="alert alert-danger border-0" role="alert">
-        Bạn có chắc chắn muốn xóa bài viết này?
-    </div>
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <h3 class="card-title">@Model.BlogViewModel!.Title</h3>
-            <p class="card-text">@Model.BlogViewModel!.Description</p>
-            <img src="@Model.BlogViewModel!.CurrentThumbnailPath" class="img-fluid mb-3" alt="@Model.BlogViewModel!.Title">
-            <dl class="row">
-                <dt class="col-sm-2">Tác giả:</dt>
-                <dd class="col-sm-10">@Model.User!.Name</dd>
-                <dt class="col-sm-2">Ngày đăng:</dt>
-                <dd class="col-sm-10">@Model.BlogViewModel!.CreatedAt</dd>
-            </dl>
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Bài viết</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Xác nhận xóa</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Warning Card -->
+            <div class="card border-danger border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="warning-icon mb-3">
+                            <i class="fas fa-exclamation-triangle text-danger fa-3x"></i>
+                        </div>
+                        <h4 class="card-title text-danger mb-3">Xác nhận xóa bài viết</h4>
+                        <p class="card-text text-muted mb-0">
+                            Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa bài viết này?
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Article Preview Card -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+                <img src="@Model.BlogViewModel!.CurrentThumbnailPath"
+                     class="card-img-top preview-image object-fit-cover"
+                     alt="@Model.BlogViewModel!.Title">
+
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">Chi tiết bài viết</h5>
+
+                    <div class="article-info">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-wrapper me-3">
+                                        <i class="fas fa-heading text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Tiêu đề</small>
+                                        <strong>@Model.BlogViewModel!.Title</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-wrapper me-3">
+                                        <i class="fas fa-user text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Tác giả</small>
+                                        <strong>@Model.User!.Name</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-wrapper me-3">
+                                        <i class="far fa-calendar text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Ngày đăng</small>
+                                        <strong>@Model.BlogViewModel!.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex align-items-start">
+                                <div class="icon-wrapper me-3">
+                                    <i class="fas fa-align-left text-primary"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block mb-2">Mô tả</small>
+                                    <p class="mb-0">@Model.BlogViewModel!.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <form asp-action="Delete" class="d-inline-block">
+                    <input type="hidden" asp-for="@Model.BlogViewModel.Id" />
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">
+                            <i class="fas fa-trash-alt me-2"></i>Xóa bài viết
+                        </button>
+                        <a asp-action="Index" class="btn btn-light rounded-pill px-4">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="@Model.BlogViewModel.Id" />
-        <input type="submit" value="Xóa bài viết" class="btn btn-danger" />
-        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
-    </form>
 </div>
+
+@section Styles {
+    <style>
+        .preview-image {
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .icon-wrapper {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(var(--bs-primary-rgb), 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .warning-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(var(--bs-danger-rgb), 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-group .btn:first-child {
+            margin-right: 0.5rem;
+        }
+
+        @@media (max-width: 768px) {
+            .preview-image {
+                height: 200px;
+            }
+        }
+    </style>
+}

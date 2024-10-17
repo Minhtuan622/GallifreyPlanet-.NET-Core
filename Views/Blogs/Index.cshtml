@@ -1,33 +1,59 @@
 ﻿@model List<GallifreyPlanet.ViewModels.Blog.BlogViewModel>
-
 @{
     ViewData["Title"] = "Bài viết";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>@ViewData["Title"]</h1>
-        <a asp-action="Create" class="btn btn-primary">Tạo bài viết mới</a>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold text-primary">@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 d-flex align-items-center gap-2">
+            <i class="fas fa-plus"></i>
+            <span>Tạo bài viết</span>
+        </a>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+    <div class="row g-4">
         @foreach (var item in Model)
         {
-            <div class="col">
-                <div class="card border-0 shadow-sm h-100">
-                    <img src="@item.CurrentThumbnailPath" class="card-img-top" alt="@item.Title">
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">@item.Title</h5>
-                        <p class="card-text content">@item.Description</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Sửa</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">Xóa</a>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-img-wrapper">
+                        <img src="@item.CurrentThumbnailPath" class="card-img-top" alt="@item.Title">
+                        <div class="card-img-overlay d-flex align-items-start justify-content-end p-3">
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                            <i class="fas fa-edit me-2"></i>Sửa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="fas fa-info-circle me-2"></i>Chi tiết
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">
+                                            <i class="fas fa-trash-alt me-2"></i>Xóa
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 fw-bold text-truncate">@item.Title</h5>
+                        <p class="card-text content text-muted">@item.Description</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <div class="d-flex align-items-center text-muted">
+                            <i class="far fa-calendar me-2"></i>
+                            <small>@item.CreatedAt?.ToString("dd/MM/yyyy")</small>
                         </div>
                     </div>
                 </div>
@@ -38,9 +64,23 @@
 
 @section Styles {
     <style>
+        .card {
+            transition: transform 0.2s ease-in-out;
+            border-radius: 1rem;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+        }
+
         .card-img-top {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
+            border-radius: 1rem 1rem 0 0;
         }
 
         .content {
@@ -48,6 +88,36 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            line-height: 1.6;
         }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 0.8rem;
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
+        }
+
+            .dropdown-item:hover {
+                background-color: #f8f9fa;
+            }
+
+        .btn-light {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .btn-light:hover {
+                background-color: #fff;
+            }
     </style>
 }
