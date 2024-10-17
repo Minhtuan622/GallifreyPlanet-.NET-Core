@@ -108,7 +108,7 @@
             <div class="card-header">
                 <h5 class="card-title mb-0">Lịch sử đăng nhập</h5>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-bordered">
@@ -140,7 +140,7 @@
             <div class="card-header">
                 <h5 class="card-title mb-0">Quản lý phiên đăng nhập</h5>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead class="table-bordered">
@@ -177,36 +177,30 @@
 <style>
     .card {
         border: none;
-        transition: all 0.3s ease;
     }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
 
     .avatar-wrapper {
         position: relative;
         display: inline-block;
     }
 
-        .avatar-wrapper::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            background-color: #28a745;
-            border: 2px solid #fff;
-            border-radius: 50%;
-        }
+    .avatar-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        background-color: #28a745;
+        border: 2px solid #fff;
+        border-radius: 50%;
+    }
 
     .table {
         font-size: 0.9rem;
     }
 
-        .table th {
-            font-weight: 600;
-        }
+    .table th {
+        font-weight: 600;
+    }
 </style>

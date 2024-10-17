@@ -89,23 +89,20 @@
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Bài viết gần đây</h5>
-                    @foreach (var blog in Model.RecentBlogs)
-                    {
-                        <div class="card mb-3 border-0 shadow-sm">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="@blog.CurrentThumbnailPath" class="img-fluid rounded-start h-100 object-fit-cover" alt="@blog.Title">
-                                </div>
-                                <div class="col-md-8">
+                    <div class="row row-cols-3 g-3">
+                        @foreach (var blog in Model.RecentBlogs)
+                        {
+                            <a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id" class="text-decoration-none">
+                                <div class="card">
+                                    <img src="@blog.CurrentThumbnailPath" class="card-img-top" alt="@blog.Title">
                                     <div class="card-body">
-                                        <h5 class="card-title">@blog.Title</h5>
-                                        <p class="card-text text-muted">@blog.Description</p>
-                                        <a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id" class="btn btn-primary btn-sm">Đọc thêm</a>
+                                        <h5 class="card-title text-truncate">@blog.Title</h5>
+                                        <p class="card-text text-truncate">@blog.Description</p>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    }
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
 
@@ -157,22 +154,22 @@
 </div>
 
 <style>
-    .card {
-        transition: all 0.3s ease;
-        }
-    .card:hover {
-
-        transform: translateY(-5px);
-    }
     .progress {
-            background-color: #e9ecef;
+        background-color: #e9ecef;
     }
 
-    .btn-outline-primary, .btn-outline-dark, .btn-outline-info, .btn-outline-danger {
+    .btn-outline-primary,
+    .btn-outline-dark,
+    .btn-outline-info,
+    .btn-outline-danger {
         border-width: 2px;
+        transition: all 0.2s ease-in-out;
     }
-        .btn-outline-primary:hover, .btn-outline-dark:hover, .btn-outline-info:hover, .btn-outline-danger:hover {
-        transform: translateY(-2px);
 
+    .btn-outline-primary:hover,
+    .btn-outline-dark:hover,
+    .btn-outline-info:hover,
+    .btn-outline-danger:hover {
+        transform: translateY(-2px);
     }
 </style>
