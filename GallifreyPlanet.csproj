@@ -27,4 +27,11 @@
     <Folder Include="wwwroot\uploads\accounts\avatars\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Shared\_StatusMessage.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

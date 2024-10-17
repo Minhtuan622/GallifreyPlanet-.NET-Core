@@ -95,6 +95,7 @@ namespace GallifreyPlanet.Controllers
 
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
+                TempData[key: "StatusMessage"] = "Tạo thành công";
                 return RedirectToAction(nameof(Index));
             }
             return View(viewModel);
@@ -166,6 +167,8 @@ namespace GallifreyPlanet.Controllers
                         throw;
                     }
                 }
+
+                TempData[key: "StatusMessage"] = "Cập nhật thành công";
                 return RedirectToAction(nameof(Index));
             }
             return View(viewModel);
@@ -206,6 +209,7 @@ namespace GallifreyPlanet.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData[key: "StatusMessage"] = "Xóa thành công";
             return RedirectToAction(nameof(Index));
         }
 
