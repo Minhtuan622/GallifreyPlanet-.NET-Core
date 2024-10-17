@@ -105,6 +105,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
+                TempData[key: "StatusMessage"] = "Cập nhật mật khẩu thành công";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -136,6 +137,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
+                TempData[key: "StatusMessage"] = "Cập nhật thông tin cá nhân thành công";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -161,6 +163,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
+                TempData[key: "StatusMessage"] = "Cập nhật cài đặt quyền riêng tư thành công";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -186,6 +189,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
+                TempData[key: "StatusMessage"] = "Cập nhật cài đặt thông báo thành công";
                 return RedirectToAction(nameof(Index));
             }
 
