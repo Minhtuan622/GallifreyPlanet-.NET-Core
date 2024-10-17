@@ -105,7 +105,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
-                TempData[key: "StatusMessage"] = "Cập nhật mật khẩu thành công";
+                TempData[key: "StatusMessage"] = "Đổi mật khẩu thành công";
                 return RedirectToAction(nameof(Index));
             }
 

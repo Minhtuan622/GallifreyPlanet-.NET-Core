@@ -14,16 +14,16 @@ namespace GallifreyPlanet.Services
             _gallifreyPlanetContext = gallifreyPlanetContext;
         }
 
-        public async Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int count = 0)
+        public async Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
             List<Blog>? blogs = await _gallifreyPlanetContext.Blog
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.Id)
                 .ToListAsync();
 
-            if (count == 0)
+            if (count is not null)
             {
-                blogs.Take(count);
+                blogs = blogs.Take(count.Value).ToList();
             }
 
             return blogs.Select(NewBlogViewModel).ToList();
