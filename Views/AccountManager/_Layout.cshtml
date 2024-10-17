@@ -3,6 +3,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Styles {
+    @RenderSection("Styles", required: false)
+}
+
 <h1>Quản lý tài khoản</h1>
 
 <div class="d-flex align-items-start">

@@ -9,15 +9,17 @@
     <h1>@Model.BlogViewModel.Title</h1>
     <hr />
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8 bg-body px-0 rounded-3 overflow-hidden shadow-sm">
             <img src="@Model.BlogViewModel.CurrentThumbnailPath" class="img-fluid mb-4" alt="@Model.BlogViewModel.Title">
-            <p class="lead">@Model.BlogViewModel.Description</p>
-            <div class="blog-content">
-                @Html.Raw(Model.BlogViewModel.Content)
+            <div class="p-3 pt-0">
+                <p class="lead">@Model.BlogViewModel.Description</p>
+                <div class="blog-content">
+                    @Html.Raw(Model.BlogViewModel.Content)
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Thông tin bài viết</h5>
                     <p class="card-text mb-1"><strong>Ngày đăng:</strong> @Model.BlogViewModel!.CreatedAt</p>

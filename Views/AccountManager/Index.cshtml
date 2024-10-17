@@ -174,33 +174,35 @@
     }
 </div>
 
-<style>
-    .card {
-        border: none;
-    }
+@section Styles {
+    <style>
+        .card {
+            border: none;
+        }
 
-    .avatar-wrapper {
-        position: relative;
-        display: inline-block;
-    }
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
 
-    .avatar-wrapper::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 20px;
-        height: 20px;
-        background-color: #28a745;
-        border: 2px solid #fff;
-        border-radius: 50%;
-    }
+        .avatar-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #28a745;
+            border: 2px solid #fff;
+            border-radius: 50%;
+        }
 
-    .table {
-        font-size: 0.9rem;
-    }
+        .table {
+            font-size: 0.9rem;
+        }
 
-    .table th {
-        font-weight: 600;
-    }
-</style>
+        .table th {
+            font-weight: 600;
+        }
+    </style>
+}
