@@ -93,8 +93,8 @@
                         @foreach (var blog in Model.RecentBlogs)
                         {
                             <a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id" class="text-decoration-none">
-                                <div class="card">
-                                    <img src="@blog.CurrentThumbnailPath" class="card-img-top" alt="@blog.Title">
+                                <div class="card h-100">
+                                    <img src="@blog.CurrentThumbnailPath" class="card-img-top h-100" alt="@blog.Title">
                                     <div class="card-body">
                                         <h5 class="card-title text-truncate">@blog.Title</h5>
                                         <p class="card-text text-truncate">@blog.Description</p>
