@@ -13,11 +13,11 @@
         </a>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-3">
         @foreach (var item in Model)
         {
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="card h-100 border-0 shadow-sm">
                     <div class="card-img-wrapper">
                         <img src="@item.CurrentThumbnailPath" class="card-img-top" alt="@item.Title">
                         <div class="card-img-overlay d-flex align-items-start justify-content-end p-3">
@@ -25,7 +25,7 @@
                                 <button class="btn btn-light btn-sm rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu border-0 py-0">
                                     <li>
                                         <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
                                             <i class="fas fa-edit me-2"></i>Sửa
@@ -36,7 +36,7 @@
                                             <i class="fas fa-info-circle me-2"></i>Chi tiết
                                         </a>
                                     </li>
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li><hr class="dropdown-divider my-0"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">
                                             <i class="fas fa-trash-alt me-2"></i>Xóa
@@ -65,12 +65,7 @@
 @section Styles {
     <style>
         .card {
-            transition: transform 0.2s ease-in-out;
             border-radius: 1rem;
-        }
-
-        .hover-card:hover {
-            transform: translateY(-5px);
         }
 
         .card-img-wrapper {
@@ -92,18 +87,12 @@
         }
 
         .dropdown-menu {
-            border: none;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            border-radius: 0.8rem;
         }
 
         .dropdown-item {
             padding: 0.7rem 1.2rem;
         }
-
-            .dropdown-item:hover {
-                background-color: #f8f9fa;
-            }
 
         .btn-light {
             background-color: rgba(255, 255, 255, 0.9);
@@ -116,8 +105,8 @@
             justify-content: center;
         }
 
-            .btn-light:hover {
-                background-color: #fff;
-            }
+        .btn-light:hover {
+            background-color: #fff;
+        }
     </style>
 }
