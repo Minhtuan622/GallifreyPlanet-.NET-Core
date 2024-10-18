@@ -15,5 +15,7 @@ namespace GallifreyPlanet.Data
         public DbSet<LoginHistory> LoginHistory { get; set; } = default!;
         public DbSet<UserSession> UserSession { get; set; } = default!;
         public DbSet<Blog> Blog { get; set; } = default!;
+        public DbSet<Friend> Friend { get; set; } = default!;
+        public DbSet<FriendRequest> FriendRequest { get; set; } = default!;
     }
 }

@@ -41,7 +41,11 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                    <div class="d-flex" style="gap: 0.5rem;">
+                        <partial name="_Messages" />
+                        <partial name="_Notifications" />
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>

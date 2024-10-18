@@ -18,6 +18,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<BlogService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<FriendService>();
 
 builder.Services.AddSession();
 

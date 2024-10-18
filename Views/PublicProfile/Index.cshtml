@@ -1,16 +1,18 @@
 @{
     ViewData["Title"] = $"Hồ sơ của {Model.Name}";
+
+    string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
-<div class="container my-5">
+<div class="container">
     <div class="row g-3">
         <div class="col-lg-4 ps-0">
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <img src="@(Model.Avatar ?? "/uploads/accounts/default-avatar.jpg")"
+                    <div class="text-center mb-2">
+                        <img src="@(Model.Avatar ?? defaultAvatarPath)"
                              alt="Avatar" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-                        <h4 class="mb-1">
+                        <h4>
                             @Model.Name
                             @if (User.Identity!.IsAuthenticated)
                             {
@@ -19,6 +21,42 @@
                         </h4>
                         <p class="text-muted">@@@Model.UserName</p>
                     </div>
+                    @if (User.Identity!.Name != Model.UserName)
+                    {
+                        <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
+                            @if (Model.IsFriend)
+                            {
+                                <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                    <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
+                                        <i class="fa-solid fa-user"></i>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                @if (Model.IsSendRequest)
+                                {
+                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                        <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
+                                            <i class="fa-solid fa-user-check"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                        <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
+                                            <i class="fa-solid fa-user-plus"></i>
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            <a href="@Model.Website" target="_blank" class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
+                                <i class="fa-solid fa-comment"></i>
+                            </a>
+                        </div>
+                    }
+
 
                     @if (!string.IsNullOrEmpty(Model.Email))
                     {
@@ -83,12 +121,63 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card border-0 shadow-sm rounded-4 mt-3">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title mb-4">Danh sách bạn bè</h5>
+                        <a 
+                            asp-action ="Index"
+                            asp-controller="Friend" 
+                            class="text-primary text-decoration-none"
+                        >
+                            Xem tất cả
+                        </a>
+                    </div>
+                    <div class="list-group">
+                        @foreach(var user in Model.Users)
+                        {
+                            <a 
+                               asp-action="Index" 
+                               asp-controller="PublicProfile"
+                               asp-route-username="@user.UserName"
+                               class="list-group-item list-group-item-action"
+                            >
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-placeholder me-3">
+                                        <img src="@(user.Avatar ?? defaultAvatarPath)"
+                                             alt="Alternate Text" 
+                                            class="h-100 w-100 object-fit-cover rounded-circle" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">
+                                            @user.Name
+                                            <small class="fw-normal text-muted">@@@user.UserName</small>
+                                        </h6>
+                                        <small class="text-muted mb-0">
+                                            <i class="far fa-envelope me-2 text-truncate"></i>@user.Email
+                                        </small>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-8 pe-0">
             <div class="card border-0 shadow-sm rounded-4 mb-3">
                 <div class="card-body p-4">
-                    <h5 class="card-title mb-4">Bài viết gần đây</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title mb-4">Bài viết gần đây</h5>
+                        <a asp-action="Index"
+                           asp-controller="Blogs"
+                           class="text-primary text-decoration-none">
+                            Xem tất cả
+                        </a>
+                    </div>
                     <div class="row row-cols-3 g-3">
                         @foreach (var blog in Model.RecentBlogs)
                         {
@@ -159,19 +248,9 @@
             background-color: #e9ecef;
         }
 
-        .btn-outline-primary,
-        .btn-outline-dark,
-        .btn-outline-info,
-        .btn-outline-danger {
-            border-width: 2px;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .btn-outline-primary:hover,
-        .btn-outline-dark:hover,
-        .btn-outline-info:hover,
-        .btn-outline-danger:hover {
-            transform: translateY(-2px);
+        .avatar-placeholder {
+            width: 45px;
+            height: 45px;
         }
     </style>
 }

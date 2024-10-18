@@ -1,32 +1,31 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Blog;
-using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services
 {
     public class BlogService
     {
-        private readonly GallifreyPlanetContext _gallifreyPlanetContext;
+        private readonly GallifreyPlanetContext _context;
 
-        public BlogService(GallifreyPlanetContext gallifreyPlanetContext)
+        public BlogService(GallifreyPlanetContext context)
         {
-            _gallifreyPlanetContext = gallifreyPlanetContext;
+            _context = context;
         }
 
-        public async Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
+        public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
-            List<Blog>? blogs = await _gallifreyPlanetContext.Blog
+            List<Blog>? blogs = _context.Blog
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.Id)
-                .ToListAsync();
+                .ToList();
 
             if (count is not null)
             {
                 blogs = blogs.Take(count.Value).ToList();
             }
 
-            return blogs.Select(NewBlogViewModel).ToList();
+            return Task.FromResult(blogs.Select(NewBlogViewModel).ToList());
         }
 
         public BlogViewModel NewBlogViewModel(Blog blog)

@@ -9,26 +9,31 @@ namespace GallifreyPlanet.Controllers
     {
         private readonly UserService _userService;
         private readonly BlogService _blogService;
+        private readonly FriendService _friendService;
 
         public PublicProfileController(
             UserService userService,
-            BlogService blogService
+            BlogService blogService,
+            FriendService friendService
         )
         {
             _userService = userService;
             _blogService = blogService;
+            _friendService = friendService;
         }
 
         public async Task<IActionResult> Index(string? username)
         {
+            User? currentUser = await _userService.GetCurrentUserAsync();
             User? user = await _userService.GetUserAsyncByUserName(username);
-            if (user == null)
+            if (user is null)
             {
                 return NotFound();
             }
 
             PublicProfileViewModel? publicProfile = new PublicProfileViewModel
             {
+                UserId = user.Id,
                 UserName = user.UserName!,
                 Name = user.Name!,
                 Avatar = user.Avatar!,
@@ -36,6 +41,9 @@ namespace GallifreyPlanet.Controllers
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
                 RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 6),
+                Users = await _userService.GetUsersAsync(),
+                IsFriend = _friendService.IsFriend(user.Id),
+                IsSendRequest = _friendService.GetFriendRequestByReceiverId(user.Id, currentUser!.Id) != null,
 
                 // test
                 Website = "https://example.com",
@@ -52,6 +60,7 @@ namespace GallifreyPlanet.Controllers
                     FollowPercentage = 66
                 },
             };
+
             return View(publicProfile);
         }
     }

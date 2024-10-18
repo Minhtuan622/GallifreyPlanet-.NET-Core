@@ -1,9 +1,11 @@
+using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Blog;
 
 namespace GallifreyPlanet.ViewModels
 {
     public class PublicProfileViewModel
     {
+        public string? UserId { get; set; }
         public string? UserName { get; set; }
         public string? Name { get; set; }
         public string? Avatar { get; set; }
@@ -15,8 +17,11 @@ namespace GallifreyPlanet.ViewModels
         public string? Twitter { get; set; }
         public string? Instagram { get; set; }
         public string? Facebook { get; set; }
+        public bool IsFriend { get; set; }
+        public bool IsSendRequest { get; set; }
         public RecentActivities RecentActivities { get; set; } = new RecentActivities();
         public List<BlogViewModel> RecentBlogs { get; set; } = new List<BlogViewModel>();
+        public List<User>? Users { get; set; }
     }
 
     public class RecentActivities
