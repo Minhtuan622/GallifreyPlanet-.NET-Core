@@ -6,5 +6,6 @@ namespace GallifreyPlanet.ViewModels.Blog
     {
         public User? User { get; set; }
         public BlogViewModel? BlogViewModel { get; set; }
+        public Comment? Comment { get; set; }
     }
 }

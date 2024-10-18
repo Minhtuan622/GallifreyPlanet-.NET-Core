@@ -218,5 +218,29 @@ namespace GallifreyPlanet.Controllers
         {
             return _context.Blog.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int blogId, string content)
+        {
+
+        }
+
+[HttpDelete]
+        public async Task<IActionResult> DeleteComment(int id)
+        {
+
+        }
+
+[HttpPost]
+        public async Task<IActionResult> AddReply(int commentId, string content)
+        {
+
+        }
+
+[HttpDelete]
+        public async Task<IActionResult> DeleteReply(int id)
+        {
+
+        }
     }
 }
