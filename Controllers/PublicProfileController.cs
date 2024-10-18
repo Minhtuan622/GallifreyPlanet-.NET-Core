@@ -19,9 +19,9 @@ namespace GallifreyPlanet.Controllers
             _blogService = blogService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? username)
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await _userService.GetUserAsyncByUserName(username);
             if (user == null)
             {
                 return NotFound();

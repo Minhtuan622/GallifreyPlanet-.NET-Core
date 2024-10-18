@@ -2,7 +2,7 @@
 
 namespace GallifreyPlanet.Models
 {
-    [Table(name: "friends")]
+    [Table(name: "Friends")]
     public class Friend
     {
         public int Id { get; set; }

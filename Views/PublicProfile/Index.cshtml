@@ -8,7 +8,7 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
-                        <img src="@(string.IsNullOrEmpty(Model.Avatar) ? "/uploads/accounts/default-avatar.jpg" : Model.Avatar)"
+                        <img src="@(Model.Avatar ?? "/uploads/accounts/default-avatar.jpg")"
                              alt="Avatar" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                         <h4 class="mb-1">
                             @Model.Name

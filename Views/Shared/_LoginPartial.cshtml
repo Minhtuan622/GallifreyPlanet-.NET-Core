@@ -21,7 +21,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item py-2" asp-action="Index" asp-controller="PublicProfile">
+                    <a class="dropdown-item py-2" asp-action="Index" asp-controller="PublicProfile" asp-route-username="@User.Identity!.Name">
                         Hồ sơ
                     </a>
                 </li>

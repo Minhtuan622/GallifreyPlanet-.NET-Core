@@ -31,6 +31,11 @@ namespace GallifreyPlanet.Services
             return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
         }
 
+        public async Task<User?> GetUserAsyncByUserName(string? username)
+        {
+            return await _gallifreyPlanetContext.User.FirstOrDefaultAsync(x => x.UserName == username);
+        }
+
         public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsyncByUser(string userId)
         {
             return await _gallifreyPlanetContext.UserSession
