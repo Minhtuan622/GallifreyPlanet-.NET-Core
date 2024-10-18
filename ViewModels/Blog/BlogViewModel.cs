@@ -20,7 +20,6 @@ namespace GallifreyPlanet.ViewModels.Blog
         public string? Content { get; set; }
 
         [Display(Name = "Ảnh thu nhỏ")]
-        [Required(ErrorMessage = "Ảnh thu nhỏ là bắt buộc")]
         public IFormFile? ThumbnailFile { get; set; }
 
         public string? CurrentThumbnailPath { get; set; }

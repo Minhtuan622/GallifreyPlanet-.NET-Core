@@ -31,7 +31,7 @@
                         <!-- Thumbnail Upload -->
                         <div class="mb-4">
                             <div class="upload-container border rounded-4 p-4 text-center position-relative">
-                                <input asp-for="ThumbnailFile" type="file" class="form-control d-none" accept="image/*" id="thumbnailUpload" />
+                                <input asp-for="ThumbnailFile" type="file" class="form-control d-none" accept="image/*" id="thumbnailUpload" required />
                                 <label for="thumbnailUpload" class="upload-label mb-0 w-100">
                                     <div id="preview-container" class="d-none mb-3">
                                         <img id="preview-image" class="img-fluid rounded-3" style="max-height: 200px;" />

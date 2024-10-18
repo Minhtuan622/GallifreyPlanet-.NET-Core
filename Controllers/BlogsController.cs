@@ -31,7 +31,7 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> Index()
         {
             User? user = await _userService.GetCurrentUserAsync();
-            if (user == null)
+            if (user is null)
             {
                 return NotFound();
             }
@@ -43,13 +43,13 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
             Blog? blog = await _context.Blog.FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
+            if (blog is null)
             {
                 return NotFound();
             }
@@ -104,19 +104,20 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
             Blog? blog = await _context.Blog.FindAsync(id);
-            if (blog == null)
+            if (blog is null)
             {
                 return NotFound();
             }
 
             BlogViewModel viewModel = new BlogViewModel
             {
+                Id = id ?? 0,
                 Title = blog.Title,
                 Description = blog.Description,
                 Content = blog.Content,
@@ -177,13 +178,13 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
             Blog? blog = await _context.Blog.FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
+            if (blog is null)
             {
                 return NotFound();
             }
@@ -203,7 +204,7 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Blog? blog = await _context.Blog.FindAsync(id);
-            if (blog != null)
+            if (blog is not null)
             {
                 _context.Blog.Remove(blog);
             }

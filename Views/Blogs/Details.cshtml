@@ -48,13 +48,13 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="sticky-top" style="top: 2rem;">
+            <div class="sticky-top" style="top: 5rem;">
                 <!-- Author Card -->
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
-                            <div class="avatar-placeholder rounded-circle me-3 bg-primary d-flex align-items-center justify-content-center">
-                                <i class="fas fa-user text-white"></i>
+                            <div class="avatar-placeholder me-3">
+                                <img src="@Model.User!.Avatar" alt="Alternate Text" class="h-100 w-100 object-fit-cover rounded-circle" />
                             </div>
                             <div>
                                 <h5 class="card-title mb-1">@Model.User?.Name</h5>
