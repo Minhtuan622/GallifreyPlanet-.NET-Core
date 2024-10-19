@@ -35,7 +35,7 @@
         @if (Model.Comments != null && Model.Comments.Any())
         {
             <div class="comments-list">
-                @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                @* @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
                 {
                     <div class="comment-item mb-4">
                         <div class="d-flex">
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                }
+                } *@
             </div>
         }
         else

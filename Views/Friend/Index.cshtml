@@ -1,6 +1,4 @@
 ﻿@model IEnumerable<GallifreyPlanet.Models.Friend>
-@* Giả sử bạn có thêm một model cho friend requests *@
-@* @model (IEnumerable<GallifreyPlanet.Models.Friend>, IEnumerable<GallifreyPlanet.Models.FriendRequest>) *@
 
 <div class="container py-5">
     <!-- Pending Friend Requests Section -->
@@ -8,12 +6,17 @@
         <div class="card-header bg-white py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
-                    <i class="bi bi-envelope-paper-heart me-2"></i>Friend Requests
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    Friend Requests
                     <span class="badge bg-primary ms-2">3</span>
                 </h5>
-                <button class="btn btn-link text-decoration-none p-0" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#friendRequestsCollapse">
-                    <i class="bi bi-chevron-down"></i>
+                <button 
+                    class="btn btn-link text-decoration-none p-0" 
+                    type="button"
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#friendRequestsCollapse"
+                >
+                    <i class="fa-solid fa-chevron-down"></i>
                 </button>
             </div>
         </div>
@@ -29,21 +32,24 @@
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3"
                                          style="width: 48px; height: 48px;">
-                                        <i class="bi bi-person fs-4 text-secondary"></i>
+                                        <i class="fa-regular fa-user fs-4 text-secondary"></i>
                                     </div>
                                     <div>
                                         <h6 class="mb-0">John Doe</h6>
                                         <small class="text-muted">
-                                            <i class="bi bi-clock me-1"></i>Sent 2 days ago
+                                            <i class="fa-solid fa-clock"></i>
+                                            Sent 2 days ago
                                         </small>
                                     </div>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-primary btn-sm">
-                                        <i class="bi bi-check2 me-1"></i>Accept
+                                        <i class="fa-solid fa-check"></i>
+                                        Accept
                                     </button>
                                     <button class="btn btn-outline-secondary btn-sm">
-                                        <i class="bi bi-x-lg me-1"></i>Decline
+                                        <i class="fa-solid fa-xmark"></i>
+                                        Decline
                                     </button>
                                 </div>
                             </div>
@@ -57,12 +63,9 @@
     <!-- Friends List Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h3 mb-0">
-            My Friends
+            Danh sách bạn bè
             <span class="badge bg-secondary ms-2">@(Model?.Count() ?? 0)</span>
         </h2>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-2"></i>Add New Friend
-        </a>
     </div>
 
     @if (Model is not null && Model.Any())
@@ -76,12 +79,12 @@
                             <div class="d-flex align-items-center mb-3">
                                 <div class="rounded-circle bg-light d-flex justify-content-center align-items-center"
                                      style="width: 48px; height: 48px;">
-                                    <i class="bi bi-person fs-4 text-secondary"></i>
+                                    <i class="fa-regular fa-user fs-4 text-secondary"></i>
                                 </div>
                                 <div class="ms-3">
                                     <h5 class="card-title mb-1">Friend #@item.FriendId</h5>
                                     <p class="card-subtitle text-muted small">
-                                        <i class="bi bi-clock me-1"></i>
+                                        <i class="fa-solid fa-clock"></i>
                                         Added @item.CreatedAt
                                     </p>
                                 </div>
@@ -95,18 +98,21 @@
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
-                                            <i class="bi bi-eye me-2"></i>View Profile
+                                            <i class="fa-regular fa-eye"></i>
+                                            View Profile
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
-                                            <i class="bi bi-pencil me-2"></i>Edit
+                                                    <i class="fa-solid fa-pencil"></i>
+                                            Edit
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">
-                                            <i class="bi bi-trash me-2"></i>Remove Friend
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Remove Friend
                                         </a>
                                     </li>
                                 </ul>
@@ -123,25 +129,17 @@
             <div class="display-1 text-secondary mb-4">
                 <i class="bi bi-people"></i>
             </div>
-            <h3>No Friends Yet</h3>
-            <p class="text-muted mb-4">Start connecting with others by adding your first friend!</p>
+            <h3>Chưa có bạn bè</h3>
+            <p class="text-muted mb-4">Kết nối với mọi người bằng cách thêm những người bạn đầu tiên</p>
             <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-2"></i>Add Friend
+                <i class="fa-solid fa-plus"></i>
+                Tìm kiếm bạn mới
             </a>
         </div>
     }
 </div>
 
-<!-- Optional: Custom CSS -->
 <style>
-    .card {
-        transition: transform 0.2s ease-in-out;
-    }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
@@ -155,7 +153,7 @@
         padding: 1rem;
     }
 
-        .list-group-item:last-child {
-            border-bottom: 0;
-        }
+    .list-group-item:last-child {
+        border-bottom: 0;
+    }
 </style>
