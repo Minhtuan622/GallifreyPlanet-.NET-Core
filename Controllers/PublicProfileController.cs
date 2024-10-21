@@ -26,7 +26,7 @@ namespace GallifreyPlanet.Controllers
         {
             User? currentUser = await _userService.GetCurrentUserAsync();
             User? user = await _userService.GetUserAsyncByUserName(username);
-            if (user is null)
+            if (user is null || currentUser is null)
             {
                 return NotFound();
             }
@@ -42,8 +42,8 @@ namespace GallifreyPlanet.Controllers
                 PhoneNumber = user.PhoneNumber,
                 RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 6),
                 Users = await _userService.GetUsersAsync(),
-                IsFriend = _friendService.IsFriend(user.Id),
-                IsSendRequest = _friendService.GetFriendRequestByReceiverId(user.Id, currentUser!.Id) != null,
+                IsFriend = _friendService.AreFriends(currentUser.Id, user.Id),
+                IsSendRequest = _friendService.Find(user.Id, currentUser!.Id) != null,
 
                 // test
                 Website = "https://example.com",

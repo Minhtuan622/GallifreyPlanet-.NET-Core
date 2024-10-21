@@ -26,7 +26,7 @@
                         <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
                             @if (Model.IsFriend)
                             {
-                                <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
                                     <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
                                         <i class="fa-solid fa-user"></i>
                                     </button>
@@ -36,7 +36,7 @@
                             {
                                 @if (Model.IsSendRequest)
                                 {
-                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
                                         <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
                                             <i class="fa-solid fa-user-check"></i>
                                         </button>
@@ -44,7 +44,7 @@
                                 }
                                 else
                                 {
-                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-receiverId="@Model.UserId" method="post">
+                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
                                         <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
                                             <i class="fa-solid fa-user-plus"></i>
                                         </button>

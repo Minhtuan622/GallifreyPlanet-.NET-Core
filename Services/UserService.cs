@@ -31,14 +31,19 @@ namespace GallifreyPlanet.Services
             return await _userManager.GetUserAsync(_httpContextAccessor.HttpContext!.User);
         }
 
-        public async Task<User?> GetUserAsyncByUserName(string? username)
+        public async Task<User?> GetUserAsyncByUserName(string username)
         {
-            return await _context.User.FirstOrDefaultAsync(x => x.UserName == username);
+            return await _userManager.FindByNameAsync(username);
         }
 
         public async Task<List<User>?> GetUsersAsync()
         {
             return await _context.User.ToListAsync();
+        }
+
+        public async Task<User?> GetUserAsyncById(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
         }
 
         public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsyncByUser(string userId)

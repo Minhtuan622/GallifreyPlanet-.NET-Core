@@ -1,5 +1,7 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
+using GallifreyPlanet.ViewModels.Friend;
+using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services
 {
@@ -17,44 +19,164 @@ namespace GallifreyPlanet.Services
             _userService = userService;
         }
 
-        public async Task SendFriendRequest(string userId, string receiverId)
+        public bool SendFriendRequest(string UserId, string FriendId)
         {
-            FriendRequest? newFriendRequest = new FriendRequest
+            if (AreFriends(UserId, FriendId))
             {
-                RequesterId = userId,
-                ReceiverId = receiverId,
+                return false;
+            }
+
+            Friend friend = new Friend
+            {
+                UserId = UserId,
+                FriendId = FriendId,
                 Status = 0,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
             };
 
-            _context.FriendRequest.Add(newFriendRequest);
-            await _context.SaveChangesAsync();
+            _context.Add(friend);
+            _context.SaveChanges();
+
+            return true;
         }
 
-        public FriendRequest? GetFriendRequestById(int friendRequestId)
+        public bool Accept(string UserId, string FriendId)
         {
-            return _context.FriendRequest.Find(friendRequestId);
-        }
-
-        public FriendRequest? GetFriendRequestByReceiverId(string ReceiverId, string UserId)
-        {
-            return _context.FriendRequest
-                .Where(f => f.ReceiverId == ReceiverId && f.RequesterId == UserId)
-                .FirstOrDefault();
-        }
-
-        public bool IsFriend(string friendId)
-        {
-            Friend? isFriend = _context.Friend
-                .Where(r => r.FriendId == friendId)
-                .FirstOrDefault();
-
-            if (isFriend is not null)
+            if (AreFriends(UserId, FriendId))
             {
+                return false;
+            }
+
+            Friend? friend = Find(UserId, FriendId);
+
+            if (friend is not null)
+            {
+                friend.Status = 1;
+                _context.SaveChanges();
+
                 return true;
             }
+
             return false;
+        }
+
+        public bool Decline(string UserId, string FriendId)
+        {
+            if (AreFriends(UserId, FriendId))
+            {
+                return false;
+            }
+
+            Friend? friend = Find(UserId, FriendId);
+
+            if (friend is not null)
+            {
+                friend.Status = 2;
+                _context.SaveChanges();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Blocked(string UserId, string FriendId)
+        {
+            if (AreFriends(UserId, FriendId))
+            {
+                return false;
+            }
+
+            Friend? friend = Find(UserId, FriendId);
+
+            if (friend is not null)
+            {
+                friend.Status = 3;
+                _context.SaveChanges();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Remove(string UserId, string FriendId)
+        {
+            if (AreFriends(UserId, FriendId))
+            {
+                Friend? friend = Find(UserId, FriendId);
+
+                if (friend is not null)
+                {
+                    _context.Friend.Remove(friend);
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task<List<FriendViewModel>> GetFriends(string UserId)
+        {
+            List<Friend>? friends = await _context.Friend
+                .Where(f => (f.UserId == UserId || f.FriendId == UserId)
+                        && f.Status == 1)
+                .ToListAsync();
+
+            List<FriendViewModel>? result = new List<FriendViewModel>();
+            foreach (Friend friend in friends)
+            {
+                result.Add(await NewFriendViewModel(friend));
+            }
+            return result;
+        }
+
+        public async Task<List<FriendViewModel>> GetFriendRequests(string UserId)
+        {
+            List<Friend>? friends = await _context.Friend
+                .Where(f => (f.UserId == UserId || f.FriendId == UserId)
+                        && f.Status == 0)
+                .ToListAsync();
+
+            List<FriendViewModel>? result = new List<FriendViewModel>();
+            foreach (Friend friend in friends)
+            {
+                result.Add(await NewFriendViewModel(friend));
+            }
+            return result;
+        }
+
+        public bool AreFriends(string UserId, string FriendId)
+        {
+            Friend? friend = Find(UserId, FriendId);
+
+            if (friend is not null && friend.Status == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public Friend? Find(string UserId, string FriendId)
+        {
+            return _context.Friend
+                    .FirstOrDefault(f =>
+                        (f.UserId == UserId && f.FriendId == FriendId) ||
+                        (f.UserId == FriendId && f.FriendId == UserId));
+        }
+
+        public async Task<FriendViewModel> NewFriendViewModel(Friend friend)
+        {
+            return new FriendViewModel
+            {
+                User = await _userService.GetUserAsyncById(friend.UserId!),
+                Friend = await _userService.GetUserAsyncById(friend.FriendId!),
+                Status = friend.Status,
+                CreatedAt = friend.CreatedAt,
+                UpdatedAt = friend.UpdatedAt,
+            };
         }
     }
 }

@@ -1,90 +1,117 @@
-﻿using GallifreyPlanet.Data;
-using GallifreyPlanet.Models;
+﻿using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
+using GallifreyPlanet.ViewModels.Friend;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers
 {
     public class FriendController : Controller
     {
-        private readonly GallifreyPlanetContext? _context;
         private readonly UserService _userService;
         private readonly FriendService _friendService;
 
         public FriendController(
-            GallifreyPlanetContext? context,
             UserService userService,
             FriendService friendService
         )
         {
-            _context = context;
             _userService = userService;
             _friendService = friendService;
         }
 
         [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SendFriendRequest(string? receiverId)
+        public async Task<IActionResult> Index()
         {
             User? user = await _userService.GetCurrentUserAsync();
-            if (receiverId is null || user is null)
+            if (user is null)
             {
                 return NotFound();
             }
 
-            await _friendService.SendFriendRequest(user.Id, receiverId);
+            string userId = user.Id;
+            FriendManagerViewModel? friends = new FriendManagerViewModel
+            {
+                Friends = await _friendService.GetFriends(userId),
+                FriendRequests = await _friendService.GetFriendRequests(userId),
+            };
 
-            TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
-            return RedirectToAction(nameof(Index), controllerName: "PublicProfile");
+            return View(friends);
         }
 
         [HttpPost]
-        public IActionResult AcceptFriendRequest(int? friendRequestId)
+        public async Task<IActionResult> SendFriendRequest(string? friendId)
         {
-            if (friendRequestId is null)
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
             {
                 return NotFound();
             }
 
-            FriendRequest? request = _friendService.GetFriendRequestById(friendRequestId ?? 0);
-
-            if (request is null)
+            if (_friendService.SendFriendRequest(user.Id, friendId))
             {
-                return NotFound();
+                TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
+                return RedirectToAction(nameof(Index), controllerName: "PublicProfile", user.UserName);
             }
 
-            request!.Status = 1;
-            _context!.SaveChanges();
-
-            TempData[key: "StatusMessage"] = "Đã chấp nhận lời mời kết bạn";
-            return View();
+            TempData[key: "StatusMessage"] = "Error while sending friend request";
+            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", user.UserName);
         }
 
         [HttpPost]
-        public IActionResult DeclineFriendRequest(int? friendRequestId)
+        public async Task<IActionResult> AcceptFriendRequest(string? friendId)
         {
-            if (friendRequestId is null)
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
             {
                 return NotFound();
             }
 
-            FriendRequest? request = _friendService.GetFriendRequestById(friendRequestId ?? 0);
+            if (_friendService.Accept(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Đã chấp nhận lời mời kết bạn";
+                return RedirectToAction(nameof(Index));
+            }
 
-            if (request is null)
+            TempData[key: "StatusMessage"] = "Error while accept friend request";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeclineFriendRequest(string? friendId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
             {
                 return NotFound();
             }
 
-            request!.Status = 2;
-            _context!.SaveChanges();
+            if (_friendService.Decline(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Đã từ chối lời mời kết bạn";
+                return RedirectToAction(nameof(Index));
+            }
 
-            TempData[key: "StatusMessage"] = "Đã từ chối lời mời kết bạn";
-            return View();
+            TempData[key: "StatusMessage"] = "Error while decline friend request";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFriend(string? friendId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
+            {
+                return NotFound();
+            }
+
+            if (_friendService.Remove(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Đã hủy kết bạn thành công";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData[key: "StatusMessage"] = "Error while remove friend";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
