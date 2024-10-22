@@ -5,49 +5,49 @@
     @if (signInManager.IsSignedIn(User))
     {
         <li class="nav-item dropdown">
-            <a 
-                class="nav-link dropdown-toggle"
-                href="#" 
-                role="button" 
-                data-bs-toggle="dropdown" 
-                aria-expanded="false"
-            >
+            <a class="nav-link dropdown-toggle"
+               href="#"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
                 @User.Identity!.Name
             </a>
-            <ul class="dropdown-menu dropdown-menu-end border-0 py-0">
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-0">
                 <li>
                     <a class="dropdown-item py-2" asp-action="Index" asp-controller="AccountManager">
-                        Quản lý tài khoản
+                        <i class="fa-solid fa-user-cog"></i> Quản lý tài khoản
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item py-2" asp-action="Index" asp-controller="PublicProfile" asp-route-username="@User.Identity!.Name">
-                        Hồ sơ
+                        <i class="fa-solid fa-user"></i> Hồ sơ
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item py-2" asp-action="Index" asp-controller="Blogs">
-                        Bài viết
+                        <i class="fa-solid fa-newspaper"></i> Bài viết
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item py-2" asp-action="Index" asp-controller="Friend">
-                        Bạn bè
+                        <i class="fa-solid fa-users"></i> Bạn bè
                     </a>
                 </li>
-                <hr class="m-0 p-0"/>
+                <hr class="m-0 p-0" />
                 <li>
                     <div class="dropdown-item py-2">
                         <div class="form-check form-switch form-check-reverse text-start">
-                            <label class="form-check-label" for="btnSwitch">Chế độ tối</label>
+                            <label class="form-check-label" for="btnSwitch">
+                                <i class="fa-solid fa-moon"></i> Chế độ tối
+                            </label>
                             <input class="form-check-input" type="checkbox" role="switch" id="btnSwitch">
                         </div>
                     </div>
                 </li>
-                <hr class="m-0 p-0"/>
+                <hr class="m-0 p-0" />
                 <li>
-                    <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#modalLogout">
-                        Đăng xuất
+                    <button type="button" class="dropdown-item py-2 text-danger" data-bs-toggle="modal" data-bs-target="#modalLogout">
+                        <i class="fa-solid fa-sign-out-alt"></i> Đăng xuất
                     </button>
                 </li>
             </ul>
@@ -56,10 +56,14 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">
+                <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">
+                <i class="fa-solid fa-user-plus"></i> Đăng ký
+            </a>
         </li>
     }
 </ul>
