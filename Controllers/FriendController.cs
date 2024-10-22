@@ -33,13 +33,14 @@ namespace GallifreyPlanet.Controllers
             {
                 Friends = await _friendService.GetFriends(userId),
                 FriendRequests = await _friendService.GetFriendRequests(userId),
+                BlockedFriends = await _friendService.GetBlockedFriends(userId),
             };
 
             return View(friends);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendFriendRequest(string? friendId)
+        public async Task<IActionResult> Send(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)
@@ -58,7 +59,7 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CancelFriendRequest(string? friendId)
+        public async Task<IActionResult> Cancel(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)
@@ -77,7 +78,7 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AcceptFriendRequest(string? friendId)
+        public async Task<IActionResult> Accept(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)
@@ -96,7 +97,7 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeclineFriendRequest(string? friendId)
+        public async Task<IActionResult> Decline(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)
@@ -115,7 +116,7 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BlockedFriend(string? friendId)
+        public async Task<IActionResult> Blocked(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)
@@ -134,7 +135,26 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFriend(string? friendId)
+        public async Task<IActionResult> UnBlocked(string? friendId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
+            {
+                return NotFound();
+            }
+
+            if (_friendService.UnBlocked(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Bỏ chặn thành công";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData[key: "StatusMessage"] = "Error while unblock friend";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
             if (friendId is null || user is null || friendId == user.Id)

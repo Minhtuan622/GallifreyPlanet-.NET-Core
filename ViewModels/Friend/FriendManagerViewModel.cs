@@ -4,5 +4,6 @@
     {
         public List<FriendViewModel>? Friends { get; set; }
         public List<FriendViewModel>? FriendRequests { get; set; }
+        public List<FriendViewModel>? BlockedFriends { get; set; }
     }
 }

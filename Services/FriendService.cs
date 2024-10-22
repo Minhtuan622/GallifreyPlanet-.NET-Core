@@ -119,6 +119,24 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
+        public bool UnBlocked(string UserId, string FriendId)
+        {
+            if (AreFriends(UserId, FriendId))
+            {
+                Friend? friend = Find(UserId, FriendId);
+
+                if (friend is not null)
+                {
+                    friend.Status = 1;
+                    _context.SaveChanges();
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool Remove(string UserId, string FriendId)
         {
             if (AreFriends(UserId, FriendId))
@@ -154,8 +172,21 @@ namespace GallifreyPlanet.Services
         public async Task<List<FriendViewModel>> GetFriendRequests(string UserId)
         {
             List<Friend>? friends = await _context.Friend
-                .Where(f => (f.UserId == UserId || f.FriendId == UserId)
-                        && f.Status == 0)
+                .Where(f => (f.UserId == UserId || f.FriendId == UserId) && f.Status == 0)
+                .ToListAsync();
+
+            List<FriendViewModel>? result = new List<FriendViewModel>();
+            foreach (Friend friend in friends)
+            {
+                result.Add(await NewFriendViewModel(friend));
+            }
+            return result;
+        }
+
+        public async Task<List<FriendViewModel>> GetBlockedFriends(string UserId)
+        {
+            List<Friend>? friends = await _context.Friend
+                .Where(f => (f.UserId == UserId || f.FriendId == UserId) && f.Status == 3)
                 .ToListAsync();
 
             List<FriendViewModel>? result = new List<FriendViewModel>();
