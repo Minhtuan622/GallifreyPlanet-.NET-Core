@@ -25,7 +25,7 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> Index(string? username)
         {
             User? currentUser = await _userService.GetCurrentUserAsync();
-            User? user = await _userService.GetUserAsyncByUserName(username);
+            User? user = await _userService.GetUserAsyncByUserName(username!);
             if (user is null || currentUser is null)
             {
                 return NotFound();

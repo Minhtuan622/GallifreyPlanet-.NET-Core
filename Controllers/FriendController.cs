@@ -50,11 +50,11 @@ namespace GallifreyPlanet.Controllers
             if (_friendService.SendFriendRequest(user.Id, friendId))
             {
                 TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
-                return RedirectToAction(nameof(Index), controllerName: "PublicProfile", user.UserName);
+                return RedirectToAction(nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while sending friend request";
-            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", user.UserName);
+            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", new { username = user.UserName });
         }
 
         [HttpPost]

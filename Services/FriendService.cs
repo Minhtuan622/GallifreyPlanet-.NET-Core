@@ -152,11 +152,11 @@ namespace GallifreyPlanet.Services
         {
             Friend? friend = Find(UserId, FriendId);
 
-            if (friend is not null && friend.Status == 0)
+            if (friend is not null && friend.Status != 0)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public Friend? Find(string UserId, string FriendId)
