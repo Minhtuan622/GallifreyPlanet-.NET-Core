@@ -105,17 +105,15 @@ namespace GallifreyPlanet.Services
         {
             if (AreFriends(UserId, FriendId))
             {
-                return false;
-            }
+                Friend? friend = Find(UserId, FriendId);
 
-            Friend? friend = Find(UserId, FriendId);
+                if (friend is not null)
+                {
+                    friend.Status = 3;
+                    _context.SaveChanges();
 
-            if (friend is not null)
-            {
-                friend.Status = 3;
-                _context.SaveChanges();
-
-                return true;
+                    return true;
+                }
             }
 
             return false;

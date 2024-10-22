@@ -35,7 +35,14 @@
                                         <li>
                                             <form asp-action="RemoveFriend" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
                                                 <button type="submit" class="dropdown-item">
-                                                    <i class="fas fa-edit me-2"></i> Hủy kết bạn
+                                                    <i class="fa-solid fa-user-xmark"></i> Hủy kết bạn
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="BlockedFriend" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fa-solid fa-ban"></i> Chặn
                                                 </button>
                                             </form>
                                         </li>

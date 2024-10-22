@@ -115,6 +115,25 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> BlockedFriend(string? friendId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
+            {
+                return NotFound();
+            }
+
+            if (_friendService.Blocked(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Đã chặn thành công";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData[key: "StatusMessage"] = "Error while block friend";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemoveFriend(string? friendId)
         {
             User? user = await _userService.GetCurrentUserAsync();
