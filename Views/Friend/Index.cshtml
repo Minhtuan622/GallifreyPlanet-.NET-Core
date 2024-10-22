@@ -13,14 +13,11 @@
                 <h5 class="mb-0">
                     <i class="fa-solid fa-envelope-open-text"></i>
                     Friend Requests
-                    @* <span class="badge bg-primary ms-2">3</span> *@
                 </h5>
-                <button 
-                    class="btn btn-link text-decoration-none p-0" 
-                    type="button"
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#friendRequestsCollapse"
-                >
+                <button class="btn btn-link text-decoration-none p-0"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#friendRequestsCollapse">
                     <i class="fa-solid fa-chevron-down"></i>
                 </button>
             </div>
@@ -36,7 +33,11 @@
                             <div class="list-group-item">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <img src="@(friendRequest.Friend.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
+                                        <img 
+                                            src="@(friendRequest.Friend.Avatar ?? defaultAvatarPath)" 
+                                            class="rounded-circle" 
+                                            style="width: 48px; height: 48px;" 
+                                        />
                                         <div class="ms-3">
                                             <h6 class="mb-0">@friendRequest.Friend.Name</h6>
                                             <small class="text-muted">
@@ -55,7 +56,13 @@
                                                 asp-route-friendId="@friendRequest.User.Id"
                                                 method="post"
                                             >
-                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-primary btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    onclick="confirmAction('Chấp nhận lời mời kết bạn?', this)"
+                                                >
                                                     <i class="fa-solid fa-check"></i>
                                                     Chấp nhận
                                                 </button>
@@ -66,13 +73,20 @@
                                                 asp-route-friendId="@friendRequest.User.Id"
                                                 method="post"
                                             >
-                                                <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-outline-secondary btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    onclick="confirmAction('Từ chối lời mời kết bạn?', this)"
+                                                >
                                                     <i class="fa-solid fa-xmark"></i>
                                                     Từ chối
                                                 </button>
                                             </form>
                                         </div>
-                                    } else
+                                    }
+                                    else
                                     {
                                         <div class="d-flex gap-2">
                                             <p>Đã gửi lời mời kết bạn</p>
@@ -92,7 +106,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h3 mb-0">
                 Danh sách bạn bè
-                @* <span class="badge bg-secondary ms-2">3</span> *@
             </h2>
         </div>
 
@@ -105,7 +118,11 @@
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="@(item.Friend.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
+                                    <img 
+                                        src="@(item.Friend.Avatar ?? defaultAvatarPath)" 
+                                        class="rounded-circle" 
+                                        style="width: 48px; height: 48px;" 
+                                    />
                                     <div class="ms-3">
                                         <a class="text-decoration-none"
                                            asp-action="Index"
@@ -141,7 +158,13 @@
                                                   asp-controller="Friend"
                                                   asp-route-friendId="@item.Friend.Id"
                                                   method="post">
-                                                <button type="submit" class="dropdown-item text-danger">
+                                                <button 
+                                                    type="button" 
+                                                    class="dropdown-item text-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    onclick="confirmAction('Xóa bạn bè này?', this)"
+                                                >
                                                     <i class="fa-regular fa-trash-can"></i>
                                                     Remove Friend
                                                 </button>
@@ -155,20 +178,6 @@
                 }
             </div>
         }
-        else
-        {
-            <div class="text-center py-5">
-                <div class="display-1 text-secondary mb-4">
-                    <i class="bi bi-people"></i>
-                </div>
-                <h3>Chưa có bạn bè</h3>
-                <p class="text-muted mb-4">Kết nối với mọi người bằng cách thêm những người bạn đầu tiên</p>
-                <a class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i>
-                    Tìm kiếm bạn mới
-                </a>
-            </div>
-        }
     </div>
 
     <div class="mb-5">
@@ -176,7 +185,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h3 mb-0">
                 Đã chặn
-                @* <span class="badge bg-secondary ms-2">3</span> *@
             </h2>
         </div>
 
@@ -189,7 +197,11 @@
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="@(item.Friend.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
+                                    <img 
+                                        src="@(item.Friend.Avatar ?? defaultAvatarPath)"
+                                        class="rounded-circle" 
+                                        style="width: 48px; height: 48px;" 
+                                    />
                                     <div class="ms-3">
                                         <a class="text-decoration-none"
                                            asp-action="Index"
@@ -215,8 +227,13 @@
                                                   asp-controller="Friend"
                                                   asp-route-friendId="@item.Friend.Id"
                                                   method="post">
-                                                <button type="submit"
-                                                        class="dropdown-item">
+                                                <button 
+                                                    type="button" 
+                                                    class="dropdown-item" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    onclick="confirmAction('Bỏ chặn bạn bè này?', this)"
+                                                >
                                                     <i class="fa-regular fa-eye"></i>
                                                     Bỏ chặn
                                                 </button>
@@ -228,7 +245,13 @@
                                                   asp-controller="Friend"
                                                   asp-route-friendId="@item.Friend.Id"
                                                   method="post">
-                                                <button type="submit" class="dropdown-item text-danger">
+                                                <button 
+                                                    type="button" 
+                                                    class="dropdown-item text-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    onclick="confirmAction('Xóa bạn bè này?', this)"
+                                                >
                                                     <i class="fa-regular fa-trash-can"></i>
                                                     Remove Friend
                                                 </button>
@@ -242,34 +265,40 @@
                 }
             </div>
         }
-        else
-        {
-            <div class="text-center py-5">
-                <div class="display-1 text-secondary mb-4">
-                    <i class="bi bi-people"></i>
-                </div>
-                <h3>Chưa có bạn bè bị chặn</h3>
-                <p class="text-muted mb-4">Hủy kết nối với mọi người bằng cách chặn những người bạn đầu tiên :v</p>
-            </div>
-        }
     </div>
 </div>
 
-<style>
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Bạn có chắc muốn thực hiện hành động này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    .gap-2 {
-        gap: 0.5rem !important;
-    }
+    <script>
+        function confirmAction(message, element) {
+            document.getElementById('confirmMessage').innerText = message;
 
-    .list-group-item {
-        padding: 1rem;
-    }
-
-    .list-group-item:last-child {
-        border-bottom: 0;
-    }
-</style>
+            document.getElementById('confirmBtn').onclick = function () {
+                element.closest('form').submit();
+            };
+        }
+    </script>
+}

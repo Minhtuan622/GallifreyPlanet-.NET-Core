@@ -34,14 +34,26 @@
                                     <ul class="dropdown-menu border-0 py-0">
                                         <li>
                                             <form asp-action="Remove" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                                <button type="submit" class="dropdown-item">
+                                                <button 
+                                                    type="button" 
+                                                    class="dropdown-item" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal" 
+                                                    onclick="confirmAction('Hủy kết bạn với @Model.Name?', this)"
+                                                 >
                                                     <i class="fa-solid fa-user-xmark"></i> Hủy kết bạn
                                                 </button>
                                             </form>
                                         </li>
                                         <li>
                                             <form asp-action="Blocked" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                                <button type="submit" class="dropdown-item text-danger">
+                                                <button 
+                                                    type="button" 
+                                                    class="dropdown-item text-danger" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal" 
+                                                    onclick="confirmAction('Chặn @Model.Name', this)"
+                                                >
                                                     <i class="fa-solid fa-ban"></i> Chặn
                                                 </button>
                                             </form>
@@ -261,6 +273,25 @@
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Bạn có chắc muốn thực hiện hành động này?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Styles {
     <style>
         .progress {
@@ -280,4 +311,20 @@
             padding: 0.7rem 1.2rem;
         }
     </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function confirmAction(message, element) {
+            document.getElementById('confirmMessage').innerText = message;
+
+            document.getElementById('confirmBtn').onclick = function () {
+                element.closest('form').submit();
+            };
+        }
+    </script>
 }
