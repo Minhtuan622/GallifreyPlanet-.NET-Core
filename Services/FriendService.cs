@@ -19,7 +19,7 @@ namespace GallifreyPlanet.Services
             _userService = userService;
         }
 
-        public bool SendFriendRequest(string UserId, string FriendId)
+        public bool Send(string UserId, string FriendId)
         {
             if (AreFriends(UserId, FriendId))
             {
@@ -39,6 +39,26 @@ namespace GallifreyPlanet.Services
             _context.SaveChanges();
 
             return true;
+        }
+
+        public bool Cancel(string UserId, string FriendId)
+        {
+            if (AreFriends(UserId, FriendId))
+            {
+                return false;
+            }
+
+            Friend? friend = Find(UserId, FriendId);
+
+            if (friend is not null)
+            {
+                _context.Friend.Remove(friend);
+                _context.SaveChanges();
+
+                return true;
+            }
+
+            return false;
         }
 
         public bool Accept(string UserId, string FriendId)

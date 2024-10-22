@@ -47,13 +47,32 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (_friendService.SendFriendRequest(user.Id, friendId))
+            if (_friendService.Send(user.Id, friendId))
             {
                 TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
                 return RedirectToAction(nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while sending friend request";
+            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", new { username = user.UserName });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelFriendRequest(string? friendId)
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (friendId is null || user is null || friendId == user.Id)
+            {
+                return NotFound();
+            }
+
+            if (_friendService.Cancel(user.Id, friendId))
+            {
+                TempData[key: "StatusMessage"] = "Hủy lời mời kết bạn thành công";
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData[key: "StatusMessage"] = "Error while canceling friend request";
             return RedirectToAction(nameof(Index), controllerName: "PublicProfile", new { username = user.UserName });
         }
 

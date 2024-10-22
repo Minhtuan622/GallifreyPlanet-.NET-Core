@@ -26,19 +26,30 @@
                         <div class="d-flex justify-content-center align-items-center" style="gap: 0.5rem;">
                             @if (Model.IsFriend)
                             {
-                                <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                    <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
-                                        <i class="fa-solid fa-user"></i>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary rounded-pill" title="Hủy kết bạn" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-user-check"></i>
+                                        Bạn bè
                                     </button>
-                                </form>
+                                    <ul class="dropdown-menu border-0 py-0">
+                                        <li>
+                                            <form asp-action="RemoveFriend" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-edit me-2"></i> Hủy kết bạn
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
                             }
                             else
                             {
                                 @if (Model.IsSendRequest)
                                 {
-                                    <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                        <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
-                                            <i class="fa-solid fa-user-check"></i>
+                                    <form asp-action="CancelFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
+                                        <button type="submit" class="btn btn-primary rounded-pill" title="Hủy lời mời kết bạn">
+                                            <i class="fa-solid fa-user-plus"></i>
+                                            Hủy lời mời
                                         </button>
                                     </form>
                                 }
@@ -47,6 +58,7 @@
                                     <form asp-action="SendFriendRequest" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
                                         <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
                                             <i class="fa-solid fa-user-plus"></i>
+                                            Kết bạn
                                         </button>
                                     </form>
                                 }
@@ -251,6 +263,14 @@
         .avatar-placeholder {
             width: 45px;
             height: 45px;
+        }
+
+        .dropdown-menu {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
         }
     </style>
 }

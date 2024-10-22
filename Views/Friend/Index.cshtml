@@ -8,7 +8,7 @@
 <div class="container py-5 px-0">
     <!-- Pending Friend Requests Section -->
     <div class="card border-0 shadow-sm mb-5">
-        <div class="card-header bg-white py-3">
+        <div class="card-header py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
                     <i class="fa-solid fa-envelope-open-text"></i>
@@ -38,7 +38,7 @@
                                     <div class="d-flex align-items-center">
                                         <img src="@(friendRequest.Friend.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
                                         <div class="ms-3">
-                                            <h6 class="mb-0">@friendRequest.User.Name</h6>
+                                            <h6 class="mb-0">@friendRequest.Friend.Name</h6>
                                             <small class="text-muted">
                                                 <i class="fa-solid fa-clock"></i>
                                                 @friendRequest.CreatedAt
@@ -104,17 +104,17 @@
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <img src="@(item.User.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
+                                <img src="@(item.Friend.Avatar ?? defaultAvatarPath)" style="width: 48px; height: 48px;" class="rounded-circle" />
                                 <div class="ms-3">
                                     <a 
-                                        class="text-decoration-none"
-                                        asp-action="Index"
-                                        asp-controller="PublicProfile"
-                                        asp-route-username="@item.User.UserName"
+                                       class="text-decoration-none"
+                                       asp-action="Index"
+                                       asp-controller="PublicProfile"
+                                       asp-route-username="@item.Friend.UserName"
                                     >
-                                        <h5 class="card-title mb-1">@item.User.Name</h5>
+                                        <h5 class="card-title mb-1">@item.Friend.Name</h5>
                                         <p class="card-subtitle text-muted small">
-                                            @item.User.Email
+                                            @item.Friend.Email
                                         </p>
                                     </a>
                                 </div>
@@ -133,8 +133,8 @@
                                         <a 
                                             class="dropdown-item" 
                                             asp-action="Index" 
-                                            asp-controller="PublicProfile" 
-                                            asp-route-username="@item.User.UserName"
+                                            asp-controller="PublicProfile"
+                                            asp-route-username="@item.Friend.UserName"
                                         >
                                             <i class="fa-regular fa-eye"></i>
                                             View Profile
@@ -145,7 +145,7 @@
                                         <form 
                                             asp-action="RemoveFriend"
                                             asp-controller="Friend"
-                                            asp-route-friendId="@item.User.Id"
+                                            asp-route-friendId="@item.Friend.Id"
                                             method="post"
                                         >
                                             <button type="submit" class="dropdown-item text-danger">
