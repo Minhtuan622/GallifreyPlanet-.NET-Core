@@ -13,6 +13,14 @@ namespace GallifreyPlanet.Services
             _context = context;
         }
 
+        public BlogViewModel? GetById(int id)
+        {
+            return _context.Blog
+                .Select(NewBlogViewModel)
+                .Where(b => b.Id == id)
+                .FirstOrDefault();
+        }
+
         public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
             List<Blog>? blogs = _context.Blog
@@ -41,6 +49,11 @@ namespace GallifreyPlanet.Services
                 CreatedAt = blog.CreatedAt,
                 UpdatedAt = blog.UpdatedAt,
             };
+        }
+
+        public bool BlogExists(int id)
+        {
+            return _context.Blog.Any(e => e.Id == id);
         }
     }
 }

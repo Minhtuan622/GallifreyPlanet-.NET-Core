@@ -15,7 +15,7 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <article class="bg-white rounded-4 shadow-sm overflow-hidden">
+            <article class="rounded-4 shadow-sm overflow-hidden">
                 <!-- Hero Image -->
                 <div class="position-relative">
                     <img src="@Model.BlogViewModel.CurrentThumbnailPath"
@@ -38,7 +38,7 @@
 
                 <!-- Content -->
                 <div class="p-4">
-                    <div class="description p-4 rounded-3 bg-light mb-4">
+                    <div class="description p-4 rounded-3 mb-4">
                         @Model.BlogViewModel.Description
                     </div>
                     <div class="blog-content">
@@ -47,7 +47,7 @@
                 </div>
             </article>
 
-            <div class="bg-white rounded-4 shadow-sm overflow-hidden mt-4 p-4">
+            <div class="rounded-4 shadow-sm overflow-hidden bg-body mt-4 p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="h4 mb-0">Bình luận</h3>
                     <button class="btn btn-link text-decoration-none p-0" type="button"
@@ -57,16 +57,17 @@
                 </div>
 
                 <!-- Comment Form -->
-                <div class="card border-0 bg-light mb-4">
+                <div class="card border-0 bg-body-tertiary mb-4">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Thêm bình luận</h5>
-                        <form asp-action="AddComment" asp-route-blogId="@Model.BlogViewModel.Id" method="post">
+                        <form asp-action="AddComment" asp-controller="Comment" asp-route-blogId="@Model.BlogViewModel.Id" method="post">
                             <div class="mb-3">
-                                <textarea class="form-control border-0"
-                                          rows="3"
-                                          name="content"
-                                          placeholder="Nhập bình luận của bạn..."
-                                          required></textarea>
+                                <textarea 
+                                    class="form-control border-0"
+                                    rows="3"
+                                    name="content"
+                                    placeholder="Nhập bình luận của bạn..."
+                                    required></textarea>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary rounded-pill px-4">
@@ -79,26 +80,26 @@
 
                 <!-- Comments List -->
                 <div class="collapse show" id="commentsSection">
-                    @if (Model.Comment != null)
+                    @if (Model.Comments is not null)
                     {
                         <div class="comments-list">
-                            @foreach (var comment in Model.Comment)
+                            @foreach (var comment in Model.Comments)
                             {
                                 <div class="comment-item mb-4">
                                     <div class="d-flex">
                                         <!-- User Avatar -->
                                         <div class="avatar-placeholder me-3">
-                                            <img src="@comment.User.Avatar"
+                                            <img src="@comment.User!.Avatar"
                                                  alt="@comment.User.Name"
                                                  class="h-100 w-100 object-fit-cover rounded-circle" />
                                         </div>
 
                                         <!-- Comment Content -->
                                         <div class="flex-grow-1">
-                                            <div class="bg-light rounded-4 p-3">
+                                            <div class="rounded-4 p-3">
                                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                                     <h6 class="mb-0">@comment.User.Name</h6>
-                                                    @if (comment.UserId == Model.User?.Id)
+                                                    @if (comment.User.Id == Model.User?.Id)
                                                     {
                                                         <div class="dropdown">
                                                             <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
@@ -117,7 +118,7 @@
                                                 </div>
                                                 <p class="mb-1">@comment.Content</p>
                                                 <small class="text-muted">
-                                                    <i class="far fa-clock me-1"></i>@comment.CreatedAt?.ToString("HH:mm dd/MM/yyyy")
+                                                    <i class="far fa-clock me-1"></i>@comment.CreatedAt
                                                 </small>
                                             </div>
 
@@ -135,15 +136,15 @@
                                                     {
                                                         <div class="d-flex mb-3">
                                                             <div class="avatar-placeholder me-2" style="width: 32px; height: 32px;">
-                                                                <img src="@reply.User.Avatar"
+                                                                <img src="@reply.User!.Avatar"
                                                                      alt="@reply.User.Name"
                                                                      class="h-100 w-100 object-fit-cover rounded-circle" />
                                                             </div>
                                                             <div class="flex-grow-1">
-                                                                <div class="bg-light rounded-4 p-2">
+                                                                <div class="rounded-4 p-2">
                                                                     <div class="d-flex justify-content-between align-items-start">
                                                                         <h6 class="mb-1 fs-6">@reply.User.Name</h6>
-                                                                        @if (reply.UserId == Model.User?.Id)
+                                                                        @if (reply.User.Id == Model.User?.Id)
                                                                         {
                                                                             <div class="dropdown">
                                                                                 <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
@@ -162,7 +163,7 @@
                                                                     </div>
                                                                     <p class="mb-1">@reply.Content</p>
                                                                     <small class="text-muted">
-                                                                        <i class="far fa-clock me-1"></i>@reply.CreatedAt?.ToString("HH:mm dd/MM/yyyy")
+                                                                        <i class="far fa-clock me-1"></i>@reply.CreatedAt
                                                                     </small>
                                                                 </div>
                                                             </div>
@@ -189,7 +190,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
         <div class="col-lg-4">
             <div class="sticky-top" style="top: 5rem;">
@@ -243,205 +243,11 @@
         </div>
     </div>
 </div>
-</div>
 
 @section Styles {
-    <style>
-        .hero-image {
-            height: 400px;
-            object-fit: cover;
-        }
-
-        .hero-gradient {
-            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-        }
-
-        .avatar-placeholder {
-            width: 48px;
-            height: 48px;
-        }
-
-        .description {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            font-weight: 500;
-        }
-
-        .blog-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: #2c3e50;
-        }
-
-        .blog-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .blog-content h2,
-        .blog-content h3,
-        .blog-content h4 {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .btn-outline-primary,
-        .btn-outline-info,
-        .btn-outline-success,
-        .btn-outline-secondary {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        comment-item {
-            transition: background-color 0.2s ease;
-        }
-
-        .comment-item:hover {
-            background-color: rgba(0, 0, 0, 0.01);
-        }
-
-        .comments-list {
-            max-height: 800px;
-            overflow-y: auto;
-        }
-
-        .comments-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .comments-list::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-
-        .comments-list::-webkit-scrollbar-track {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        /* Mobile Responsive */
-        @@media (max-width: 768px) {
-            .hero-image {
-                height: 300px;
-            }
-        }
-    </style>
+    <link href="~/css/blog.css" rel="stylesheet" />
 }
 
 @section Scripts {
-    <script>
-        function showReplyForm(commentId) {
-            // Check if form already exists
-            const existingForm = document.querySelector(`#replyForm-${commentId}`);
-            if (existingForm) {
-                existingForm.remove();
-                return;
-            }
-
-            // Create reply form
-            const replyForm = `
-                <div id="replyForm-${commentId}" class="mt-3 ms-4">
-                    <form onsubmit="submitReply(event, ${commentId})" class="d-flex gap-2">
-                        <input type="hidden" name="commentId" value="${commentId}">
-                        <input type="text" name="content" class="form-control form-control-sm"
-                               placeholder="Nhập phản hồi của bạn..." required>
-                        <button type="submit" class="btn btn-primary btn-sm">Gửi</button>
-                    </form>
-                </div>
-            `;
-
-            // Find the comment item and append the form
-            const commentItem = document.querySelector(`[data-comment-id="${commentId}"]`);
-            commentItem.insertAdjacentHTML('beforeend', replyForm);
-        }
-
-        async function submitReply(event, commentId) {
-            event.preventDefault();
-            const form = event.target;
-            const content = form.content.value;
-
-            try {
-                const response = await fetch('/Blog/AddReply', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    },
-                    body: JSON.stringify({ commentId, content })
-                });
-
-                if (response.ok) {
-                    const replyHtml = await response.text();
-                    // Find replies container and append new reply
-                    const repliesContainer = document.querySelector(`#replies-${commentId}`);
-                    repliesContainer.insertAdjacentHTML('beforeend', replyHtml);
-                    // Remove reply form
-                    document.querySelector(`#replyForm-${commentId}`).remove();
-                } else {
-                    const error = await response.text();
-                    alert(error);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Đã có lỗi xảy ra khi gửi phản hồi');
-            }
-        }
-
-        // Enhance existing delete functions to remove elements from DOM
-        async function deleteComment(commentId) {
-            if (confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
-                try {
-                    const response = await fetch(`/Blog/DeleteComment/${commentId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-
-                    if (response.ok) {
-                        // Remove comment from DOM
-                        document.querySelector(`[data-comment-id="${commentId}"]`).remove();
-                    } else {
-                        const error = await response.text();
-                        alert(error);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Đã có lỗi xảy ra khi xóa bình luận');
-                }
-            }
-        }
-
-        async function deleteReply(replyId, commentId) {
-            if (confirm('Bạn có chắc chắn muốn xóa phản hồi này?')) {
-                try {
-                    const response = await fetch(`/Blog/DeleteReply/${replyId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-
-                    if (response.ok) {
-                        // Remove reply from DOM
-                        document.querySelector(`[data-reply-id="${replyId}"]`).remove();
-                    } else {
-                        const error = await response.text();
-                        alert(error);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Đã có lỗi xảy ra khi xóa phản hồi');
-                }
-            }
-        }
-    </script>
+    <script src="~/js/comment.js"></script>
 }
