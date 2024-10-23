@@ -86,13 +86,19 @@
     @await RenderSectionAsync("Scripts", required: false)
 
     <script type="text/javascript">
-        $("#btnSwitch").on('click', () => {
-            if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
-                document.documentElement.setAttribute('data-bs-theme', 'light');
-            } else {
-                document.documentElement.setAttribute('data-bs-theme', 'dark');
-            }
-        });
+        function switchTheme() {
+            let currentTheme = $('html').attr('data-bs-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            $('html').attr('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        let storedTheme = localStorage.getItem('theme');
+        if (storedTheme) {
+            $('html').attr('data-bs-theme', storedTheme);
+        }
+
+        $('#btnSwitch').on('click', switchTheme);
     </script>
 </body>
 </html>
