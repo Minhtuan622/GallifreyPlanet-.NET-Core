@@ -10,7 +10,7 @@ namespace GallifreyPlanet.Models
         public int CommentableId { get; set; }
         public CommentableType CommentableType { get; set; }
         public string? Content { get; set; }
-        public List<Reply>? Replies { get; set; }
+        public int? ParentId { get; set; }
         public DateTime? CreatedAt { get; set; }
     }
 

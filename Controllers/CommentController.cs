@@ -1,7 +1,6 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,43 +10,78 @@ namespace GallifreyPlanet.Controllers
     {
         private readonly GallifreyPlanetContext _context;
         private readonly UserService _userService;
-        private readonly BlogService _blogService;
+        private readonly CommentService _commentService;
 
         public CommentController(
             GallifreyPlanetContext context,
             UserService userService,
-            BlogService blogService
+            CommentService commentService
         )
         {
             _context = context;
             _userService = userService;
-            _blogService = blogService;
+            _commentService = commentService;
         }
+
+        [HttpGet]
+        public async Task<JsonResult> Get(int commentableId)
+        {
+            try
+            {
+                User? user = await _userService.GetCurrentUserAsync();
+                if (user is null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Người dùng không tồn tại",
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = await _commentService.GetComments(CommentableType.blog, commentableId),
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.ToString(),
+                });
+            }
+        }
+
         [HttpPost]
-        public async Task<IActionResult> AddComment(int blogId, string content)
+        public async Task<JsonResult> Add(int commentableId, string content)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(content))
                 {
-                    return BadRequest(error: "Nội dung bình luận không được để trống");
-                }
-
-                if (!_blogService.BlogExists(blogId))
-                {
-                    return NotFound(value: "Không tìm thấy bài viết");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận không được để trống",
+                    });
                 }
 
                 User? user = await _userService.GetCurrentUserAsync();
                 if (user == null)
                 {
-                    return Unauthorized(value: "Người dùng không tồn tại");
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Người dùng không tồn tại",
+                    });
                 }
 
                 Comment? comment = new Comment
                 {
                     UserId = user.Id,
-                    CommentableId = blogId,
+                    CommentableId = commentableId,
                     CommentableType = CommentableType.blog,
                     Content = content.Trim(),
                     CreatedAt = DateTime.Now
@@ -56,24 +90,23 @@ namespace GallifreyPlanet.Controllers
                 await _context.Comment.AddAsync(comment);
                 await _context.SaveChangesAsync();
 
-                // Nếu là Ajax request thì trả về partial view
-                if (Request.Headers[key: "X-Requested-With"] == "XMLHttpRequest")
+                return Json(new
                 {
-                    return PartialView(viewName: "_CommentPartial", comment);
-                }
-
-                // Nếu không phải Ajax thì redirect về trang blog
-                return RedirectToAction(actionName: "Details", controllerName: "Blogs", new { id = blogId });
+                    success = true
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(statusCode: 500, value: "Đã xảy ra lỗi khi thêm bình luận");
+                return Json(new
+                {
+                    success = false,
+                    message = ex.ToString(),
+                });
             }
         }
 
         [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> DeleteComment(int id)
+        public async Task<JsonResult> Delete(int id)
         {
             try
             {
@@ -82,109 +115,154 @@ namespace GallifreyPlanet.Controllers
 
                 if (comment == null)
                 {
-                    return NotFound(value: "Không tìm thấy bình luận");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận không được để trống",
+                    });
                 }
 
                 User? user = await _userService.GetCurrentUserAsync();
                 if (user == null || user.Id != comment.UserId)
                 {
-                    return Unauthorized(value: "Bạn không có quyền xóa bình luận này");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Người dùng không tồn tại",
+                    });
                 }
 
-                // Xóa các reply trước
-                if (comment.Replies?.Any() == true)
+                if (comment.ParentId is not null)
                 {
-                    _context.Reply.RemoveRange(comment.Replies);
+                    _commentService.DeleteCommentChildren(
+                        comment.CommentableType,
+                        comment.CommentableId,
+                        comment.ParentId
+                    );
                 }
 
                 _context.Comment.Remove(comment);
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                return Json(new
+                {
+                    success = true,
+                    message = "Xóa bình luận thành công",
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(statusCode: 500, value: "Đã xảy ra lỗi khi xóa bình luận");
+                return Json(new
+                {
+                    success = false,
+                    message = ex.ToString(),
+                });
             }
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> AddReply(int commentId, string content)
+        public async Task<JsonResult> AddReply(int commentId, string content)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(content))
                 {
-                    return BadRequest(error: "Nội dung phản hồi không được để trống");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận không được để trống",
+                    });
                 }
 
-                // Kiểm tra comment có tồn tại
                 Comment? comment = await _context.Comment.FindAsync(commentId);
                 if (comment == null)
                 {
-                    return NotFound(value: "Không tìm thấy bình luận");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận bạn vừa phản hồi không còn tồn tại",
+                    });
                 }
 
                 User? user = await _userService.GetCurrentUserAsync();
                 if (user == null)
                 {
-                    return Unauthorized();
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Người dùng không tồn tại",
+                    });
                 }
 
-                Reply? reply = new Reply
+                Comment? reply = new Comment
                 {
                     ParentId = commentId,
+                    CommentableType = CommentableType.blog,
+                    CommentableId = comment.CommentableId,
                     UserId = user.Id,
                     Content = content.Trim(),
                     CreatedAt = DateTime.Now
                 };
 
-                await _context.Reply.AddAsync(reply);
+                await _context.Comment.AddAsync(reply);
                 await _context.SaveChangesAsync();
 
-                // Nếu là Ajax request thì trả về partial view
-                if (Request.Headers[key: "X-Requested-With"] == "XMLHttpRequest")
+                return Json(new
                 {
-                    return PartialView(viewName: "_ReplyPartial", reply);
-                }
-
-                // Nếu không phải Ajax thì redirect về trang blog
-                return RedirectToAction(actionName: "Details", new { id = comment.CommentableId });
+                    success = true,
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(statusCode: 500, value: "Đã xảy ra lỗi khi thêm phản hồi");
+                return Json(new
+                {
+                    success = false,
+                    message = ex.ToString(),
+                });
             }
         }
 
         [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> DeleteReply(int id)
+        public async Task<JsonResult> DeleteReply(int id)
         {
             try
             {
-                Reply? reply = await _context.Reply.FindAsync(id);
+                Comment? reply = await _context.Comment.FindAsync(id);
                 if (reply == null)
                 {
-                    return NotFound(value: "Không tìm thấy phản hồi");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận không tồn tại",
+                    });
                 }
 
                 User? user = await _userService.GetCurrentUserAsync();
                 if (user == null || user.Id != reply.UserId)
                 {
-                    return Unauthorized(value: "Bạn không có quyền xóa phản hồi này");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Người dùng không tồn tại",
+                    });
                 }
 
-                _context.Reply.Remove(reply);
+                _context.Comment.Remove(reply);
                 await _context.SaveChangesAsync();
 
-                return Ok();
+                return Json(new
+                {
+                    success = true,
+                    message = "Xóa bình luận thành công",
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(statusCode: 500, value: "Đã xảy ra lỗi khi xóa phản hồi");
+                return Json(new
+                {
+                    success = false,
+                    message = ex.ToString(),
+                });
             }
         }
     }

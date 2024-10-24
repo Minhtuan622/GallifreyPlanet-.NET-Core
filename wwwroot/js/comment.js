@@ -1,15 +1,30 @@
-﻿function showReplyForm(commentId) {
-    // Check if form already exists
+﻿$(document).ready(function () {
+    var formData = new FormData();
+    formData.append("commentableId", $('input[name="blogId"]').val());
+
+    $.ajax({
+        url: '/Comment/Get',
+        type: 'GET',
+        data: formData,
+        processData: false,
+        contentType: false,
+    }).done(response => {
+        console.table(response);
+    }).fail(error => {
+        console.error(error);
+    });
+})
+
+function showReplyForm(commentId) {
     const existingForm = $(`#replyForm-${commentId}`);
     if (existingForm.length) {
         existingForm.remove();
         return;
     }
 
-    // Find the comment item and append the form
     $(`[data-comment-id="${commentId}"]`).append(`
-        <div id="replyForm-${commentId}" class="mt-3 ms-4">
-            <form class="d-flex gap-2">
+        <div id="replyForm-${commentId}" class="mt-3">
+            <form class="d-flex gap-2" method="post" action="/Comment/AddReply">
                 <input type="hidden" name="commentId" value="${commentId}">
                 <input type="text" name="content" class="form-control form-control-sm" 
                        placeholder="Nhập phản hồi của bạn..." required>
@@ -18,79 +33,77 @@
         </div>
     `);
 
-    // Attach event handler for form submission
-    $(`#replyForm-${commentId} form`).on('submit', function (event) {
-        submitReply(event, commentId);
+    $(`#replyForm-${commentId} form`).on('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        submitReply(formData, commentId);
     });
 }
 
-async function submitReply(event, commentId) {
-    event.preventDefault();
-    const content = $(event.target).find('input[name="content"]').val();
-
-    try {
-        const response = await $.ajax({
-            url: '/Comment/AddReply',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-            },
-            data: JSON.stringify({ commentId, content })
-        });
-
-        // Handle success response
-        $(`#replies-${commentId}`).append(response);
-        $(`#replyForm-${commentId}`).remove();
-    } catch (error) {
+function submitReply(formData, commentId) {
+    $.ajax({
+        url: '/Comment/AddReply',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+    }).done(response => {
+        console.log(response)
+        if (response.success) {
+            location.reload();
+        }
+    }).catch(error => {
         console.error('Error:', error);
         alert('Đã có lỗi xảy ra khi gửi phản hồi');
-    }
+    });
 }
 
-async function deleteComment(commentId) {
-    if (confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
-        try {
-            const response = await $.ajax({
-                url: `/Comment/DeleteComment/${commentId}`,
-                method: 'DELETE',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
+function deleteComment(commentId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) return;
 
-            if (response) {
-                $(`[data-comment-id="${commentId}"]`).remove();
-            } else {
-                alert('Đã có lỗi xảy ra khi xóa bình luận');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    $.ajax({
+        url: `/Comment/Delete/${commentId}`,
+        type: 'DELETE',
+        processData: false,
+        contentType: false,
+    }).done(response => {
+        console.log(response)
+        if (response.success) {
+            $(`.comment-item`).has(`[data-comment-id="${commentId}"]`).remove();
+        } else {
+            alert('Không thể xóa bình luận');
+        }
+    }).fail(error => {
+        console.error('Error:', error);
+        if (error.status === 401) {
+            alert('Bạn không có quyền xóa bình luận này');
+        } else {
             alert('Đã có lỗi xảy ra khi xóa bình luận');
         }
-    }
+    });
 }
 
-async function deleteReply(replyId, commentId) {
-    if (confirm('Bạn có chắc chắn muốn xóa phản hồi này?')) {
-        try {
-            const response = await $.ajax({
-                url: `/Comment/DeleteReply/${replyId}`,
-                method: 'DELETE',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
+function deleteReply(replyId) {
+    if (!confirm('Bạn có chắc chắn muốn xóa phản hồi này?')) return;
 
-            if (response) {
-                $(`[data-reply-id="${replyId}"]`).remove();
-            } else {
-                alert('Đã có lỗi xảy ra khi xóa phản hồi');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    $.ajax({
+        url: `/Comment/DeleteReply/${replyId}`,
+        type: 'DELETE',
+        processData: false,
+        contentType: false,
+    }).done(response => {
+        console.log(response)
+        if (response.success) {
+            $(`[data-reply-id="${replyId}"]`).closest('.d-flex.mb-3').remove();
+        } else {
+            alert('Không thể xóa phản hồi');
+        }
+    }).fail(error => {
+        console.error('Error:', error);
+        if (error.status === 401) {
+            alert('Bạn không có quyền xóa phản hồi này');
+        } else {
             alert('Đã có lỗi xảy ra khi xóa phản hồi');
         }
-    }
+    });
 }
