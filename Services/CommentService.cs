@@ -1,6 +1,7 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Comment;
+using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services
 {
@@ -9,37 +10,38 @@ namespace GallifreyPlanet.Services
         private readonly GallifreyPlanetContext _context;
         private readonly UserService _userService;
 
-        public CommentService(
-            GallifreyPlanetContext context,
-            UserService userService
-        )
+        public CommentService(GallifreyPlanetContext context, UserService userService)
         {
             _context = context;
             _userService = userService;
         }
 
-        public async Task<List<CommentViewModel>> Get(
+        private async Task<List<CommentViewModel>> FetchCommentsAsync(
             CommentableType commentableType,
-            int commentableId
+            int commentableId,
+            int? parentId = null
         )
         {
-            List<Comment>? comments = _context.Comment
+            List<Comment>? comments = await _context.Comment
                 .Where(c =>
                     c.CommentableType == commentableType &&
                     c.CommentableId == commentableId &&
-                    c.ParentId == null
+                    c.ParentId == parentId
                 )
                 .OrderByDescending(c => c.CreatedAt)
-                .ToList();
+                .ToListAsync();
 
             List<CommentViewModel>? result = new List<CommentViewModel>();
-
-            foreach (Comment item in comments)
+            foreach (Comment comment in comments)
             {
-                result.Add(await NewCommentViewModel(item));
+                result.Add(await CreateCommentViewModelAsync(comment));
             }
-
             return result;
+        }
+
+        public Task<List<CommentViewModel>> Get(CommentableType commentableType, int commentableId)
+        {
+            return FetchCommentsAsync(commentableType, commentableId);
         }
 
         public Comment? GetById(int id)
@@ -47,28 +49,9 @@ namespace GallifreyPlanet.Services
             return _context.Comment.FirstOrDefault(c => c.Id == id);
         }
 
-        public async Task<List<CommentViewModel>> GetReplies(
-            CommentableType commentableType,
-            int commentableId,
-            int parentId
-        )
+        public Task<List<CommentViewModel>> GetReplies(CommentableType commentableType, int commentableId, int parentId)
         {
-            List<Comment>? comments = _context.Comment
-                .Where(c =>
-                    c.CommentableType == commentableType &&
-                    c.CommentableId == commentableId &&
-                    c.ParentId == parentId
-                )
-                .ToList();
-
-            List<CommentViewModel>? result = new List<CommentViewModel>();
-
-            foreach (Comment item in comments)
-            {
-                result.Add(await NewCommentViewModel(item));
-            }
-
-            return result;
+            return FetchCommentsAsync(commentableType, commentableId, parentId);
         }
 
         public bool DeleteCommentChildren(Comment comment)
@@ -76,18 +59,14 @@ namespace GallifreyPlanet.Services
             try
             {
                 List<Comment>? replies = _context.Comment
-               .Where(c =>
-                   c.CommentableType == comment.CommentableType &&
-                   c.CommentableId == comment.CommentableId &&
-                   c.ParentId == comment.Id
-               )
-               .ToList();
+                    .Where(c =>
+                        c.CommentableType == comment.CommentableType &&
+                        c.CommentableId == comment.CommentableId &&
+                        c.ParentId == comment.Id
+                    )
+                    .ToList();
 
-                foreach (Comment item in replies)
-                {
-                    _context.Comment.Remove(item);
-                }
-
+                _context.Comment.RemoveRange(replies);
                 _context.Comment.Remove(comment);
                 _context.SaveChanges();
 
@@ -99,21 +78,19 @@ namespace GallifreyPlanet.Services
             }
         }
 
-        public async Task<CommentViewModel> NewCommentViewModel(Comment comment)
+        private async Task<CommentViewModel> CreateCommentViewModelAsync(Comment comment)
         {
-            CommentViewModel? newComment = new CommentViewModel
+            return new CommentViewModel
             {
                 Id = comment.Id,
                 User = await _userService.GetUserAsyncById(comment.UserId!),
                 ParentId = comment.ParentId,
-                Replies = await GetReplies(comment.CommentableType, comment.CommentableId, comment.Id),
+                Replies = await FetchCommentsAsync(comment.CommentableType, comment.CommentableId, comment.Id),
                 CommentableId = comment.CommentableId,
                 CommentableType = comment.CommentableType,
                 Content = comment.Content,
                 CreatedAt = comment.CreatedAt,
             };
-
-            return newComment;
         }
     }
 }

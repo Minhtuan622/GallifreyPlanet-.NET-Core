@@ -1,6 +1,7 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
+using GallifreyPlanet.ViewModels.Comment;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers
@@ -22,34 +23,44 @@ namespace GallifreyPlanet.Controllers
             _commentService = commentService;
         }
 
+        private JsonResult JsonResponse(bool success, string message = "", object? data = null)
+        {
+            return Json(new { success, message, data });
+        }
+
+        private async Task<User> GetAuthenticatedUserAsync()
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (user == null)
+            {
+                JsonResponse(
+                    success: false,
+                    message: "Vui lòng đăng nhập để sử dụng tính năng này"
+                );
+            }
+            return user!;
+        }
+
+        private JsonResult? ValidateContent(string content)
+        {
+            return string.IsNullOrWhiteSpace(content)
+                ? JsonResponse(success: false, message: "Bình luận không được để trống")
+                : null;
+        }
+
         [HttpGet]
         public async Task<JsonResult> Get(int commentableId)
         {
             try
             {
-                User? user = await _userService.GetCurrentUserAsync();
-                if (user is null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
-                    });
-                }
+                User? user = await GetAuthenticatedUserAsync();
 
-                return Json(new
-                {
-                    success = true,
-                    data = await _commentService.Get(CommentableType.blog, commentableId),
-                });
+                List<CommentViewModel>? data = await _commentService.Get(CommentableType.blog, commentableId);
+                return JsonResponse(success: true, data: data);
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                });
+                return JsonResponse(success: false, ex.Message);
             }
         }
 
@@ -58,24 +69,13 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(content))
+                JsonResult? contentValidation = ValidateContent(content);
+                if (contentValidation != null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận không được để trống",
-                    });
+                    return contentValidation;
                 }
 
-                User? user = await _userService.GetCurrentUserAsync();
-                if (user == null)
-                {
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
-                    });
-                }
+                User? user = await GetAuthenticatedUserAsync();
 
                 Comment? comment = new Comment
                 {
@@ -89,19 +89,14 @@ namespace GallifreyPlanet.Controllers
                 await _context.Comment.AddAsync(comment);
                 await _context.SaveChangesAsync();
 
-                return Json(new
-                {
-                    success = true,
-                    message = "Bình luận thành công",
-                });
+                return JsonResponse(
+                    success: true,
+                    message: "Bình luận thành công"
+                );
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                });
+                return JsonResponse(success: false, ex.Message);
             }
         }
 
@@ -113,46 +108,30 @@ namespace GallifreyPlanet.Controllers
                 Comment? comment = _commentService.GetById(id);
                 if (comment == null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận không được để trống",
-                    });
+                    return JsonResponse(
+                        success: false,
+                        message: "Bình luận không được để trống"
+                    );
                 }
 
-                User? user = await _userService.GetCurrentUserAsync();
-                if (user == null || user.Id != comment.UserId)
+                User? user = await GetAuthenticatedUserAsync();
+                if (user.Id != comment.UserId)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
-                    });
+                    return JsonResponse(
+                        success: false,
+                        message: "Bạn không có quyền xóa bình luận này"
+                    );
                 }
 
-
-                if (_commentService.DeleteCommentChildren(comment))
-                {
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Xóa bình luận thành công",
-                    });
-                }
-
-                return Json(new
-                {
-                    success = false,
-                    message = "Xóa bình luận không thành công",
-                });
+                bool deleteSuccess = _commentService.DeleteCommentChildren(comment);
+                return JsonResponse(
+                    deleteSuccess,
+                    deleteSuccess ? "Xóa bình luận thành công" : "Xóa bình luận không thành công"
+                );
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                });
+                return JsonResponse(success: false, ex.Message);
             }
         }
 
@@ -161,40 +140,28 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(content))
+                JsonResult? contentValidation = ValidateContent(content);
+                if (contentValidation != null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận không được để trống",
-                    });
+                    return contentValidation;
                 }
 
-                User? user = await _userService.GetCurrentUserAsync();
-                if (user == null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
-                    });
-                }
+                User? user = await GetAuthenticatedUserAsync();
 
-                Comment? comment = _commentService.GetById(commentId);
-                if (comment == null)
+                Comment? parentComment = _commentService.GetById(commentId);
+                if (parentComment == null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận bạn vừa phản hồi không còn tồn tại",
-                    });
+                    return JsonResponse(
+                        success: false,
+                        message: "Bình luận bạn vừa phản hồi không còn tồn tại"
+                    );
                 }
 
                 Comment? reply = new Comment
                 {
                     ParentId = commentId,
                     CommentableType = CommentableType.blog,
-                    CommentableId = comment.CommentableId,
+                    CommentableId = parentComment.CommentableId,
                     UserId = user.Id,
                     Content = content.Trim(),
                     CreatedAt = DateTime.Now
@@ -203,18 +170,11 @@ namespace GallifreyPlanet.Controllers
                 await _context.Comment.AddAsync(reply);
                 await _context.SaveChangesAsync();
 
-                return Json(new
-                {
-                    success = true,
-                });
+                return JsonResponse(success: true, message: "Phản hồi thành công");
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                });
+                return JsonResponse(success: false, ex.Message);
             }
         }
 
@@ -226,39 +186,29 @@ namespace GallifreyPlanet.Controllers
                 Comment? reply = _commentService.GetById(id);
                 if (reply == null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận không tồn tại",
-                    });
+                    return JsonResponse(
+                        success: false,
+                        message: "Bình luận không tồn tại"
+                    );
                 }
 
-                User? user = await _userService.GetCurrentUserAsync();
-                if (user == null || user.Id != reply.UserId)
+                User? user = await GetAuthenticatedUserAsync();
+                if (user.Id != reply.UserId)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
-                    });
+                    return JsonResponse(
+                        success: false,
+                        message: "Bạn không có quyền xóa bình luận này"
+                    );
                 }
 
                 _context.Comment.Remove(reply);
                 await _context.SaveChangesAsync();
 
-                return Json(new
-                {
-                    success = true,
-                    message = "Xóa bình luận thành công",
-                });
+                return JsonResponse(success: true, message: "Xóa bình luận thành công");
             }
             catch (Exception ex)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = ex.ToString(),
-                });
+                return JsonResponse(success: false, ex.Message);
             }
         }
     }
