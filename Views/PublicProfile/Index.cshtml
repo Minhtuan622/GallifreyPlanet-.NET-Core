@@ -166,32 +166,56 @@
                         </a>
                     </div>
                     <div class="list-group">
-                        @foreach(var user in Model.Users)
+                        @foreach(var user in Model.Friends)
                         {
-                            <a 
-                               asp-action="Index" 
-                               asp-controller="PublicProfile"
-                               asp-route-username="@user.UserName"
-                               class="list-group-item list-group-item-action"
-                            >
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-placeholder me-3">
-                                        <img src="@(user.Avatar ?? defaultAvatarPath)"
-                                             alt="Alternate Text" 
-                                            class="h-100 w-100 object-fit-cover rounded-circle" 
-                                        />
+                            @if (User.Identity!.Name != user.Friend.UserName)
+                            {
+                                <a asp-action="Index"
+                                   asp-controller="PublicProfile"
+                                   asp-route-username="@user.Friend.UserName"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder me-3">
+                                            <img src="@(user.Friend.Avatar ?? defaultAvatarPath)"
+                                                 alt="Alternate Text"
+                                                 class="h-100 w-100 object-fit-cover rounded-circle" />
+                                        </div>
+                                        <div>
+                                            <h6 class="card-title mb-1">
+                                                @user.Friend.Name
+                                                <small class="fw-normal text-muted">@@@user.Friend.UserName</small>
+                                            </h6>
+                                            <small class="text-muted mb-0">
+                                                <i class="far fa-envelope me-2 text-truncate"></i>@user.Friend.Email
+                                            </small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6 class="card-title mb-1">
-                                            @user.Name
-                                            <small class="fw-normal text-muted">@@@user.UserName</small>
-                                        </h6>
-                                        <small class="text-muted mb-0">
-                                            <i class="far fa-envelope me-2 text-truncate"></i>@user.Email
-                                        </small>
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-controller="PublicProfile"
+                                   asp-route-username="@user.User.UserName"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-placeholder me-3">
+                                            <img src="@(user.User.Avatar ?? defaultAvatarPath)"
+                                                 alt="Alternate Text"
+                                                 class="h-100 w-100 object-fit-cover rounded-circle" />
+                                        </div>
+                                        <div>
+                                            <h6 class="card-title mb-1">
+                                                @user.User.Name
+                                                <small class="fw-normal text-muted">@@@user.User.UserName</small>
+                                            </h6>
+                                            <small class="text-muted mb-0">
+                                                <i class="far fa-envelope me-2 text-truncate"></i>@user.User.Email
+                                            </small>
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
+                            }
                         }
                     </div>
                 </div>

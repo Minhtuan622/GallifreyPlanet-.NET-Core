@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = Model.BlogViewModel!.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
 <div class="container">
@@ -95,7 +97,7 @@
                                         <div class="d-flex">
                                             <!-- User Avatar -->
                                             <div class="avatar-placeholder me-3">
-                                                <img src="@comment.User.Avatar"
+                                                <img src="@(comment.User.Avatar ?? defaultAvatarPath)"
                                                      alt="@comment.User.Name"
                                                      class="h-100 w-100 object-fit-cover rounded-circle" />
                                             </div>
@@ -147,7 +149,7 @@
                                                             {
                                                                 <div class="d-flex mb-3">
                                                                     <div class="avatar-placeholder me-2" style="width: 32px; height: 32px;">
-                                                                        <img src="@reply.User.Avatar"
+                                                                        <img src="@(reply.User.Avatar ?? defaultAvatarPath)"
                                                                              alt="@reply.User.Name"
                                                                              class="h-100 w-100 object-fit-cover rounded-circle" />
                                                                     </div>
@@ -211,7 +213,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
                             <div class="avatar-placeholder me-3">
-                                <img src="@Model.User!.Avatar" alt="Alternate Text" class="h-100 w-100 object-fit-cover rounded-circle" />
+                                <img src="@(Model.User!.Avatar ?? defaultAvatarPath)" alt="Alternate Text" class="h-100 w-100 object-fit-cover rounded-circle" />
                             </div>
                             <div>
                                 <h5 class="card-title mb-1">@Model.User?.Name</h5>

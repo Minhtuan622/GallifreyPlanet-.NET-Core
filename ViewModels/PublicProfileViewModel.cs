@@ -1,5 +1,5 @@
-using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Blog;
+using GallifreyPlanet.ViewModels.Friend;
 
 namespace GallifreyPlanet.ViewModels
 {
@@ -21,7 +21,7 @@ namespace GallifreyPlanet.ViewModels
         public bool IsSendRequest { get; set; }
         public RecentActivities RecentActivities { get; set; } = new RecentActivities();
         public List<BlogViewModel> RecentBlogs { get; set; } = new List<BlogViewModel>();
-        public List<User>? Users { get; set; }
+        public List<FriendViewModel>? Friends { get; set; }
     }
 
     public class RecentActivities

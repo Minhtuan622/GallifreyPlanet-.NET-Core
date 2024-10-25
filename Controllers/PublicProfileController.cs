@@ -41,7 +41,7 @@ namespace GallifreyPlanet.Controllers
                 Address = user.Address,
                 PhoneNumber = user.PhoneNumber,
                 RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 6),
-                Users = await _userService.GetUsersAsync(),
+                Friends = await _friendService.GetFriends(user.Id),
                 IsFriend = _friendService.AreFriends(currentUser.Id, user.Id),
                 IsSendRequest = _friendService.Find(user.Id, currentUser!.Id) != null,
 
