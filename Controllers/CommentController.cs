@@ -41,7 +41,7 @@ namespace GallifreyPlanet.Controllers
                 return Json(new
                 {
                     success = true,
-                    data = await _commentService.GetComments(CommentableType.blog, commentableId),
+                    data = await _commentService.Get(CommentableType.blog, commentableId),
                 });
             }
             catch (Exception ex)

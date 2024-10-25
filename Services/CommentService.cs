@@ -18,7 +18,7 @@ namespace GallifreyPlanet.Services
             _userService = userService;
         }
 
-        public async Task<List<CommentViewModel>> GetComments(
+        public async Task<List<CommentViewModel>> Get(
             CommentableType commentableType,
             int commentableId
         )
@@ -26,7 +26,8 @@ namespace GallifreyPlanet.Services
             List<Comment>? comments = _context.Comment
                 .Where(c =>
                     c.CommentableType == commentableType &&
-                    c.CommentableId == commentableId
+                    c.CommentableId == commentableId &&
+                    c.ParentId == null
                 )
                 .ToList();
 
@@ -40,32 +41,28 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
-        public async Task<List<CommentViewModel>?> GetReplies(
+        public async Task<List<CommentViewModel>> GetReplies(
             CommentableType commentableType,
             int commentableId,
-            int? parentId
+            int parentId
         )
         {
-            if (parentId is not null)
+            List<Comment>? comments = _context.Comment
+                .Where(c =>
+                    c.CommentableType == commentableType &&
+                    c.CommentableId == commentableId &&
+                    c.ParentId == parentId
+                )
+                .ToList();
+
+            List<CommentViewModel>? result = new List<CommentViewModel>();
+
+            foreach (Comment item in comments)
             {
-                List<Comment>? replies = _context.Comment
-                   .Where(c =>
-                       c.CommentableType == commentableType &&
-                       c.CommentableId == commentableId &&
-                       c.ParentId == parentId
-                   )
-                   .ToList();
-
-                List<CommentViewModel>? result = new List<CommentViewModel>();
-
-                foreach (Comment item in replies)
-                {
-                    result.Add(await NewCommentViewModel(item, isParent: false));
-                }
-
-                return result;
+                result.Add(await NewCommentViewModel(item));
             }
-            return null;
+
+            return result;
         }
 
         public bool DeleteCommentChildren(
@@ -88,22 +85,18 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public async Task<CommentViewModel> NewCommentViewModel(Comment comment, bool isParent = true)
+        public async Task<CommentViewModel> NewCommentViewModel(Comment comment)
         {
             CommentViewModel? newComment = new CommentViewModel
             {
                 Id = comment.Id,
                 User = await _userService.GetUserAsyncById(comment.UserId!),
+                Replies = await GetReplies(comment.CommentableType, comment.CommentableId, comment.Id),
                 CommentableId = comment.CommentableId,
                 CommentableType = comment.CommentableType,
                 Content = comment.Content,
                 CreatedAt = comment.CreatedAt,
             };
-
-            if (isParent)
-            {
-                newComment.Replies = await GetReplies(comment.CommentableType, comment.CommentableId, comment.ParentId);
-            }
 
             return newComment;
         }

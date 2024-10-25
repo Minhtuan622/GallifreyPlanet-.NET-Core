@@ -63,7 +63,7 @@ namespace GallifreyPlanet.Controllers
             {
                 User = user,
                 BlogViewModel = _blogService.NewBlogViewModel(blog),
-                Comments = await _commentService.GetComments(CommentableType.blog, id)
+                Comments = await _commentService.Get(CommentableType.blog, id)
             };
 
             return View(viewModel);
