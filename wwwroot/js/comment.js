@@ -48,7 +48,6 @@ function submitReply(formData, commentId) {
         processData: false,
         contentType: false,
     }).done(response => {
-        console.log(response)
         if (response.success) {
             location.reload();
         }
@@ -69,9 +68,9 @@ function deleteComment(commentId) {
     }).done(response => {
         console.log(response)
         if (response.success) {
-            $(`.comment-item`).has(`[data-comment-id="${commentId}"]`).remove();
+            location.reload();
         } else {
-            alert('Không thể xóa bình luận');
+            alert(response.message);
         }
     }).fail(error => {
         console.error('Error:', error);
@@ -94,7 +93,7 @@ function deleteReply(replyId) {
     }).done(response => {
         console.log(response)
         if (response.success) {
-            $(`[data-reply-id="${replyId}"]`).closest('.d-flex.mb-3').remove();
+            location.reload();
         } else {
             alert('Không thể xóa phản hồi');
         }

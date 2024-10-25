@@ -41,6 +41,11 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
+        public Comment? GetById(int id)
+        {
+            return _context.Comment.FirstOrDefault(c => c.Id == id);
+        }
+
         public async Task<List<CommentViewModel>> GetReplies(
             CommentableType commentableType,
             int commentableId,
@@ -65,24 +70,32 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
-        public bool DeleteCommentChildren(
-            CommentableType commentableType,
-            int commentableId,
-            int? parentId
-        )
+        public bool DeleteCommentChildren(Comment comment)
         {
-            if (parentId is not null)
+            try
             {
                 List<Comment>? replies = _context.Comment
                .Where(c =>
-                   c.CommentableType == commentableType &&
-                   c.CommentableId == commentableId &&
-                   c.ParentId == parentId
+                   c.CommentableType == comment.CommentableType &&
+                   c.CommentableId == comment.CommentableId &&
+                   c.ParentId == comment.Id
                )
                .ToList();
+
+                foreach (Comment item in replies)
+                {
+                    _context.Comment.Remove(item);
+                }
+
+                _context.Comment.Remove(comment);
+                _context.SaveChanges();
+
                 return true;
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<CommentViewModel> NewCommentViewModel(Comment comment)
@@ -91,6 +104,7 @@ namespace GallifreyPlanet.Services
             {
                 Id = comment.Id,
                 User = await _userService.GetUserAsyncById(comment.UserId!),
+                ParentId = comment.ParentId,
                 Replies = await GetReplies(comment.CommentableType, comment.CommentableId, comment.Id),
                 CommentableId = comment.CommentableId,
                 CommentableType = comment.CommentableType,

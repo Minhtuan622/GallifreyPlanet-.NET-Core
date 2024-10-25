@@ -2,7 +2,6 @@
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Controllers
 {
@@ -110,9 +109,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? comment = await _context.Comment
-                    .FirstOrDefaultAsync(c => c.Id == id);
-
+                Comment? comment = _commentService.GetById(id);
                 if (comment == null)
                 {
                     return Json(new
@@ -132,22 +129,20 @@ namespace GallifreyPlanet.Controllers
                     });
                 }
 
-                if (comment.ParentId is not null)
-                {
-                    _commentService.DeleteCommentChildren(
-                        comment.CommentableType,
-                        comment.CommentableId,
-                        comment.ParentId
-                    );
-                }
 
-                _context.Comment.Remove(comment);
-                await _context.SaveChangesAsync();
+                if (_commentService.DeleteCommentChildren(comment))
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Xóa bình luận thành công",
+                    });
+                }
 
                 return Json(new
                 {
-                    success = true,
-                    message = "Xóa bình luận thành công",
+                    success = false,
+                    message = "Xóa bình luận không thành công",
                 });
             }
             catch (Exception ex)
