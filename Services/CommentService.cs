@@ -29,6 +29,7 @@ namespace GallifreyPlanet.Services
                     c.CommentableId == commentableId &&
                     c.ParentId == null
                 )
+                .OrderByDescending(c => c.CreatedAt)
                 .ToList();
 
             List<CommentViewModel>? result = new List<CommentViewModel>();
