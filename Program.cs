@@ -2,6 +2,7 @@
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
+using SignalRChat.Hubs;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 string? context = builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
@@ -20,6 +21,8 @@ builder.Services.AddScoped<BlogService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<CommentService>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddSession();
 
@@ -46,5 +49,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
