@@ -21,6 +21,11 @@
     {
       "library": "qrcodejs@1.0.0",
       "destination": "wwwroot/lib/qrcodejs/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/signalr/"
     }
   ]
 }
