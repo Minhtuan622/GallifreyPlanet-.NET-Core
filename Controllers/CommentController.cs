@@ -33,7 +33,7 @@ namespace GallifreyPlanet.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Người dùng không tồn tại",
+                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
                     });
                 }
 
@@ -73,7 +73,7 @@ namespace GallifreyPlanet.Controllers
                     return Json(new
                     {
                         success = true,
-                        message = "Người dùng không tồn tại",
+                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
                     });
                 }
 
@@ -91,7 +91,8 @@ namespace GallifreyPlanet.Controllers
 
                 return Json(new
                 {
-                    success = true
+                    success = true,
+                    message = "Bình luận thành công",
                 });
             }
             catch (Exception ex)
@@ -125,7 +126,7 @@ namespace GallifreyPlanet.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Người dùng không tồn tại",
+                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
                     });
                 }
 
@@ -169,23 +170,23 @@ namespace GallifreyPlanet.Controllers
                     });
                 }
 
-                Comment? comment = await _context.Comment.FindAsync(commentId);
-                if (comment == null)
-                {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Bình luận bạn vừa phản hồi không còn tồn tại",
-                    });
-                }
-
                 User? user = await _userService.GetCurrentUserAsync();
                 if (user == null)
                 {
                     return Json(new
                     {
                         success = false,
-                        message = "Người dùng không tồn tại",
+                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
+                    });
+                }
+
+                Comment? comment = _commentService.GetById(commentId);
+                if (comment == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Bình luận bạn vừa phản hồi không còn tồn tại",
                     });
                 }
 
@@ -222,7 +223,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? reply = await _context.Comment.FindAsync(id);
+                Comment? reply = _commentService.GetById(id);
                 if (reply == null)
                 {
                     return Json(new
@@ -238,7 +239,7 @@ namespace GallifreyPlanet.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Người dùng không tồn tại",
+                        message = "Vui lòng đăng nhập để sử dụng tính năng này",
                     });
                 }
 
