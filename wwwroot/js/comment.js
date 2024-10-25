@@ -24,7 +24,7 @@ function showReplyForm(commentId) {
 
     $(`[data-comment-id="${commentId}"]`).append(`
         <div id="replyForm-${commentId}" class="mt-3">
-            <form class="d-flex gap-2" method="post" action="/Comment/AddReply">
+            <form class="d-flex gap-2" method="post" action="/Comment/AddReply" autocomplete="off">
                 <input type="hidden" name="commentId" value="${commentId}">
                 <input type="text" name="content" class="form-control form-control-sm" 
                        placeholder="Nhập phản hồi của bạn..." required>
