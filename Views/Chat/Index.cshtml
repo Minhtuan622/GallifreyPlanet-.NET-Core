@@ -1,0 +1,125 @@
+@{
+    ViewBag.Title = "Chat Manager";
+}
+
+<div class="chat-container">
+    <!-- Sidebar -->
+    <div class="chat-sidebar">
+        <div class="chat-sidebar-header">
+            <h3>Messages</h3>
+            <div class="chat-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-conversations" placeholder="Search conversations...">
+            </div>
+        </div>
+        <div class="chat-conversation-list">
+            <div class="chat-conversation-item active">
+                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
+                <div class="chat-conversation-info">
+                    <div class="chat-conversation-header">
+                        <h4>John Doe</h4>
+                        <span class="chat-time">2m ago</span>
+                    </div>
+                    <p class="chat-last-message">Thanks for the update!</p>
+                </div>
+            </div>
+            <div class="chat-conversation-item">
+                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
+                <div class="chat-conversation-info">
+                    <div class="chat-conversation-header">
+                        <h4>Alice Smith</h4>
+                        <span class="chat-time">1h ago</span>
+                    </div>
+                    <p class="chat-last-message">Let's meet tomorrow</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-main">
+        <div class="chat-main-header">
+            <div class="chat-user-info">
+                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
+                <div class="chat-user-details">
+                    <h4>John Doe</h4>
+                    <span class="chat-status">Online</span>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="chat-action-btn"><i class="fas fa-phone"></i></button>
+                <button class="chat-action-btn"><i class="fas fa-video"></i></button>
+                <button class="chat-action-btn"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
+        </div>
+
+        <div class="chat-messages">
+            <div class="chat-message received">
+                <div class="chat-message-content">
+                    Hi! How are you doing?
+                </div>
+                <span class="chat-message-time">10:30 AM</span>
+            </div>
+            <div class="chat-message sent">
+                <div class="chat-message-content">
+                    I'm doing great, thanks for asking! How about you?
+                </div>
+                <span class="chat-message-time">10:32 AM</span>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <button class="chat-action-btn"><i class="fas fa-paperclip"></i></button>
+            <input type="text" placeholder="Type your message...">
+            <button class="chat-action-btn"><i class="fas fa-smile"></i></button>
+            <button class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<link href="~/css/chat.css" rel="stylesheet" />
+
+<script>
+    $(document).ready(function () {
+        // Handle search functionality
+        $('#search-conversations').on('input', function () {
+            const searchValue = $(this).val().toLowerCase();
+            $('.chat-conversation-item').each(function () {
+                const text = $(this).text().toLowerCase();
+                $(this).toggle(text.includes(searchValue));
+            });
+        });
+
+        // Handle conversation selection
+        $('.chat-conversation-item').click(function () {
+            $('.chat-conversation-item').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        // Handle message sending
+        $('.chat-send-btn').click(function () {
+            const input = $('.chat-input-area input');
+            const message = input.val().trim();
+
+            if (message) {
+                const messageHtml = `
+                        <div class="chat-message sent">
+                            <div class="chat-message-content">${message}</div>
+                            <span class="chat-message-time">Just now</span>
+                        </div>
+                    `;
+
+                $('.chat-messages').append(messageHtml);
+                input.val('');
+                $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+            }
+        });
+
+        // Handle enter key press
+        $('.chat-input-area input').keypress(function (e) {
+            if (e.which === 13) {
+                $('.chat-send-btn').click();
+            }
+        });
+    });
+</script>
