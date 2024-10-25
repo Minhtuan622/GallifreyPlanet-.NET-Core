@@ -124,6 +124,8 @@ namespace GallifreyPlanet.Controllers
                 }
 
                 bool deleteSuccess = _commentService.DeleteCommentChildren(comment);
+
+                TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(
                     deleteSuccess,
                     deleteSuccess ? "Xóa bình luận thành công" : "Xóa bình luận không thành công"
@@ -204,6 +206,7 @@ namespace GallifreyPlanet.Controllers
                 _context.Comment.Remove(reply);
                 await _context.SaveChangesAsync();
 
+                TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(success: true, message: "Xóa bình luận thành công");
             }
             catch (Exception ex)
