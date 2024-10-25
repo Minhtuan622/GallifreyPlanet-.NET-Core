@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GallifreyPlanet.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/notification.css" />
     @RenderSection("Styles", required: false)
 </head>
 <body class="user-select-none bg-body-tertiary">
@@ -83,6 +84,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/notification.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
     <script type="text/javascript">

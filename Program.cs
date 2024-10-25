@@ -1,4 +1,5 @@
 ﻿using GallifreyPlanet.Data;
+using GallifreyPlanet.Hubs;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +22,12 @@ builder.Services.AddScoped<BlogService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddSignalR();
 
 builder.Services.AddSession();
+
 
 WebApplication? app = builder.Build();
 
@@ -51,5 +54,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
