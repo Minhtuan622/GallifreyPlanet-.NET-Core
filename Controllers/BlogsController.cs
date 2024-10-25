@@ -44,9 +44,9 @@ namespace GallifreyPlanet.Controllers
         }
 
         // GET: Blogs/Details/5
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, string userId)
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await _userService.GetUserAsyncById(userId);
 
             if (user is null || string.IsNullOrEmpty(user.Id))
             {
