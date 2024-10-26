@@ -22,7 +22,7 @@ builder.Services.AddScoped<BlogService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<CommentService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<NotificationService>();
 
 builder.Services.AddSignalR();
 

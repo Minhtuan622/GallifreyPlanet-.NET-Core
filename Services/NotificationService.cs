@@ -1,26 +1,11 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Hubs;
+using GallifreyPlanet.Models;
 using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Services
 {
-    public class Notification
-    {
-        public int Id { get; set; }
-        public string? Message { get; set; }
-        public string? User { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public bool IsRead { get; set; }
-    }
-
-    public interface INotificationService
-    {
-        Task CreateNotification(string user, string message);
-        Task<List<Notification>> GetUserNotifications(string user);
-        Task MarkAsRead(int notificationId);
-    }
-
-    public class NotificationService : INotificationService
+    public class NotificationService
     {
         private readonly GallifreyPlanetContext _context;
         private readonly IHubContext<NotificationHub> _hubContext;
@@ -33,31 +18,31 @@ namespace GallifreyPlanet.Services
 
         public async Task CreateNotification(string user, string message)
         {
-            var notification = new Notification
+            Notification? notification = new Notification
             {
-                User = user,
+                UserId = user,
                 Message = message,
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
             };
 
-            _context.Notifications.Add(notification);
+            _context.Notification.Add(notification);
             await _context.SaveChangesAsync();
 
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", user, message);
+            await _hubContext.Clients.All.SendAsync(method: "ReceiveNotification", user, message);
         }
 
-        public async Task<List<Notification>> GetUserNotifications(string user)
+        public List<Notification> GetUserNotifications(string user)
         {
-            return await _context.Notifications
-                .Where(n => n.User == user)
+            return _context.Notification
+                .Where(n => n.UserId == user)
                 .OrderByDescending(n => n.CreatedAt)
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task MarkAsRead(int notificationId)
         {
-            var notification = await _context.Notifications.FindAsync(notificationId);
+            Notification? notification = await _context.Notification.FindAsync(notificationId);
             if (notification != null)
             {
                 notification.IsRead = true;

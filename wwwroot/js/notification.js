@@ -1,5 +1,4 @@
-﻿// notification.js
-const connection = new signalR.HubConnectionBuilder()
+﻿const connection = new signalR.HubConnectionBuilder()
     .withUrl("/notificationHub")
     .withAutomaticReconnect()
     .build();
@@ -7,7 +6,6 @@ const connection = new signalR.HubConnectionBuilder()
 connection.start().catch(err => console.error(err));
 
 connection.on("ReceiveNotification", (user, message) => {
-    // Thêm thông báo mới vào UI
     const notificationList = document.getElementById("notificationList");
     const notificationCount = document.getElementById("notificationCount");
 
@@ -20,11 +18,9 @@ connection.on("ReceiveNotification", (user, message) => {
 
     notificationList.insertBefore(notification, notificationList.firstChild);
 
-    // Cập nhật số lượng thông báo
     const currentCount = parseInt(notificationCount.textContent);
     notificationCount.textContent = currentCount + 1;
 
-    // Hiển thị toast notification
     showToast(message);
 });
 
