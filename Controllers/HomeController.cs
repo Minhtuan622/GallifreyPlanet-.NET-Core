@@ -9,16 +9,28 @@ namespace GallifreyPlanet.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly NotificationService _notificationService;
+        private readonly UserService _userService;
 
-        public HomeController(ILogger<HomeController> logger, NotificationService notificationService)
+        public HomeController(
+            ILogger<HomeController> logger,
+            NotificationService notificationService,
+            UserService userService
+        )
         {
             _logger = logger;
             _notificationService = notificationService;
+            _userService = userService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            User? user = await _userService.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         public IActionResult Privacy()

@@ -1,36 +1,154 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<!-- Main Content -->
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body profile-section">
+                    <img src="@Model.Avatar" class="profile-image" alt="Avatar">
+                    <h5 class="fw-bold mb-2">@Model.Name</h5>
+                    <p class="text-muted mb-3">@@@Model.UserName</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ
+                        </button>
+                        <button class="btn btn-light">
+                            <i class="fas fa-cog"></i> Cài đặt
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <!-- Main Feed -->
+        <div class="col-md-6">
+            <!-- Create Post -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <textarea 
+                            class="form-control rounded-3" 
+                            rows="3" 
+                            placeholder="Chia sẻ những điều thú vị..."
+                        ></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn me-2">
+                                <i class="fas fa-image text-success"></i> Ảnh
+                            </button>
+                            <button class="btn me-2">
+                                <i class="fas fa-video text-primary"></i> Video
+                            </button>
+                            <button class="btn">
+                                <i class="fas fa-smile text-warning"></i> Cảm xúc
+                            </button>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Đăng bài
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Feed -->
+            <div class="card post-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="/api/placeholder/50/50" class="rounded-circle me-2" alt="User">
+                        <div>
+                            <h6 class="fw-bold mb-0">Nguyễn Văn A</h6>
+                            <small class="text-muted">
+                                <i class="fas fa-globe-asia"></i> 2 giờ trước
+                            </small>
+                        </div>
+                    </div>
+                    <p>Hôm nay là một ngày tuyệt vời! 🌞</p>
+                    <img src="/api/placeholder/500/300" 
+                            class="img-fluid rounded mb-3" 
+                            alt="Post image">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex">
+                            <button class="btn interaction-btn">
+                                <i class="fas fa-heart text-danger"></i> 24
+                            </button>
+                            <button class="btn interaction-btn">
+                                <i class="fas fa-comment text-primary"></i> 8
+                            </button>
+                            <button class="btn interaction-btn">
+                                <i class="fas fa-share text-success"></i> 3
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="col-md-3">
+            <!-- Friends Suggestions -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-user-plus text-primary"></i> Gợi ý kết bạn
+                    </h5>
+                    <div class="friend-suggestion mb-3">
+                        <div class="d-flex align-items-center">
+                            <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Friend">
+                            <div>
+                                <h6 class="mb-0 fw-bold">Trần Thị B</h6>
+                                <small class="text-muted">5 bạn chung</small>
+                                <button class="btn btn-primary btn-sm mt-2 w-100">
+                                    <i class="fas fa-user-plus"></i> Kết bạn
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">
+                        <i class="fas fa-bell text-primary"></i> Hoạt động gần đây
+                    </h5>
+                    <div class="activity-item">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-user-plus text-success"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0"><strong>Lê Văn C</strong> đã gửi lời mời kết bạn</p>
+                                <small class="text-muted">5 phút trước</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-heart text-danger"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0"><strong>Phạm Thị D</strong> đã thích bài viết của bạn</p>
+                                <small class="text-muted">15 phút trước</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-</div>
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
+@section Styles {
+    <link href="~/css/home.css" rel="stylesheet" />
+}
+
+@section Scripts{
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+}

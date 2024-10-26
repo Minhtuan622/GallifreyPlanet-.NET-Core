@@ -76,50 +76,53 @@
         </div>
     </div>
 </div>
+@section Styles {
+    <link href="~/css/chat.css" rel="stylesheet" />
+}
 
-<link href="~/css/chat.css" rel="stylesheet" />
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Handle search functionality
+            $('#search-conversations').on('input', function () {
+                const searchValue = $(this).val().toLowerCase();
+                $('.chat-conversation-item').each(function () {
+                    const text = $(this).text().toLowerCase();
+                    $(this).toggle(text.includes(searchValue));
+                });
+            });
 
-<script>
-    $(document).ready(function () {
-        // Handle search functionality
-        $('#search-conversations').on('input', function () {
-            const searchValue = $(this).val().toLowerCase();
-            $('.chat-conversation-item').each(function () {
-                const text = $(this).text().toLowerCase();
-                $(this).toggle(text.includes(searchValue));
+            // Handle conversation selection
+            $('.chat-conversation-item').click(function () {
+                $('.chat-conversation-item').removeClass('active');
+                $(this).addClass('active');
+            });
+
+            // Handle message sending
+            $('.chat-send-btn').click(function () {
+                const input = $('.chat-input-area input');
+                const message = input.val().trim();
+
+                if (message) {
+                    const messageHtml = `
+                                <div class="chat-message sent">
+                                    <div class="chat-message-content">${message}</div>
+                                    <span class="chat-message-time">Just now</span>
+                                </div>
+                            `;
+
+                    $('.chat-messages').append(messageHtml);
+                    input.val('');
+                    $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+                }
+            });
+
+            // Handle enter key press
+            $('.chat-input-area input').keypress(function (e) {
+                if (e.which === 13) {
+                    $('.chat-send-btn').click();
+                }
             });
         });
-
-        // Handle conversation selection
-        $('.chat-conversation-item').click(function () {
-            $('.chat-conversation-item').removeClass('active');
-            $(this).addClass('active');
-        });
-
-        // Handle message sending
-        $('.chat-send-btn').click(function () {
-            const input = $('.chat-input-area input');
-            const message = input.val().trim();
-
-            if (message) {
-                const messageHtml = `
-                        <div class="chat-message sent">
-                            <div class="chat-message-content">${message}</div>
-                            <span class="chat-message-time">Just now</span>
-                        </div>
-                    `;
-
-                $('.chat-messages').append(messageHtml);
-                input.val('');
-                $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
-            }
-        });
-
-        // Handle enter key press
-        $('.chat-input-area input').keypress(function (e) {
-            if (e.which === 13) {
-                $('.chat-send-btn').click();
-            }
-        });
-    });
-</script>
+    </script>
+}
