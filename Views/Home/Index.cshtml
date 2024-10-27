@@ -1,142 +1,151 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chủ";
 }
-<!-- Main Content -->
-<div class="container mt-4">
-    <div class="row">
+
+<div class="container py-4">
+    <div class="row g-4">
         <!-- Left Sidebar -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body profile-section">
-                    <img src="@Model.Avatar" class="profile-image" alt="Avatar">
-                    <h5 class="fw-bold mb-2">@Model.Name</h5>
-                    <p class="text-muted mb-3">@@@Model.UserName</p>
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ
-                        </button>
-                        <button class="btn btn-light">
-                            <i class="fas fa-cog"></i> Cài đặt
-                        </button>
+        <div class="col-lg-3">
+            <div class="card shadow-sm rounded-3 border-0">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="@Model.Avatar" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Avatar">
+                        <h5 class="fw-bold">@Model.Name</h5>
+                        <p class="text-muted">@@@Model.UserName</p>
+                        <a asp-controller="AccountManager" asp-action="Index" class="btn btn-outline-primary rounded-pill w-100 mb-2">
+                            <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
+                        </a>
+                    </div>
+
+                    <div class="border-top pt-3">
+                        <h6 class="fw-bold mb-3">Thống kê</h6>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Bài viết</span>
+                            @*<span class="fw-medium">@Model.PostCount</span>*@
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Bạn bè</span>
+                            @*<span class="fw-medium">@Model.FriendCount</span>*@
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Lượt xem</span>
+                            @*<span class="fw-medium">@Model.ViewCount</span>*@
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Feed -->
-        <div class="col-md-6">
-            <!-- Create Post -->
-            <div class="card mb-4">
+        <!-- Main Content -->
+        <div class="col-lg-6">
+            <!-- Featured Blogs -->
+            <div class="card shadow-sm rounded-3 border-0 mb-4">
                 <div class="card-body">
-                    <div class="mb-3">
-                        <textarea 
-                            class="form-control rounded-3" 
-                            rows="3" 
-                            placeholder="Chia sẻ những điều thú vị..."
-                        ></textarea>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold m-0">Bài viết nổi bật</h5>
+                        <a asp-controller="Blogs" asp-action="Index" class="text-decoration-none">Xem tất cả</a>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <button class="btn me-2">
-                                <i class="fas fa-image text-success"></i> Ảnh
-                            </button>
-                            <button class="btn me-2">
-                                <i class="fas fa-video text-primary"></i> Video
-                            </button>
-                            <button class="btn">
-                                <i class="fas fa-smile text-warning"></i> Cảm xúc
-                            </button>
-                        </div>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Đăng bài
-                        </button>
+
+                    <div class="row g-3">
+                        @*@foreach (var post in Model.FeaturedPosts)
+                        {
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 bg-light rounded-3">
+                                    <img src="@post.ThumbnailUrl" class="card-img-top rounded-top" style="height: 160px; object-fit: cover;" alt="@post.Title">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
+                                            <small class="text-muted">@post.AuthorName</small>
+                                        </div>
+                                        <h6 class="card-title fw-bold mb-2">@post.Title</h6>
+                                        <p class="card-text small text-muted mb-3">@post.Excerpt</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="far fa-clock me-1"></i>@post.PublishedDate
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="far fa-eye me-1"></i>@post.ViewCount
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }*@
                     </div>
                 </div>
             </div>
 
-            <!-- Posts Feed -->
-            <div class="card post-card">
+            <!-- Latest Blogs -->
+            <div class="card shadow-sm rounded-3 border-0">
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="/api/placeholder/50/50" class="rounded-circle me-2" alt="User">
-                        <div>
-                            <h6 class="fw-bold mb-0">Nguyễn Văn A</h6>
-                            <small class="text-muted">
-                                <i class="fas fa-globe-asia"></i> 2 giờ trước
-                            </small>
+                    <h5 class="fw-bold mb-4">Bài viết mới nhất</h5>
+
+                    @*@foreach (var post in Model.LatestPosts)
+                    {
+                        <div class="d-flex gap-3 mb-4">
+                            <img src="@post.ThumbnailUrl" class="rounded-3" style="width: 200px; height: 134px; object-fit: cover;" alt="@post.Title">
+                            <div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
+                                    <small class="text-muted">@post.AuthorName</small>
+                                    <small class="text-muted ms-auto">
+                                        <i class="far fa-clock me-1"></i>@post.PublishedDate
+                                    </small>
+                                </div>
+                                <h6 class="fw-bold mb-2">@post.Title</h6>
+                                <p class="text-muted small mb-2">@post.Excerpt</p>
+                                <div class="d-flex gap-3">
+                                    <small class="text-muted">
+                                        <i class="far fa-eye me-1"></i>@post.ViewCount xem
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="far fa-comment me-1"></i>@post.CommentCount bình luận
+                                    </small>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <p>Hôm nay là một ngày tuyệt vời! 🌞</p>
-                    <img src="/api/placeholder/500/300" 
-                            class="img-fluid rounded mb-3" 
-                            alt="Post image">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="d-flex">
-                            <button class="btn interaction-btn">
-                                <i class="fas fa-heart text-danger"></i> 24
-                            </button>
-                            <button class="btn interaction-btn">
-                                <i class="fas fa-comment text-primary"></i> 8
-                            </button>
-                            <button class="btn interaction-btn">
-                                <i class="fas fa-share text-success"></i> 3
-                            </button>
-                        </div>
+                    }*@
+
+                    <div class="text-center mt-4">
+                        <a asp-controller="Blogs" asp-action="Index" class="btn btn-outline-primary rounded-pill px-4">
+                            Xem thêm bài viết
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Right Sidebar -->
-        <div class="col-md-3">
-            <!-- Friends Suggestions -->
-            <div class="card mb-4">
+        <div class="col-lg-3">
+            <!-- Popular Authors -->
+            <div class="card shadow-sm rounded-3 border-0 mb-4">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-user-plus text-primary"></i> Gợi ý kết bạn
-                    </h5>
-                    <div class="friend-suggestion mb-3">
-                        <div class="d-flex align-items-center">
-                            <img src="/api/placeholder/40/40" class="rounded-circle me-2" alt="Friend">
+                    <h6 class="fw-bold mb-3">Tác giả nổi bật</h6>
+                    @*@foreach (var author in Model.PopularAuthors)
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="@author.Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="@author.Name">
                             <div>
-                                <h6 class="mb-0 fw-bold">Trần Thị B</h6>
-                                <small class="text-muted">5 bạn chung</small>
-                                <button class="btn btn-primary btn-sm mt-2 w-100">
-                                    <i class="fas fa-user-plus"></i> Kết bạn
-                                </button>
+                                <h6 class="mb-0 fw-medium">@author.Name</h6>
+                                <small class="text-muted">@author.PostCount bài viết</small>
                             </div>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill ms-auto">Theo dõi</button>
                         </div>
-                    </div>
+                    }*@
                 </div>
             </div>
 
-            <!-- Recent Activities -->
-            <div class="card">
+            <!-- Popular Tags -->
+            <div class="card shadow-sm rounded-3 border-0">
                 <div class="card-body">
-                    <h5 class="card-title fw-bold mb-3">
-                        <i class="fas fa-bell text-primary"></i> Hoạt động gần đây
-                    </h5>
-                    <div class="activity-item">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-user-plus text-success"></i>
-                            </div>
-                            <div class="ms-3">
-                                <p class="mb-0"><strong>Lê Văn C</strong> đã gửi lời mời kết bạn</p>
-                                <small class="text-muted">5 phút trước</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-heart text-danger"></i>
-                            </div>
-                            <div class="ms-3">
-                                <p class="mb-0"><strong>Phạm Thị D</strong> đã thích bài viết của bạn</p>
-                                <small class="text-muted">15 phút trước</small>
-                            </div>
-                        </div>
+                    <h6 class="fw-bold mb-3">Chủ đề phổ biến</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        @*@foreach (var tag in Model.PopularTags)
+                        {
+                            <a href="/blogs/tag/@tag.Slug" class="text-decoration-none">
+                                <span class="badge rounded-pill bg-light text-dark">@tag.Name</span>
+                            </a>
+                        }*@
                     </div>
                 </div>
             </div>
@@ -145,10 +154,18 @@
 </div>
 
 @section Styles {
-    <link href="~/css/home.css" rel="stylesheet" />
-}
+    <style>
+        .btn-outline-primary {
+            border-width: 1.5px;
+        }
 
-@section Scripts{
-    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
+        .badge {
+            font-weight: normal;
+            padding: 6px 12px;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+    </style>
 }
