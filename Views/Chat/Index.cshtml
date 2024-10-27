@@ -2,127 +2,222 @@
     ViewBag.Title = "Chat Manager";
 }
 
-<div class="chat-container">
-    <!-- Sidebar -->
-    <div class="chat-sidebar">
-        <div class="chat-sidebar-header">
-            <h3>Messages</h3>
-            <div class="chat-search">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search-conversations" placeholder="Search conversations...">
-            </div>
-        </div>
-        <div class="chat-conversation-list">
-            <div class="chat-conversation-item active">
-                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
-                <div class="chat-conversation-info">
-                    <div class="chat-conversation-header">
-                        <h4>John Doe</h4>
-                        <span class="chat-time">2m ago</span>
+<div class="container-fluid p-0">
+    <div class="row g-0 vh-75">
+        <!-- Sidebar -->
+        <div class="col-md-4 col-lg-3 border-end">
+            <div class="d-flex flex-column h-100">
+                <!-- Search Header -->
+                <div class="p-3 border-bottom">
+                    <h5 class="mb-3">Messages</h5>
+                    <div class="input-group">
+                        <span class="input-group-text border-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" id="search-conversations" class="form-control border-0" placeholder="Search conversations...">
                     </div>
-                    <p class="chat-last-message">Thanks for the update!</p>
                 </div>
-            </div>
-            <div class="chat-conversation-item">
-                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
-                <div class="chat-conversation-info">
-                    <div class="chat-conversation-header">
-                        <h4>Alice Smith</h4>
-                        <span class="chat-time">1h ago</span>
+
+                <!-- Conversation List -->
+                <div class="flex-grow-1 overflow-auto vh-70">
+                    <div class="conversation-item d-flex p-3 border-bottom hover-bg" data-user-id="1">
+                        <div class="position-relative">
+                            <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
+                            <span class="position-absolute bottom-0 end-0 bg-success border border-light rounded-circle status-dot"></span>
+                        </div>
+                        <div class="ms-3 overflow-hidden flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">John Doe</h6>
+                                <small class="text-muted">2m ago</small>
+                            </div>
+                            <p class="text-muted small text-truncate mb-0">Thanks for the update!</p>
+                        </div>
                     </div>
-                    <p class="chat-last-message">Let's meet tomorrow</p>
+
+                    <div class="conversation-item d-flex p-3 border-bottom hover-bg" data-user-id="2">
+                        <div class="position-relative">
+                            <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
+                            <span class="position-absolute bottom-0 end-0 bg-secondary border border-light rounded-circle status-dot"></span>
+                        </div>
+                        <div class="ms-3 overflow-hidden flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Alice Smith</h6>
+                                <small class="text-muted">1h ago</small>
+                            </div>
+                            <p class="text-muted small text-truncate mb-0">Let's meet tomorrow</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Chat Area -->
-    <div class="chat-main">
-        <div class="chat-main-header">
-            <div class="chat-user-info">
-                <img src="/api/placeholder/40/40" alt="User" class="chat-avatar">
-                <div class="chat-user-details">
-                    <h4>John Doe</h4>
-                    <span class="chat-status">Online</span>
+        <!-- Chat Area -->
+        <div class="col-md-8 col-lg-9 d-flex flex-column">
+            <!-- Chat Header -->
+            <div class="p-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="position-relative">
+                            <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
+                            <span class="position-absolute bottom-0 end-0 bg-success border border-light rounded-circle status-dot"></span>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0">John Doe</h6>
+                            <small class="text-success">Online</small>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn rounded-circle" title="Voice Call">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="btn rounded-circle" title="Video Call">
+                            <i class="fas fa-video"></i>
+                        </button>
+                        <button class="btn rounded-circle" title="More Options">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="chat-actions">
-                <button class="chat-action-btn"><i class="fas fa-phone"></i></button>
-                <button class="chat-action-btn"><i class="fas fa-video"></i></button>
-                <button class="chat-action-btn"><i class="fas fa-ellipsis-v"></i></button>
-            </div>
-        </div>
 
-        <div class="chat-messages">
-            <div class="chat-message received">
-                <div class="chat-message-content">
-                    Hi! How are you doing?
+            <!-- Messages -->
+            <div class="flex-grow-1 overflow-auto vh-70 p-3" id="chat-messages">
+                <div class="message-received mb-3">
+                    <div class="d-flex">
+                        <div class="message-content bg-body rounded-3 p-3 shadow-sm">
+                            Hi! How are you doing?
+                        </div>
+                    </div>
+                    <small class="text-muted ms-2">10:30 AM</small>
                 </div>
-                <span class="chat-message-time">10:30 AM</span>
-            </div>
-            <div class="chat-message sent">
-                <div class="chat-message-content">
-                    I'm doing great, thanks for asking! How about you?
-                </div>
-                <span class="chat-message-time">10:32 AM</span>
-            </div>
-        </div>
 
-        <div class="chat-input-area">
-            <button class="chat-action-btn"><i class="fas fa-paperclip"></i></button>
-            <input type="text" placeholder="Type your message...">
-            <button class="chat-action-btn"><i class="fas fa-smile"></i></button>
-            <button class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                <div class="message-sent mb-3">
+                    <div class="d-flex justify-content-end">
+                        <div class="message-content bg-primary text-white rounded-3 p-3 shadow-sm">
+                            I'm doing great, thanks for asking! How about you?
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted me-2">10:32 AM</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 border-top">
+                <div class="d-flex gap-2 align-items-center">
+                    <button class="btn rounded-circle" title="Attach File">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="text" id="message-input" class="form-control rounded-pill border-0" placeholder="Type your message...">
+                    <button class="btn rounded-circle" title="Emoji">
+                        <i class="fas fa-smile"></i>
+                    </button>
+                    <button class="btn btn-primary rounded-circle" id="send-message" title="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 @section Styles {
-    <link href="~/css/chat.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/chat.css">
 }
 
-@section Scripts{
+@section Scripts {
     <script>
         $(document).ready(function () {
-            // Handle search functionality
-            $('#search-conversations').on('input', function () {
-                const searchValue = $(this).val().toLowerCase();
-                $('.chat-conversation-item').each(function () {
-                    const text = $(this).text().toLowerCase();
-                    $(this).toggle(text.includes(searchValue));
-                });
+            const $chatMessages = $('#chat-messages');
+            const $messageInput = $('#message-input');
+            const $searchInput = $('#search-conversations');
+
+            // Scroll to bottom on load
+            function scrollToBottom() {
+                $chatMessages.scrollTop($chatMessages[0].scrollHeight);
+            }
+            scrollToBottom();
+
+            // Handle search with debounce
+            let searchTimeout;
+            $searchInput.on('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchValue = $(this).val().toLowerCase();
+                    $('.conversation-item').each(function() {
+                        const text = $(this).find('h6').text().toLowerCase() +
+                            $(this).find('p').text().toLowerCase();
+                        $(this).toggle(text.includes(searchValue));
+                    });
+                }, 300);
             });
 
             // Handle conversation selection
-            $('.chat-conversation-item').click(function () {
-                $('.chat-conversation-item').removeClass('active');
-                $(this).addClass('active');
+            $('.conversation-item').click(function() {
+                $('.conversation-item').removeClass('active bg-light');
+                $(this).addClass('active bg-light');
+
+                if (window.innerWidth < 768) {
+                    $('.chat-sidebar').removeClass('show');
+                }
             });
 
-            // Handle message sending
-            $('.chat-send-btn').click(function () {
-                const input = $('.chat-input-area input');
-                const message = input.val().trim();
-
+            // Send message function
+            function sendMessage() {
+                const message = $messageInput.val().trim();
                 if (message) {
+                    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     const messageHtml = `
-                                <div class="chat-message sent">
-                                    <div class="chat-message-content">${message}</div>
-                                    <span class="chat-message-time">Just now</span>
+                        <div class="message-sent mb-3">
+                            <div class="d-flex justify-content-end">
+                                <div class="message-content bg-primary text-white rounded-3 p-3 shadow-sm">
+                                    ${escapeHtml(message)}
                                 </div>
-                            `;
-
-                    $('.chat-messages').append(messageHtml);
-                    input.val('');
-                    $('.chat-messages').scrollTop($('.chat-messages')[0].scrollHeight);
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted me-2">${time}</small>
+                            </div>
+                        </div>
+                    `;
+                    $chatMessages.append(messageHtml);
+                    $messageInput.val('').focus();
+                    scrollToBottom();
                 }
-            });
+            }
 
-            // Handle enter key press
-            $('.chat-input-area input').keypress(function (e) {
+            // Escape HTML to prevent XSS
+            function escapeHtml(text) {
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Send message events
+            $('#send-message').click(sendMessage);
+            $messageInput.keypress(function(e) {
                 if (e.which === 13) {
-                    $('.chat-send-btn').click();
+                    sendMessage();
+                    e.preventDefault();
                 }
             });
+
+            // Mobile responsive handlers
+            function toggleSidebar() {
+                $('.chat-sidebar').toggleClass('show');
+            }
+
+            // Add back button for mobile
+            if (window.innerWidth < 768) {
+                $('.chat-header').prepend(`
+                    <button class="btn btn-light me-2 d-md-none" onclick="toggleSidebar()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                `);
+            }
         });
     </script>
 }
