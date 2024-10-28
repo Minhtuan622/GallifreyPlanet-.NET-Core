@@ -26,6 +26,10 @@
       "provider": "unpkg",
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/lib/signalr/"
+    },
+    {
+      "library": "ckeditor5@43.2.0",
+      "destination": "wwwroot/lib/ckeditor5/"
     }
   ]
 }

@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Quản lý tài khoản";
     Layout = "~/Views/AccountManager/_Layout.cshtml";
+
+    string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
 <div class="container my-5">
@@ -14,14 +16,13 @@
             <div class="card shadow-sm rounded-lg overflow-hidden">
                 <div class="card-body text-center p-4">
                     <div class="avatar-wrapper mb-4">
-                        @if (!string.IsNullOrEmpty(Model.User!.Avatar))
-                        {
-                            <img src="@Model.User!.Avatar" alt="Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;" />
-                        }
-                        else
-                        {
-                            <img src="/uploads/accounts/default-avatar.jpg" alt="Default Avatar" id="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;" />
-                        }
+                        <img 
+                            src="@(Model.User!.Avatar ?? defaultAvatarPath)" 
+                            alt="Avatar" 
+                            id="avatar" 
+                            class="rounded-circle img-fluid object-fit-cover" 
+                            style="width: 150px; height: 150px" 
+                        />
                     </div>
                     <h4 class="mb-1">
                         @Model.User!.Name
