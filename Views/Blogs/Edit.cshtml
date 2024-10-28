@@ -70,35 +70,6 @@
                             <label class="form-label">
                                 Nội dung <span class="text-danger">*</span>
                             </label>
-                            <div class="editor-toolbar rounded-top border bg-light p-2">
-                                <div class="btn-group me-2">
-                                    <button type="button" class="btn btn-sm btn-light" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-light" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-light" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group me-2">
-                                    <button type="button" class="btn btn-sm btn-light" title="Heading">
-                                        <i class="fas fa-heading"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-light" title="Quote">
-                                        <i class="fas fa-quote-right"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-light" title="Image">
-                                        <i class="fas fa-image"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-light" title="Link">
-                                        <i class="fas fa-link"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <textarea asp-for="Content" class="form-control rounded-bottom"
                                       rows="15" placeholder="Chỉnh sửa nội dung bài viết của bạn ở đây..." id="editor"></textarea>
                             <span asp-validation-for="Content" class="text-danger"></span>
@@ -121,47 +92,7 @@
 </div>
 
 @section Styles {
-    <style>
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .upload-container {
-            background-color: #f8f9fa;
-            border: 2px dashed #dee2e6 !important;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-            .upload-container:hover {
-                border-color: var(--bs-primary) !important;
-                background-color: rgba(var(--bs-primary-rgb), 0.05);
-            }
-
-        .editor-toolbar .btn-light {
-            border: none;
-            padding: 0.5rem;
-        }
-
-            .editor-toolbar .btn-light:hover {
-                background-color: rgba(var(--bs-primary-rgb), 0.1);
-                color: var(--bs-primary);
-            }
-
-        .form-floating > .form-control:focus ~ label,
-        .form-floating > .form-control:not(:placeholder-shown) ~ label {
-            color: var(--bs-primary);
-        }
-
-        .form-control:focus {
-            border-color: rgba(var(--bs-primary-rgb), 0.5);
-            box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
-        }
-    </style>
+    <link href="~/css/blogs.css" rel="stylesheet" />
 }
 
 @section Scripts {
