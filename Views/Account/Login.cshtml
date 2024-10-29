@@ -1,71 +1,137 @@
 ﻿@model GallifreyPlanet.ViewModels.Account.LoginViewModel
-
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
 }
 
-<section class="h-100">
-	<div class="container h-100">
-		<div class="row justify-content-sm-center h-100">
-			<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-				<div class="text-center my-5">
-					<a asp-controller="Home" asp-action="Index">
-						<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">
-					</a>
-				</div>
-				<div class="card shadow-sm">
-					<div class="card-body p-5">
-						<h1 class="fs-4 card-title fw-bold mb-4">Đăng nhập</h1>
-						<form asp-action="Login" method="POST" class="needs-validation" novalidate="">
-							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-							<div class="mb-3">
-								<label asp-for="UsernameOrEmail" class="mb-2 text-muted"></label>
-								<span class="text-danger">*</span>
-								<input asp-for="UsernameOrEmail" type="text" class="form-control" required autofocus>
-								<span asp-validation-for="UsernameOrEmail" class="text-danger"></span>
-							</div>
+<section class="container mt-5">
+    <div class="row justify-content-sm-center">
+        <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+            <!-- Logo with subtle animation -->
+            <div class="text-center mb-4">
+                <a asp-controller="Home" asp-action="Index" class="d-inline-block">
+                    <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
+                         alt="logo" width="80" class="mb-3 opacity-75 hover:opacity-100 transition-all">
+                </a>
+            </div>
 
-							<div class="mb-3">
-								<div class="mb-2 w-100">
-									<label asp-for="Password" class="text-muted"></label>
-									<span class="text-danger">*</span>
-									<a class="float-end" asp-area="" asp-controller="Account" asp-action="ForgotPassword">
-										Quên mật khẩu?
-									</a>
-								</div>
-								<input asp-for="Password" type="password" class="form-control" required>
-								<span asp-validation-for="Password" class="text-danger"></span>
-							</div>
+            <div class="auth-card card">
+                <div class="card-body p-5">
+                    <h1 class="fs-4 card-title fw-bold mb-4 text-center">Chào mừng trở lại! 👋</h1>
 
-							<div class="mb-3 form-check">
-								<label class="form-check-label">
-									<input asp-for="RememberMe" class="form-check-input" />
-									@Html.DisplayNameFor(a => a.RememberMe)
-								</label>
-							</div>
+                    <!-- Social Login Buttons -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="social-btn btn btn-outline-danger">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                                     alt="Google" width="20" height="20">
+                            </a>
+                            <a href="#" class="social-btn btn btn-outline-primary">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-btn btn btn-outline-dark">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
 
-							<div class="d-flex align-items-center">
-								<button type="submit" class="btn btn-primary ms-auto">
-									Đăng nhập
-								</button>
-							</div>
-						</form>
-					</div>
-					<div class="card-footer py-3 border-0">
-						<div class="text-center">
-							Chưa có tài khoản?
-							<a class="text-dark" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký ngay</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <!-- Divider -->
+                    <div class="position-relative my-4">
+                        <hr class="text-muted opacity-25">
+                        <p class="small position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted">
+                            hoặc đăng nhập qua
+                        </p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form asp-action="Login" method="POST" class="needs-validation" autocomplete="off" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 rounded-3" role="alert"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="UsernameOrEmail" class="form-label text-muted">
+                                Email hoặc tên đăng nhập
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-user text-muted opacity-50"></i>
+                                </span>
+                                <input asp-for="UsernameOrEmail" type="text"
+                                       class="form-control border-start-0 ps-0"
+                                       placeholder="example@email.com" required autofocus>
+                            </div>
+                            <span asp-validation-for="UsernameOrEmail" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label asp-for="Password" class="form-label text-muted mb-0">
+                                    Mật khẩu
+                                </label>
+                                <a asp-area="" asp-controller="Account" asp-action="ForgotPassword"
+                                   class="text-decoration-none small text-primary">
+                                    Quên mật khẩu?
+                                </a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted opacity-50"></i>
+                                </span>
+                                <input asp-for="Password" type="password"
+                                       class="form-control border-start-0 border-end-0 px-0"
+                                       placeholder="Nhập mật khẩu" required>
+                                <button class="input-group-text border-start-0 bg-transparent"
+                                        type="button" onclick="togglePassword(event, 'Password')">
+                                    <i class="far fa-eye text-muted opacity-50"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" type="checkbox">
+                                <label class="form-check-label text-muted small" asp-for="RememberMe">
+                                    Duy trì đăng nhập
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer py-4 border-0 text-center bg-light">
+                    <p class="text-muted mb-0">
+                        Chưa có tài khoản?
+                        <a asp-area="" asp-controller="Account" asp-action="Register"
+                           class="text-decoration-none fw-semibold text-primary">
+                            Đăng ký ngay
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Security Tips -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Bảo mật tài khoản của bạn luôn là ưu tiên hàng đầu của chúng tôi
+                </p>
+            </div>
+        </div>
+    </div>
 </section>
 
+@section Styles {
+    <link href="~/css/auth.css" rel="stylesheet" />
+}
+
 @section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/auth.js"></script>
 }

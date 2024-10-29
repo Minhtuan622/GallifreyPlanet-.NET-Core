@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> signInManager
+
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
 <head>
     <meta charset="utf-8" />
@@ -43,8 +46,11 @@
                         </li>
                     </ul>
                     <div class="d-flex" style="gap: 0.5rem;">
-                        <partial name="_Messages" />
-                        <partial name="_Notifications" />
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <partial name="_Messages" />
+                            <partial name="_Notifications" />
+                        }
                         <partial name="_LoginPartial" />
                     </div>
                 </div>

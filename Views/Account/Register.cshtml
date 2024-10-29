@@ -5,80 +5,135 @@
     Layout = "~/Views/Shared/_Auth.cshtml";
 }
 
-<section class="container">
-	<div class="row justify-content-sm-center">
-		<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-			<div class="text-center m-5	">
-				<a asp-controller="Home" asp-action="Index">
-					<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="logo" width="100">
-				</a>
-			</div>
-			<div class="card shadow-sm">
-				<div class="card-body px-5 py-4">
-					<h1 class="fs-4 card-title fw-bold mb-4">Đăng ký tài khoản </h1>
-					<form asp-action="Register" method="POST" class="needs-validation" novalidate="">
-						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-						<div class="mb-3">
-							<label asp-for="Name" class="mb-2 text-muted"></label>
-							<span class="text-danger">*</span>
-							<input asp-for="Name" type="text" class="form-control" required autofocus>
-							<span asp-validation-for="Name" class="text-danger"></span>
-						</div>
+<section class="container my-5">
+    <div class="row justify-content-sm-center">
+        <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+            <div class="text-center mb-4">
+                <a asp-controller="Home" asp-action="Index" class="d-inline-block">
+                    <img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg"
+                         alt="logo" width="80" class="mb-3 opacity-75 hover:opacity-100 transition-all">
+                </a>
+            </div>
 
-						<div class="mb-3">
-							<label asp-for="UserName" class="mb-2 text-muted"></label>
-							<span class="text-danger">*</span>
-							<input asp-for="UserName" type="text" class="form-control" required>
-							<span asp-validation-for="UserName" class="text-danger"></span>
-						</div>
+            <div class="auth-card card">
+                <div class="card-body p-5">
+                    <h1 class="fs-4 card-title fw-bold mb-4 text-center">Đăng ký tài khoản</h1>
 
-						<div class="mb-3">
-							<label asp-for="Email" class="mb-2 text-muted"></label>
-							<span class="text-danger">*</span>
-							<input asp-for="Email" type="email" class="form-control" required>
-							<span asp-validation-for="Email" class="text-danger"></span>
-						</div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="#" class="social-btn btn btn-outline-danger">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                                     alt="Google" width="20" height="20">
+                            </a>
+                            <a href="#" class="social-btn btn btn-outline-primary">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-btn btn btn-outline-dark">
+                                <i class="fab fa-github"></i>
+                            </a>
+                        </div>
+                    </div>
 
-						<div class="mb-3">
-							<label asp-for="Password" class="mb-2 text-muted"></label>
-							<span class="text-danger">*</span>
-							<input asp-for="Password" type="password" class="form-control" required>
-							<span asp-validation-for="Password" class="text-danger"></span>
-						</div>
+                    <div class="position-relative my-4">
+                        <hr class="text-muted opacity-25">
+                        <p class="small position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted">
+                            Hoặc đăng ký bằng
+                        </p>
+                    </div>
 
-						<div class="mb-3">
-							<label asp-for="ConfirmPassword" class="mb-2 text-muted"></label>
-							<span class="text-danger">*</span>
-							<input asp-for="ConfirmPassword" type="password" class="form-control" required>
-							<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-						</div>
+                    <form asp-action="Register" method="POST" class="needs-validation" autocomplete="off" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 rounded-3" role="alert"></div>
 
-						<p class="form-text text-muted mb-3">
-							Bằng việc đăng ký tài khoản, bạn chấp nhận với các
-							<a asp-area="" asp-controller="Home" asp-action="Privacy">điều khoản</a>
-							của chúng tôi
-						</p>
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label text-muted">
+                                Họ và tên <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Name" type="text" class="form-control" required autofocus>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
 
-						<div class="align-items-center d-flex">
-							<button type="submit" class="btn btn-primary ms-auto">
-								Đăng ký
-							</button>
-						</div>
-					</form>
-				</div>
-				<div class="card-footer py-3 border-0">
-					<div class="text-center">
-						Đã có tài khoản?
-						<a class="text-dark" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập ngay</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        <div class="mb-4">
+                            <label asp-for="UserName" class="form-label text-muted">
+                                Tên đăng nhập <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="UserName" type="text" class="form-control" required>
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label text-muted">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Email" type="email" class="form-control" required>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label text-muted">
+                                Mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted opacity-50"></i>
+                                </span>
+                                <input asp-for="Password" type="password" class="form-control border-start-0 border-end-0 ps-0" required>
+                                <button class="input-group-text border-start-0 bg-transparent" type="button" onclick="togglePassword(event, 'Password')">
+                                    <i class="far fa-eye text-muted opacity-50"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label text-muted">
+                                Xác nhận mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted opacity-50"></i>
+                                </span>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control border-start-0 border-end-0 ps-0" required>
+                                <button class="input-group-text border-start-0 bg-transparent" type="button" onclick="togglePassword(event, 'ConfirmPassword')">
+                                    <i class="far fa-eye text-muted opacity-50"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label small text-muted" for="terms">
+                                Tôi đồng ý với các <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">điều khoản</a> của website
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-user-plus me-2"></i> Đăng ký
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer py-4 border-0 text-center bg-light">
+                    <p class="text-muted mb-0">
+                        Đã có tài khoản?
+                        <a asp-area="" asp-controller="Account" asp-action="Login" class="text-decoration-none fw-semibold text-primary">
+                            Đăng nhập ngay
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
+@section Styles {
+    <link href="~/css/auth.css" rel="stylesheet" />
+}
+
 @section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="~/js/auth.js"></script>
 }

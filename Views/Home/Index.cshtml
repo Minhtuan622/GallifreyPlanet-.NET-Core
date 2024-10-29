@@ -1,156 +1,162 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> signInManager
+
+@{
     ViewData["Title"] = "Trang chủ";
 }
 
 <div class="container py-4">
-    <div class="row g-4">
-        <!-- Left Sidebar -->
-        <div class="col-lg-3">
-            <div class="card shadow-sm rounded-3 border-0">
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <img src="@Model.Avatar" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Avatar">
-                        <h5 class="fw-bold">@Model.Name</h5>
-                        <p class="text-muted">@@@Model.UserName</p>
-                        <a asp-controller="AccountManager" asp-action="Index" class="btn btn-outline-primary rounded-pill w-100 mb-2">
-                            <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
-                        </a>
-                    </div>
-
-                    <div class="border-top pt-3">
-                        <h6 class="fw-bold mb-3">Thống kê</h6>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Bài viết</span>
-                            @*<span class="fw-medium">@Model.PostCount</span>*@
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Bạn bè</span>
-                            @*<span class="fw-medium">@Model.FriendCount</span>*@
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted">Lượt xem</span>
-                            @*<span class="fw-medium">@Model.ViewCount</span>*@
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-lg-6">
-            <!-- Featured Blogs -->
-            <div class="card shadow-sm rounded-3 border-0 mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold m-0">Bài viết nổi bật</h5>
-                        <a asp-controller="Blogs" asp-action="Index" class="text-decoration-none">Xem tất cả</a>
-                    </div>
-
-                    <div class="row g-3">
-                        @*@foreach (var post in Model.FeaturedPosts)
-                        {
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 bg-light rounded-3">
-                                    <img src="@post.ThumbnailUrl" class="card-img-top rounded-top" style="height: 160px; object-fit: cover;" alt="@post.Title">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
-                                            <small class="text-muted">@post.AuthorName</small>
-                                        </div>
-                                        <h6 class="card-title fw-bold mb-2">@post.Title</h6>
-                                        <p class="card-text small text-muted mb-3">@post.Excerpt</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">
-                                                <i class="far fa-clock me-1"></i>@post.PublishedDate
-                                            </small>
-                                            <small class="text-muted">
-                                                <i class="far fa-eye me-1"></i>@post.ViewCount
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }*@
-                    </div>
-                </div>
-            </div>
-
-            <!-- Latest Blogs -->
-            <div class="card shadow-sm rounded-3 border-0">
-                <div class="card-body">
-                    <h5 class="fw-bold mb-4">Bài viết mới nhất</h5>
-
-                    @*@foreach (var post in Model.LatestPosts)
-                    {
-                        <div class="d-flex gap-3 mb-4">
-                            <img src="@post.ThumbnailUrl" class="rounded-3" style="width: 200px; height: 134px; object-fit: cover;" alt="@post.Title">
-                            <div>
-                                <div class="d-flex align-items-center mb-2">
-                                    <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
-                                    <small class="text-muted">@post.AuthorName</small>
-                                    <small class="text-muted ms-auto">
-                                        <i class="far fa-clock me-1"></i>@post.PublishedDate
-                                    </small>
-                                </div>
-                                <h6 class="fw-bold mb-2">@post.Title</h6>
-                                <p class="text-muted small mb-2">@post.Excerpt</p>
-                                <div class="d-flex gap-3">
-                                    <small class="text-muted">
-                                        <i class="far fa-eye me-1"></i>@post.ViewCount xem
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="far fa-comment me-1"></i>@post.CommentCount bình luận
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    }*@
-
-                    <div class="text-center mt-4">
-                        <a asp-controller="Blogs" asp-action="Index" class="btn btn-outline-primary rounded-pill px-4">
-                            Xem thêm bài viết
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Sidebar -->
-        <div class="col-lg-3">
-            <!-- Popular Authors -->
-            <div class="card shadow-sm rounded-3 border-0 mb-4">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3">Tác giả nổi bật</h6>
-                    @*@foreach (var author in Model.PopularAuthors)
-                    {
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="@author.Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="@author.Name">
-                            <div>
-                                <h6 class="mb-0 fw-medium">@author.Name</h6>
-                                <small class="text-muted">@author.PostCount bài viết</small>
-                            </div>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill ms-auto">Theo dõi</button>
-                        </div>
-                    }*@
-                </div>
-            </div>
-
-            <!-- Popular Tags -->
-            <div class="card shadow-sm rounded-3 border-0">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3">Chủ đề phổ biến</h6>
-                    <div class="d-flex flex-wrap gap-2">
-                        @*@foreach (var tag in Model.PopularTags)
-                        {
-                            <a href="/blogs/tag/@tag.Slug" class="text-decoration-none">
-                                <span class="badge rounded-pill bg-light text-dark">@tag.Name</span>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <div class="row g-4">
+            <!-- Left Sidebar -->
+            <div class="col-lg-3">
+                <div class="card shadow-sm rounded-3 border-0">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <img src="@Model.Avatar" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Avatar">
+                            <h5 class="fw-bold">@Model.Name</h5>
+                            <p class="text-muted">@@@Model.UserName</p>
+                            <a asp-controller="AccountManager" asp-action="Index" class="btn btn-outline-primary rounded-pill w-100 mb-2">
+                                <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
                             </a>
+                        </div>
+
+                        <div class="border-top pt-3">
+                            <h6 class="fw-bold mb-3">Thống kê</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Bài viết</span>
+                                @*<span class="fw-medium">@Model.PostCount</span>*@
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Bạn bè</span>
+                                @*<span class="fw-medium">@Model.FriendCount</span>*@
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Lượt xem</span>
+                                @*<span class="fw-medium">@Model.ViewCount</span>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-6">
+                <!-- Featured Blogs -->
+                <div class="card shadow-sm rounded-3 border-0 mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold m-0">Bài viết nổi bật</h5>
+                            <a asp-controller="Blogs" asp-action="Index" class="text-decoration-none">Xem tất cả</a>
+                        </div>
+
+                        <div class="row g-3">
+                            @*@foreach (var post in Model.FeaturedPosts)
+                        {
+                        <div class="col-md-6">
+                        <div class="card h-100 border-0 bg-light rounded-3">
+                        <img src="@post.ThumbnailUrl" class="card-img-top rounded-top" style="height: 160px; object-fit: cover;" alt="@post.Title">
+                        <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                        <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
+                        <small class="text-muted">@post.AuthorName</small>
+                        </div>
+                        <h6 class="card-title fw-bold mb-2">@post.Title</h6>
+                        <p class="card-text small text-muted mb-3">@post.Excerpt</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                        <i class="far fa-clock me-1"></i>@post.PublishedDate
+                        </small>
+                        <small class="text-muted">
+                        <i class="far fa-eye me-1"></i>@post.ViewCount
+                        </small>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
                         }*@
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Blogs -->
+                <div class="card shadow-sm rounded-3 border-0">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-4">Bài viết mới nhất</h5>
+
+                        @*@foreach (var post in Model.LatestPosts)
+                    {
+                    <div class="d-flex gap-3 mb-4">
+                    <img src="@post.ThumbnailUrl" class="rounded-3" style="width: 200px; height: 134px; object-fit: cover;" alt="@post.Title">
+                    <div>
+                    <div class="d-flex align-items-center mb-2">
+                    <img src="@post.AuthorAvatar" class="rounded-circle me-2" style="width: 24px; height: 24px;" alt="@post.AuthorName">
+                    <small class="text-muted">@post.AuthorName</small>
+                    <small class="text-muted ms-auto">
+                    <i class="far fa-clock me-1"></i>@post.PublishedDate
+                    </small>
+                    </div>
+                    <h6 class="fw-bold mb-2">@post.Title</h6>
+                    <p class="text-muted small mb-2">@post.Excerpt</p>
+                    <div class="d-flex gap-3">
+                    <small class="text-muted">
+                    <i class="far fa-eye me-1"></i>@post.ViewCount xem
+                    </small>
+                    <small class="text-muted">
+                    <i class="far fa-comment me-1"></i>@post.CommentCount bình luận
+                    </small>
+                    </div>
+                    </div>
+                    </div>
+                    }*@
+
+                        <div class="text-center mt-4">
+                            <a asp-controller="Blogs" asp-action="Index" class="btn btn-outline-primary rounded-pill px-4">
+                                Xem thêm bài viết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-lg-3">
+                <!-- Popular Authors -->
+                <div class="card shadow-sm rounded-3 border-0 mb-4">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Tác giả nổi bật</h6>
+                        @*@foreach (var author in Model.PopularAuthors)
+                    {
+                    <div class="d-flex align-items-center mb-3">
+                    <img src="@author.Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="@author.Name">
+                    <div>
+                    <h6 class="mb-0 fw-medium">@author.Name</h6>
+                    <small class="text-muted">@author.PostCount bài viết</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary rounded-pill ms-auto">Theo dõi</button>
+                    </div>
+                    }*@
+                    </div>
+                </div>
+
+                <!-- Popular Tags -->
+                <div class="card shadow-sm rounded-3 border-0">
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-3">Chủ đề phổ biến</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @*@foreach (var tag in Model.PopularTags)
+                        {
+                        <a href="/blogs/tag/@tag.Slug" class="text-decoration-none">
+                        <span class="badge rounded-pill bg-light text-dark">@tag.Name</span>
+                        </a>
+                        }*@
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 
 @section Styles {

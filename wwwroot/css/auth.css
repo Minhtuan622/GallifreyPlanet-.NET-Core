@@ -1,0 +1,47 @@
+﻿.auth-card {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.social-btn {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    padding: 12px;
+    text-align: center;
+}
+
+    .social-btn:focus {
+        box-shadow: none;
+    }
+
+.form-control, .input-group-text {
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 0.95rem;
+}
+
+    .form-control:focus {
+        box-shadow: none;
+    }
+
+.btn-primary {
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 500;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+.input-group-text {
+    background-color: transparent;
+    border-right: none;
+}
