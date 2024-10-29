@@ -131,7 +131,11 @@ namespace GallifreyPlanet.Controllers
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
-                user.Avatar = await _fileService.UploadFileAsync(viewModel.EditProfile.AvatarFile, uploadFolder: "/accounts/avatars");
+                user.Avatar = await _fileService.UploadFileAsync(
+                    viewModel.EditProfile.AvatarFile,
+                    folder: "/accounts/avatars",
+                    user.Avatar!
+                );
                 await _userService.UpdateProfileAsync(user, viewModel.EditProfile);
             }
 
@@ -211,7 +215,7 @@ namespace GallifreyPlanet.Controllers
                 return Json(new { success = false });
             }
 
-            string? avatarPath = await _fileService.UploadFileAsync(avatar, uploadFolder: "/accounts/avatars");
+            string? avatarPath = await _fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
             user.Avatar = avatarPath;
             IdentityResult? result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 

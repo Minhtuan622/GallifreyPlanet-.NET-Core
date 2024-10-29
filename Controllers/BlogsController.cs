@@ -95,7 +95,11 @@ namespace GallifreyPlanet.Controllers
 
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                 {
-                    string? file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, uploadFolder: "/blogs");
+                    string? file = await _fileService.UploadFileAsync(
+                        viewModel.ThumbnailFile,
+                        folder: "/blogs",
+                        viewModel.CurrentThumbnailPath!
+                    );
                     blog.ThumbnailPath = file;
                 }
 
@@ -155,7 +159,7 @@ namespace GallifreyPlanet.Controllers
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
-                        string? file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, uploadFolder: "/blogs");
+                        string? file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
                         blog.ThumbnailPath = file;
                     }
 

@@ -8,19 +8,29 @@
         {
             _webHostEnvironment = webHostEnvironment;
         }
-        public async Task<string> UploadFileAsync(IFormFile avatarFile, string? uploadFolder)
+
+        public async Task<string> UploadFileAsync(IFormFile file, string? folder, string? currentFilePath = null)
         {
-            string fileDir = "uploads" + uploadFolder;
+            if (currentFilePath is not null)
+            {
+                string basePath = _webHostEnvironment.WebRootPath + currentFilePath;
+                if (File.Exists(basePath))
+                {
+                    File.Delete(basePath);
+                }
+            }
+
+            string fileDir = "uploads" + folder;
             string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, fileDir);
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + avatarFile.FileName;
-            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            string fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string filePath = Path.Combine(uploadsFolder, fileName);
 
             using (FileStream? fileStream = new FileStream(filePath, FileMode.Create))
             {
-                await avatarFile.CopyToAsync(fileStream);
+                await file.CopyToAsync(fileStream);
             }
 
-            return "/" + fileDir + "/" + uniqueFileName;
+            return "/" + fileDir + "/" + fileName;
         }
     }
 }
