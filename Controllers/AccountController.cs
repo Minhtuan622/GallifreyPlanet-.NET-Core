@@ -294,7 +294,7 @@ namespace GallifreyPlanet.Controllers
             string? returnurl = null
         )
         {
-            returnurl = returnurl ?? Url.Content(contentPath: "~/");
+            returnurl ??= Url.Content(contentPath: "~/");
 
             if (ModelState.IsValid)
             {
@@ -309,10 +309,14 @@ namespace GallifreyPlanet.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     Name = model.Email,
-                    NormalizedEmail = model.Email!.ToUpper(),
+                    EmailConfirmed = true,
+                    ShowEmail = false,
+                    AllowMessagesFromNonFriends = false,
+                    EmailNotifications = false,
+                    PushNotifications = false,
                 };
 
-                IdentityResult? result = await _userManager.CreateAsync(user);
+                IdentityResult? result = await _userManager.CreateAsync(user, model.Password!);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
