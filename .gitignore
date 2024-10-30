@@ -373,3 +373,4 @@ Services/UserService.cs
 ViewModels/AccountManager/AccountManagerViewModel.cs
 Views/AccountManager/_Layout.cshtml
 Views/AccountManager/Index.cshtml
+appsettings.json
