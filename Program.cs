@@ -28,11 +28,13 @@ builder.Services.AddSignalR();
 
 builder.Services.AddSession();
 
-builder.Services.AddAuthentication().AddFacebook(opt =>
-{
-    opt.ClientId = "911162867155408";
-    opt.ClientSecret = "e9538254f42266455dc018eca2f5dd0d";
-});
+builder.Services.AddAuthentication()
+    .AddFacebook(opt =>
+    {
+        opt.ClientId = "911162867155408";
+        opt.ClientSecret = "e9538254f42266455dc018eca2f5dd0d";
+    })
+    ;
 
 WebApplication? app = builder.Build();
 
