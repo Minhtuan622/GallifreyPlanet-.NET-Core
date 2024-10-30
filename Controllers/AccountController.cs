@@ -2,11 +2,14 @@
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.Account;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
@@ -213,10 +216,132 @@ namespace GallifreyPlanet.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string? returnUrl = null)
+        {
+            User? user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            if (user == null)
+            {
+                return View(viewName: "Error");
+            }
+            ViewData[index: "ReturnUrl"] = returnUrl;
+
+            return View(model: new VerifyAuthenticatorViewModel { ReturnUrl = returnUrl, RememberMe = rememberMe });
+
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string? returnurl = null)
+        {
+            string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", new { returnurl });
+            AuthenticationProperties? properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return Challenge(properties, provider);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string? returnurl = null, string? remoteError = null)
+        {
+            returnurl = returnurl ?? Url.Content(contentPath: "~/");
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage: $"Error from external provider: {remoteError}");
+                return View(nameof(Login));
+            }
+
+            ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            //sign in the user with this external login provider. only if they have a login
+            SignInResult? result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
+                               isPersistent: false, bypassTwoFactor: true);
+            if (result.Succeeded)
+            {
+                await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                return LocalRedirect(returnurl);
+            }
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnurl });
+            }
+            else
+            {
+                //that means user account is not create and we will display a view to create an account
+
+                ViewData[index: "ReturnUrl"] = returnurl;
+                ViewData[index: "ProviderDisplayName"] = info.ProviderDisplayName;
+
+                return View(viewName: "ExternalLoginConfirmation", model: new ExternalLoginConfirmationViewModel
+                {
+                    Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                    Name = info.Principal.FindFirstValue(ClaimTypes.Name)
+                });
+            }
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginConfirmation(
+            ExternalLoginConfirmationViewModel model,
+            string? returnurl = null
+        )
+        {
+            returnurl = returnurl ?? Url.Content(contentPath: "~/");
+
+            if (ModelState.IsValid)
+            {
+                ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
+                if (info == null)
+                {
+                    return View(viewName: "Error");
+                }
+
+                User? user = new User
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    Name = model.Email,
+                    NormalizedEmail = model.Email!.ToUpper(),
+                };
+
+                IdentityResult? result = await _userManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddLoginAsync(user, info);
+                    if (result.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                        return LocalRedirect(returnurl);
+                    }
+                }
+                AddErrors(result);
+            }
+            ViewData[index: "ReturnUrl"] = returnurl;
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction(actionName: "Index", controllerName: "Home");
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (IdentityError error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
         }
     }
 }

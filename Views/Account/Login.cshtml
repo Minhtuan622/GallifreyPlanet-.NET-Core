@@ -1,7 +1,13 @@
 ﻿@model GallifreyPlanet.ViewModels.Account.LoginViewModel
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> signInManager
+
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
+
+    var schemes = await signInManager.GetExternalAuthenticationSchemesAsync();
+    var loginProviders = schemes.ToList();
 }
 
 <section class="container mt-5">
@@ -22,14 +28,14 @@
                     <!-- Social Login Buttons -->
                     <div class="mb-4">
                         <div class="d-flex justify-content-center gap-3">
-                            <a href="#" class="social-btn btn btn-outline-danger">
+                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-danger">
                                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
                                      alt="Google" width="20" height="20">
                             </a>
-                            <a href="#" class="social-btn btn btn-outline-primary">
+                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-primary">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="#" class="social-btn btn btn-outline-dark">
+                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-dark">
                                 <i class="fab fa-github"></i>
                             </a>
                         </div>
@@ -123,6 +129,34 @@
             </div>
         </div>
     </div>
+
+    @if (loginProviders.Count() > 0)
+    {
+        <div class="p-3">
+            <hr />
+            <div class="col-12 p-3 text-center border rounded">
+                <section>
+                    <p>User another service to log in.</p>
+                    <form asp-controller="Account" asp-action="ExternalLogin"
+                          asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" role="form">
+                        <div>
+                            <p>
+                                @foreach (var provider in loginProviders)
+                                {
+                                    <button type="submit" class="btn btn-primary" name="provider"
+                                            value="@provider.Name">
+                                        @provider.Name
+                                    </button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+        </div>
+    }
+
 </section>
 
 @section Styles {
