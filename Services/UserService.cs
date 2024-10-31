@@ -81,7 +81,8 @@ namespace GallifreyPlanet.Services
         public async Task<IdentityResult> UpdatePrivacySettingsAsync(User user, PrivacySettingsViewModel model)
         {
             user.ShowEmail = model.ShowEmail;
-            user.AllowMessagesFromNonFriends = model.AllowMessagesFromNonFriends;
+            user.AllowChat = model.AllowMessagesFromNonFriends;
+            user.AllowAddFriend = model.AllowAddFriend;
             return await _userManager.UpdateAsync(user);
         }
 

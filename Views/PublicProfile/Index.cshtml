@@ -63,27 +63,30 @@
                             }
                             else
                             {
-                                @if (Model.IsSendRequest)
+                                @if (Model.AllowAddFriend)
                                 {
-                                    <form asp-action="Cancel" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                        <button type="submit" class="btn btn-primary rounded-pill" title="Hủy lời mời kết bạn">
-                                            <i class="fa-solid fa-user-plus"></i>
-                                            Hủy lời mời
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="Send" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
-                                        <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
-                                            <i class="fa-solid fa-user-plus"></i>
-                                            Kết bạn
-                                        </button>
-                                    </form>
+                                    @if (Model.IsSendRequest)
+                                    {
+                                        <form asp-action="Cancel" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
+                                            <button type="submit" class="btn btn-primary rounded-pill" title="Hủy lời mời kết bạn">
+                                                <i class="fa-solid fa-user-plus"></i>
+                                                Hủy lời mời
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Send" asp-controller="Friend" asp-route-friendId="@Model.UserId" method="post">
+                                            <button type="submit" class="btn btn-primary rounded-pill" title="Kết bạn">
+                                                <i class="fa-solid fa-user-plus"></i>
+                                                Kết bạn
+                                            </button>
+                                        </form>
+                                    }
                                 }
                             }
 
-                            @if (Model.AllowMessageFromNonFriends)
+                            @if (Model.AllowChat)
                             {
                                 <a href="@Model.Website" target="_blank" class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
                                     <i class="fa-solid fa-comment"></i>

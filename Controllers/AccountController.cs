@@ -130,7 +130,7 @@ namespace GallifreyPlanet.Controllers
                     Email = user.Email,
                     EmailConfirmed = true,
                     ShowEmail = false,
-                    AllowMessagesFromNonFriends = false,
+                    AllowChat = false,
                     EmailNotifications = false,
                     PushNotifications = false,
                 };
@@ -310,7 +310,7 @@ namespace GallifreyPlanet.Controllers
                     Name = model.Email,
                     EmailConfirmed = true,
                     ShowEmail = false,
-                    AllowMessagesFromNonFriends = false,
+                    AllowChat = false,
                     EmailNotifications = false,
                     PushNotifications = false,
                 };

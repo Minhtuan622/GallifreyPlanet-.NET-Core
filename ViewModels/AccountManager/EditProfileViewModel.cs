@@ -22,7 +22,7 @@ namespace GallifreyPlanet.ViewModels.AccountManager
         [Display(Name = "Địa chỉ", Prompt = "Nhập địa chỉ")]
         public string? Address { get; set; }
 
-        [Display(Name = "Avatar")]
+        [Display(Name = "Ảnh đại diện")]
         public IFormFile? AvatarFile { get; set; }
 
         public string? CurrentAvatar { get; set; }

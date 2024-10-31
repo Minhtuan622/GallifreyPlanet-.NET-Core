@@ -71,7 +71,7 @@ namespace GallifreyPlanet.Controllers
                 PrivacySettings = new PrivacySettingsViewModel
                 {
                     ShowEmail = user.ShowEmail,
-                    AllowMessagesFromNonFriends = user.AllowMessagesFromNonFriends,
+                    AllowMessagesFromNonFriends = user.AllowChat,
                 },
                 NotificationSettings = new NotificationSettingsViewModel
                 {
