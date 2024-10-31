@@ -31,8 +31,8 @@ builder.Services.AddSession();
 builder.Services.AddAuthentication()
     .AddFacebook(opt =>
     {
-        opt.ClientId = "911162867155408";
-        opt.ClientSecret = "e9538254f42266455dc018eca2f5dd0d";
+        opt.ClientId = builder.Configuration[key: "Authentication:Facebook:ClientId"]!;
+        opt.ClientSecret = builder.Configuration[key: "Authentication:Facebook:ClientSecret"]!;
     })
     .AddGoogle(opt =>
     {
