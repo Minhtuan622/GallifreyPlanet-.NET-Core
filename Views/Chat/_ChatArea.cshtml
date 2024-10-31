@@ -1,0 +1,68 @@
+﻿<!-- Chat Area -->
+<div class="col-md-8 col-lg-9 d-flex flex-column">
+    <!-- Chat Header -->
+    <div class="p-3 border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="position-relative">
+                    <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
+                    <span class="position-absolute bottom-0 end-0 bg-success border border-light rounded-circle status-dot"></span>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-0">John Doe</h6>
+                    <small class="text-success">Online</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn rounded-circle" title="Voice Call">
+                    <i class="fas fa-phone"></i>
+                </button>
+                <button class="btn rounded-circle" title="Video Call">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="btn rounded-circle" title="More Options">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-grow-1 overflow-auto p-3" id="chat-messages">
+        <div class="message-received mb-3">
+            <div class="d-flex">
+                <div class="message-content bg-body rounded-3 p-3 shadow-sm">
+                    Hi! How are you doing?
+                </div>
+            </div>
+            <small class="text-muted ms-2">10:30 AM</small>
+        </div>
+
+        <div class="message-sent mb-3">
+            <div class="d-flex justify-content-end">
+                <div class="message-content bg-primary text-white rounded-3 p-3 shadow-sm">
+                    I'm doing great, thanks for asking! How about you?
+                </div>
+            </div>
+            <div class="text-end">
+                <small class="text-muted me-2">10:32 AM</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-3 border-top">
+        <div class="d-flex gap-2 align-items-center">
+            <button class="btn rounded-circle" title="Attach File">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="message-input" class="form-control rounded-pill border-0" placeholder="Type your message...">
+            <button class="btn rounded-circle" title="Emoji">
+                <i class="fas fa-smile"></i>
+            </button>
+            <button class="btn btn-primary rounded-circle" id="send-message" title="Send Message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>

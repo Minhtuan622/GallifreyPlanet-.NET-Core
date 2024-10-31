@@ -17,6 +17,7 @@ namespace GallifreyPlanet.Data
         public DbSet<Blog> Blog { get; set; } = default!;
         public DbSet<Friend> Friend { get; set; } = default!;
         public DbSet<Comment> Comment { get; set; } = default!;
-        public DbSet<Notification> Notification { get; set; }
+        public DbSet<Notification> Notification { get; set; } = default!;
+        public DbSet<MessageViewModel> ChatMessage { get; set; } = default!;
     }
 }

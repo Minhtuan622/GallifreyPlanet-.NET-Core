@@ -10,16 +10,19 @@ namespace GallifreyPlanet.Controllers
         private readonly UserService _userService;
         private readonly BlogService _blogService;
         private readonly FriendService _friendService;
+        private readonly ChatService _chatService;
 
         public PublicProfileController(
             UserService userService,
             BlogService blogService,
-            FriendService friendService
+            FriendService friendService,
+            ChatService chatService
         )
         {
             _userService = userService;
             _blogService = blogService;
             _friendService = friendService;
+            _chatService = chatService;
         }
 
         public async Task<IActionResult> Index(string? username)
@@ -64,6 +67,24 @@ namespace GallifreyPlanet.Controllers
             };
 
             return View(publicProfile);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateConversation()
+        {
+            User? user = await _userService.GetCurrentUserAsync();
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            bool result = _chatService.CreateConversation();
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return View();
         }
     }
 }
