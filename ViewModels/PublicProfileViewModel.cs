@@ -19,6 +19,7 @@ namespace GallifreyPlanet.ViewModels
         public string? Facebook { get; set; }
         public bool IsFriend { get; set; }
         public bool IsSendRequest { get; set; }
+        public bool AllowMessageFromNonFriends { get; set; }
         public RecentActivities RecentActivities { get; set; } = new RecentActivities();
         public List<BlogViewModel> RecentBlogs { get; set; } = new List<BlogViewModel>();
         public List<FriendViewModel>? Friends { get; set; }

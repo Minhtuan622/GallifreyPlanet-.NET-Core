@@ -44,6 +44,7 @@ namespace GallifreyPlanet.Controllers
                 Friends = await _friendService.GetFriends(user.Id),
                 IsFriend = _friendService.AreFriends(currentUser.Id, user.Id),
                 IsSendRequest = _friendService.Find(user.Id, currentUser!.Id) != null,
+                AllowMessageFromNonFriends = user.AllowMessagesFromNonFriends,
 
                 // test
                 Website = "https://example.com",

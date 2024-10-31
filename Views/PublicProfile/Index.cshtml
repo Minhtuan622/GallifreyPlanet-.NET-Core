@@ -82,9 +82,13 @@
                                     </form>
                                 }
                             }
-                            <a href="@Model.Website" target="_blank" class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
-                                <i class="fa-solid fa-comment"></i>
-                            </a>
+
+                            @if (Model.AllowMessageFromNonFriends)
+                            {
+                                <a href="@Model.Website" target="_blank" class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
+                                    <i class="fa-solid fa-comment"></i>
+                                </a>
+                            }
                         </div>
                     }
 
