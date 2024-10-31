@@ -34,7 +34,11 @@ builder.Services.AddAuthentication()
         opt.ClientId = "911162867155408";
         opt.ClientSecret = "e9538254f42266455dc018eca2f5dd0d";
     })
-    ;
+    .AddGoogle(opt =>
+    {
+        opt.ClientId = builder.Configuration[key: "Authentication:Google:ClientId"]!;
+        opt.ClientSecret = builder.Configuration[key: "Authentication:Google:ClientSecret"]!;
+    });
 
 WebApplication? app = builder.Build();
 
