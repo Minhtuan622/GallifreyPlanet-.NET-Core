@@ -7,7 +7,7 @@
 <div class="container">
     <div class="row g-3">
         <div class="col-lg-4 ps-0">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card border-0 rounded-4 overflow-hidden">
                 <div class="card-body p-4">
                     <div class="text-center mb-2">
                         <img src="@(Model.Avatar ?? defaultAvatarPath)"
@@ -115,7 +115,7 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 mt-3">
+            <div class="card border-0 rounded-4 mt-3">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Liên kết mạng xã hội</h5>
                     <div class="d-flex flex-wrap gap-3">
@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4 mt-3">
+            <div class="card border-0 rounded-4 mt-3">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title mb-4">Danh sách bạn bè</h5>
@@ -168,7 +168,7 @@
                     <div class="list-group">
                         @foreach(var user in Model.Friends)
                         {
-                            @if (User.Identity!.Name != user.Friend.UserName)
+                            @if (Model.UserName != user.Friend.UserName)
                             {
                                 <a asp-action="Index"
                                    asp-controller="PublicProfile"
@@ -192,7 +192,8 @@
                                     </div>
                                 </a>
                             }
-                            else
+
+                            @if (Model.UserName != user.User.UserName)
                             {
                                 <a asp-action="Index"
                                    asp-controller="PublicProfile"
@@ -223,7 +224,7 @@
         </div>
 
         <div class="col-lg-8 pe-0">
-            <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card border-0 rounded-4 mb-3">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title mb-4">Bài viết gần đây</h5>
@@ -236,7 +237,7 @@
                     <div class="row row-cols-3 g-3">
                         @foreach (var blog in Model.RecentBlogs)
                         {
-                            <a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id" class="text-decoration-none">
+                            <a asp-controller="Blogs" asp-action="Details" asp-route-id="@blog.Id" asp-route-userId="@Model.UserId" class="text-decoration-none">
                                 <div class="card h-100">
                                     <img src="@blog.CurrentThumbnailPath" class="card-img-top h-100" alt="@blog.Title">
                                     <div class="card-body">
@@ -250,7 +251,7 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-4">
+            <div class="card border-0 rounded-4">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Hoạt động gần đây</h5>
                     <div class="row g-4">
