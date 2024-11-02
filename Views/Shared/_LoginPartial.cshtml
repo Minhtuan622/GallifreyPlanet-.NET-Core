@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> signInManager
+@inject SignInManager<User> SignInManager
 
 <ul class="navbar-nav">
-    @if (signInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"
@@ -12,7 +12,7 @@
                aria-expanded="false">
                 @User.Identity!.Name
             </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 py-0">
+            <ul class="dropdown-menu dropdown-menu-end border-0 py-0">
                 <li>
                     <a class="dropdown-item py-2" asp-action="Index" asp-controller="AccountManager">
                         <i class="fa-solid fa-user-cog"></i> Quản lý tài khoản

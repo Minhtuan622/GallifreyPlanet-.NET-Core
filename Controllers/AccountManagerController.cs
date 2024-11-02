@@ -1,5 +1,4 @@
-﻿using GallifreyPlanet.Data;
-using GallifreyPlanet.Models;
+﻿using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.AccountManager;
 using Microsoft.AspNetCore.Identity;
@@ -11,21 +10,14 @@ namespace GallifreyPlanet.Controllers
     {
         private readonly UserService _userService;
         private readonly FileService _fileService;
-        private readonly UserManager<User> _userManager;
-        private readonly GallifreyPlanetContext _context;
 
         public AccountManagerController(
             UserService userService,
-            FileService fileService,
-            IWebHostEnvironment webHostEnvironment,
-            UserManager<User> userManager,
-            GallifreyPlanetContext context
+            FileService fileService
         )
         {
             _userService = userService;
             _fileService = fileService;
-            _userManager = userManager;
-            _context = context;
         }
 
         [HttpGet]
@@ -37,7 +29,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            AccountManagerViewModel? viewModel = new AccountManagerViewModel
+            AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
                 User = user,
                 LoginHistory = await _userService.GetLoginHistoriesAsyncByUserId(user.Id),
@@ -97,7 +89,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult? result = await _userService.ChangePasswordAsync(
+            IdentityResult result = await _userService.ChangePasswordAsync(
                 user,
                 viewModel.ChangePassword!.CurrentPassword!,
                 viewModel.ChangePassword!.NewPassword!
@@ -127,7 +119,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult? result = await _userService.UpdateProfileAsync(user, viewModel.EditProfile!);
+            IdentityResult result = await _userService.UpdateProfileAsync(user, viewModel.EditProfile!);
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
@@ -163,7 +155,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult? result = await _userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
+            IdentityResult result = await _userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
 
             if (result.Succeeded)
             {
@@ -189,7 +181,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult? result = await _userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
+            IdentityResult result = await _userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
 
             if (result.Succeeded)
             {
@@ -204,7 +196,7 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadAvatar(IFormFile avatar)
         {
-            if (avatar == null || avatar.Length == 0)
+            if (avatar.Length == 0)
             {
                 return Json(new { success = false });
             }
@@ -215,9 +207,9 @@ namespace GallifreyPlanet.Controllers
                 return Json(new { success = false });
             }
 
-            string? avatarPath = await _fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
+            string avatarPath = await _fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
             user.Avatar = avatarPath;
-            IdentityResult? result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
+            IdentityResult result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
             return Json(new { success = result.Succeeded, avatarUrl = user.Avatar });
         }
@@ -230,8 +222,8 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            string? token = await _userService.GenerateTwoFactorTokenAsync(user);
-            EnableTwoFactorAuthenticationViewModel? model = new EnableTwoFactorAuthenticationViewModel { Token = token };
+            string token = await _userService.GenerateTwoFactorTokenAsync(user);
+            EnableTwoFactorAuthenticationViewModel model = new EnableTwoFactorAuthenticationViewModel { Token = token };
 
             return View(model);
         }
@@ -251,9 +243,9 @@ namespace GallifreyPlanet.Controllers
             }
 
             string verificationCode = model.VerificationCode!.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
-            bool is2faTokenValid = await _userService.VerifyTwoFactorTokenAsync(user, verificationCode);
+            bool is2FaTokenValid = await _userService.VerifyTwoFactorTokenAsync(user, verificationCode);
 
-            if (!is2faTokenValid)
+            if (!is2FaTokenValid)
             {
                 ModelState.AddModelError(key: "VerificationCode", errorMessage: "Mã xác thực không hợp lệ.");
                 return View(model);

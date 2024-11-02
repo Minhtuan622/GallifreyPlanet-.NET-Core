@@ -10,45 +10,43 @@ namespace GallifreyPlanet.Controllers
         private readonly UserService _userService;
         private readonly BlogService _blogService;
         private readonly FriendService _friendService;
-        private readonly ChatService _chatService;
 
         public PublicProfileController(
             UserService userService,
             BlogService blogService,
-            FriendService friendService,
-            ChatService chatService
+            FriendService friendService
         )
         {
             _userService = userService;
             _blogService = blogService;
             _friendService = friendService;
-            _chatService = chatService;
         }
 
         public async Task<IActionResult> Index(string? username)
         {
             User? currentUser = await _userService.GetCurrentUserAsync();
-            User? user = await _userService.GetUserAsyncByUserName(username!);
-            if (user is null || currentUser is null)
+            User? profileUser = await _userService.GetUserAsyncByUserName(username!);
+            if (profileUser is null || currentUser is null)
             {
                 return NotFound();
             }
 
-            PublicProfileViewModel? publicProfile = new PublicProfileViewModel
+            PublicProfileViewModel publicProfile = new PublicProfileViewModel
             {
-                UserId = user.Id,
-                UserName = user.UserName!,
-                Name = user.Name!,
-                Avatar = user.Avatar!,
-                Email = user.ShowEmail ? user.Email : null,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 6),
-                Friends = await _friendService.GetFriends(user.Id),
-                IsFriend = _friendService.AreFriends(currentUser.Id, user.Id),
-                IsSendRequest = _friendService.Find(user.Id, currentUser!.Id) != null,
-                AllowChat = user.AllowChat,
-                AllowAddFriend = user.AllowAddFriend,
+                UserId = profileUser.Id,
+                UserName = profileUser.UserName!,
+                Name = profileUser.Name!,
+                Avatar = profileUser.Avatar!,
+                Email = profileUser.ShowEmail ? profileUser.Email : null,
+                Address = profileUser.Address,
+                PhoneNumber = profileUser.PhoneNumber,
+                RecentBlogs = await _blogService.GetBlogsByUserId(profileUser.Id, count: 6),
+                Friends = await _friendService.GetFriends(profileUser.Id),
+                IsFriend = _friendService.AreFriends(currentUser.Id, profileUser.Id),
+                IsSendRequest = _friendService.Find(profileUser.Id, currentUser!.Id) != null,
+                AllowChat = profileUser.AllowChat,
+                AllowAddFriend = profileUser.AllowAddFriend,
+                CurrentUser = currentUser,
 
                 // test
                 Website = "https://example.com",
@@ -67,24 +65,6 @@ namespace GallifreyPlanet.Controllers
             };
 
             return View(publicProfile);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateConversation()
-        {
-            User? user = await _userService.GetCurrentUserAsync();
-            if (user is null)
-            {
-                return NotFound();
-            }
-
-            bool result = _chatService.CreateConversation();
-            if (!result)
-            {
-                return NotFound();
-            }
-
-            return View();
         }
     }
 }

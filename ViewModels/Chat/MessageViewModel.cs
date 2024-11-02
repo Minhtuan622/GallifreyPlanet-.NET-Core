@@ -1,4 +1,5 @@
 ﻿using GallifreyPlanet.Models;
+using GallifreyPlanet.ViewModels.Chat;
 
 namespace GallifreyPlanet.ViewModels
 {

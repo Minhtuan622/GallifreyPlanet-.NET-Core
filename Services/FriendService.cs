@@ -1,5 +1,6 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
+using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.Friend;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,17 +20,17 @@ namespace GallifreyPlanet.Services
             _userService = userService;
         }
 
-        public bool Send(string UserId, string FriendId)
+        public bool Send(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
                 return false;
             }
 
             Friend friend = new Friend
             {
-                UserId = UserId,
-                FriendId = FriendId,
+                UserId = userId,
+                FriendId = friendId,
                 Status = 0,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
@@ -41,14 +42,14 @@ namespace GallifreyPlanet.Services
             return true;
         }
 
-        public bool Cancel(string UserId, string FriendId)
+        public bool Cancel(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
                 return false;
             }
 
-            Friend? friend = Find(UserId, FriendId);
+            Friend? friend = Find(userId, friendId);
 
             if (friend is not null)
             {
@@ -61,14 +62,14 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public bool Accept(string UserId, string FriendId)
+        public bool Accept(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
                 return false;
             }
 
-            Friend? friend = Find(UserId, FriendId);
+            Friend? friend = Find(userId, friendId);
 
             if (friend is not null)
             {
@@ -81,14 +82,14 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public bool Decline(string UserId, string FriendId)
+        public bool Decline(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
                 return false;
             }
 
-            Friend? friend = Find(UserId, FriendId);
+            Friend? friend = Find(userId, friendId);
 
             if (friend is not null)
             {
@@ -101,11 +102,11 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public bool Blocked(string UserId, string FriendId)
+        public bool Blocked(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
-                Friend? friend = Find(UserId, FriendId);
+                Friend? friend = Find(userId, friendId);
 
                 if (friend is not null)
                 {
@@ -119,11 +120,11 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public bool UnBlocked(string UserId, string FriendId)
+        public bool UnBlocked(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
-                Friend? friend = Find(UserId, FriendId);
+                Friend? friend = Find(userId, friendId);
 
                 if (friend is not null)
                 {
@@ -137,11 +138,11 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public bool Remove(string UserId, string FriendId)
+        public bool Remove(string userId, string friendId)
         {
-            if (AreFriends(UserId, FriendId))
+            if (AreFriends(userId, friendId))
             {
-                Friend? friend = Find(UserId, FriendId);
+                Friend? friend = Find(userId, friendId);
 
                 if (friend is not null)
                 {
@@ -154,14 +155,14 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public async Task<List<FriendViewModel>> GetFriends(string UserId)
+        public async Task<List<FriendViewModel>> GetFriends(string userId)
         {
-            List<Friend>? friends = await _context.Friend
-                .Where(f => (f.UserId == UserId || f.FriendId == UserId)
+            List<Friend> friends = await _context.Friend
+                .Where(f => (f.UserId == userId || f.FriendId == userId)
                         && f.Status == 1)
                 .ToListAsync();
 
-            List<FriendViewModel>? result = new List<FriendViewModel>();
+            List<FriendViewModel> result = new List<FriendViewModel>();
             foreach (Friend friend in friends)
             {
                 result.Add(await NewFriendViewModel(friend));
@@ -169,13 +170,13 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
-        public async Task<List<FriendViewModel>> GetFriendRequests(string UserId)
+        public async Task<List<FriendViewModel>> GetFriendRequests(string userId)
         {
-            List<Friend>? friends = await _context.Friend
-                .Where(f => (f.UserId == UserId || f.FriendId == UserId) && f.Status == 0)
+            List<Friend> friends = await _context.Friend
+                .Where(f => (f.UserId == userId || f.FriendId == userId) && f.Status == 0)
                 .ToListAsync();
 
-            List<FriendViewModel>? result = new List<FriendViewModel>();
+            List<FriendViewModel> result = new List<FriendViewModel>();
             foreach (Friend friend in friends)
             {
                 result.Add(await NewFriendViewModel(friend));
@@ -183,13 +184,13 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
-        public async Task<List<FriendViewModel>> GetBlockedFriends(string UserId)
+        public async Task<List<FriendViewModel>> GetBlockedFriends(string userId)
         {
-            List<Friend>? friends = await _context.Friend
-                .Where(f => (f.UserId == UserId || f.FriendId == UserId) && f.Status == 3)
+            List<Friend> friends = await _context.Friend
+                .Where(f => (f.UserId == userId || f.FriendId == userId) && f.Status == 3)
                 .ToListAsync();
 
-            List<FriendViewModel>? result = new List<FriendViewModel>();
+            List<FriendViewModel> result = new List<FriendViewModel>();
             foreach (Friend friend in friends)
             {
                 result.Add(await NewFriendViewModel(friend));
@@ -197,9 +198,9 @@ namespace GallifreyPlanet.Services
             return result;
         }
 
-        public bool AreFriends(string UserId, string FriendId)
+        public bool AreFriends(string userId, string friendId)
         {
-            Friend? friend = Find(UserId, FriendId);
+            Friend? friend = Find(userId, friendId);
 
             if (friend is not null && friend.Status != 0)
             {
@@ -208,12 +209,12 @@ namespace GallifreyPlanet.Services
             return false;
         }
 
-        public Friend? Find(string UserId, string FriendId)
+        public Friend? Find(string userId, string friendId)
         {
             return _context.Friend
                     .FirstOrDefault(f =>
-                        (f.UserId == UserId && f.FriendId == FriendId) ||
-                        (f.UserId == FriendId && f.FriendId == UserId));
+                        (f.UserId == userId && f.FriendId == friendId) ||
+                        (f.UserId == friendId && f.FriendId == userId));
         }
 
         public async Task<FriendViewModel> NewFriendViewModel(Friend friend)

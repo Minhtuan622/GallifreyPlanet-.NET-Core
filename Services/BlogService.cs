@@ -23,7 +23,7 @@ namespace GallifreyPlanet.Services
 
         public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
-            List<Blog>? blogs = _context.Blog
+            List<Blog> blogs = _context.Blog
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.Id)
                 .ToList();

@@ -1,3 +1,4 @@
+using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Blog;
 using GallifreyPlanet.ViewModels.Friend;
 
@@ -24,6 +25,7 @@ namespace GallifreyPlanet.ViewModels
         public RecentActivities RecentActivities { get; set; } = new RecentActivities();
         public List<BlogViewModel> RecentBlogs { get; set; } = new List<BlogViewModel>();
         public List<FriendViewModel>? Friends { get; set; }
+        public User? CurrentUser { get; set; }
     }
 
     public class RecentActivities

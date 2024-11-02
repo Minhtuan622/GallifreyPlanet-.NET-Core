@@ -1,12 +1,12 @@
 ﻿@model GallifreyPlanet.ViewModels.Account.LoginViewModel
 @using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> signInManager
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
 
-    var schemes = await signInManager.GetExternalAuthenticationSchemesAsync();
+    var schemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
     var loginProviders = schemes.ToList();
 }
 

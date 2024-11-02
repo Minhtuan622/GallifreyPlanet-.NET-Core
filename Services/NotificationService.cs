@@ -18,7 +18,7 @@ namespace GallifreyPlanet.Services
 
         public async Task CreateNotification(string user, string message)
         {
-            Notification? notification = new Notification
+            Notification notification = new Notification
             {
                 UserId = user,
                 Message = message,

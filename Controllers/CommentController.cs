@@ -53,9 +53,9 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                User? user = await GetAuthenticatedUserAsync();
+                User user = await GetAuthenticatedUserAsync();
 
-                List<CommentViewModel>? data = await _commentService.Get(CommentableType.blog, commentableId);
+                List<CommentViewModel> data = await _commentService.Get(CommentableType.Blog, commentableId);
                 return JsonResponse(success: true, data: data);
             }
             catch (Exception ex)
@@ -75,13 +75,13 @@ namespace GallifreyPlanet.Controllers
                     return contentValidation;
                 }
 
-                User? user = await GetAuthenticatedUserAsync();
+                User user = await GetAuthenticatedUserAsync();
 
-                Comment? comment = new Comment
+                Comment comment = new Comment
                 {
                     UserId = user.Id,
                     CommentableId = commentableId,
-                    CommentableType = CommentableType.blog,
+                    CommentableType = CommentableType.Blog,
                     Content = content.Trim(),
                     CreatedAt = DateTime.Now
                 };
@@ -114,7 +114,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                User? user = await GetAuthenticatedUserAsync();
+                User user = await GetAuthenticatedUserAsync();
                 if (user.Id != comment.UserId)
                 {
                     return JsonResponse(
@@ -148,7 +148,7 @@ namespace GallifreyPlanet.Controllers
                     return contentValidation;
                 }
 
-                User? user = await GetAuthenticatedUserAsync();
+                User user = await GetAuthenticatedUserAsync();
 
                 Comment? parentComment = _commentService.GetById(commentId);
                 if (parentComment == null)
@@ -159,10 +159,10 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                Comment? reply = new Comment
+                Comment reply = new Comment
                 {
                     ParentId = commentId,
-                    CommentableType = CommentableType.blog,
+                    CommentableType = CommentableType.Blog,
                     CommentableId = parentComment.CommentableId,
                     UserId = user.Id,
                     Content = content.Trim(),
@@ -194,7 +194,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                User? user = await GetAuthenticatedUserAsync();
+                User user = await GetAuthenticatedUserAsync();
                 if (user.Id != reply.UserId)
                 {
                     return JsonResponse(

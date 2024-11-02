@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> signInManager
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Trang chủ";
@@ -8,7 +8,7 @@
 }
 
 <div class="container py-4">
-    @if (signInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User))
     {
         <div class="row g-4">
             <!-- Left Sidebar -->

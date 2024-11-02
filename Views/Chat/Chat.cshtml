@@ -1,0 +1,60 @@
+﻿<!-- Chat Main Area -->
+<div class="col-md-8 col-lg-9 chat-main">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="user-info">
+            <div class="position-relative">
+                <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
+                <span class="status-dot bg-success"></span>
+            </div>
+            <div>
+                <h6 class="mb-0">John Doe</h6>
+                <small class="text-success">Trực tuyến</small>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn rounded-circle" title="Voice Call">
+                <i class="fas fa-phone"></i>
+            </button>
+            <button class="btn rounded-circle" title="Video Call">
+                <i class="fas fa-video"></i>
+            </button>
+            <button class="btn rounded-circle" title="More Options">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+        <div class="message message-received">
+            <div class="message-content">
+                Hi! How are you doing?
+            </div>
+            <span class="message-time">10:30 AM</span>
+        </div>
+
+        <div class="message message-sent">
+            <div class="message-content">
+                I'm doing great, thanks for asking! How about you?
+            </div>
+            <span class="message-time">10:32 AM</span>
+        </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input">
+        <div class="input-container">
+            <button class="btn" title="Attach File">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="message-input" placeholder="Viết tin nhắn...">
+            <button class="btn" title="Emoji">
+                <i class="fas fa-smile"></i>
+            </button>
+            <button class="btn btn-primary rounded-circle" id="send-message" title="Send Message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>

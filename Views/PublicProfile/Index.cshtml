@@ -88,9 +88,17 @@
 
                             @if (Model.AllowChat)
                             {
-                                <a asp-action="CreateConversation" class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
-                                    <i class="fa-solid fa-comment"></i>
-                                </a>
+                                <form 
+                                    asp-action="CreateConversation" 
+                                    asp-controller="Chat" 
+                                    asp-route-senderId="@Model.CurrentUser.Id" 
+                                    asp-route-receiverId="@Model.UserId" 
+                                    method="post"
+                                >
+                                    <button class="btn btn-outline-primary rounded-pill" title="Nhắn tin">
+                                        <i class="fa-solid fa-comment"></i>
+                                    </button>
+                                </form>
                             }
                         </div>
                     }
@@ -164,13 +172,16 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title mb-4">Danh sách bạn bè</h5>
-                        <a 
-                            asp-action ="Index"
-                            asp-controller="Friend" 
-                            class="text-primary text-decoration-none"
-                        >
-                            Xem tất cả
-                        </a>
+                        @if (Model.UserName == User.Identity.Name)
+                        {
+                            <a 
+                                asp-action ="Index"
+                                asp-controller="Friend" 
+                                class="text-primary text-decoration-none"
+                            >
+                                Xem tất cả
+                            </a>
+                        }
                     </div>
                     <div class="list-group">
                         @foreach(var user in Model.Friends)
@@ -235,11 +246,14 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title mb-4">Bài viết gần đây</h5>
-                        <a asp-action="Index"
-                           asp-controller="Blogs"
-                           class="text-primary text-decoration-none">
-                            Xem tất cả
-                        </a>
+                        @if (Model.UserName == User.Identity.Name)
+                        {
+                            <a asp-action="Index"
+                               asp-controller="Blogs"
+                               class="text-primary text-decoration-none">
+                                Xem tất cả
+                            </a>
+                        }
                     </div>
                     <div class="row row-cols-3 g-3">
                         @foreach (var blog in Model.RecentBlogs)

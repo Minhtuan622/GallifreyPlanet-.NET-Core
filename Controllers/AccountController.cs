@@ -73,7 +73,7 @@ namespace GallifreyPlanet.Controllers
                     }
                 }
 
-                SignInResult? result = await _signInManager.PasswordSignInAsync(
+                SignInResult result = await _signInManager.PasswordSignInAsync(
                     userNameOrEmail!,
                     user.Password!,
                     user.RememberMe,
@@ -123,7 +123,7 @@ namespace GallifreyPlanet.Controllers
                     return View(user);
                 }
 
-                User? newUser = new User
+                User newUser = new User
                 {
                     Name = user.Name,
                     UserName = user.UserName,
@@ -135,7 +135,7 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult? result = await _userManager.CreateAsync(newUser, user.Password!);
+                IdentityResult result = await _userManager.CreateAsync(newUser, user.Password!);
 
                 if (result.Succeeded)
                 {
@@ -170,7 +170,7 @@ namespace GallifreyPlanet.Controllers
                     return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
                 }
 
-                string? code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 string? callbackUrl = Url.Page(
                 pageName: "/Account/ResetPassword",
@@ -236,7 +236,7 @@ namespace GallifreyPlanet.Controllers
         public IActionResult ExternalLogin(string provider, string? returnurl = null)
         {
             string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", new { returnurl });
-            AuthenticationProperties? properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
 
@@ -257,7 +257,7 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            SignInResult? result = await _signInManager.ExternalLoginSignInAsync(
+            SignInResult result = await _signInManager.ExternalLoginSignInAsync(
                 info.LoginProvider,
                 info.ProviderKey,
                 isPersistent: false,
@@ -303,7 +303,7 @@ namespace GallifreyPlanet.Controllers
                     return NotFound();
                 }
 
-                User? user = new User
+                User user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email,
@@ -315,7 +315,7 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult? result = await _userManager.CreateAsync(user, model.Password!);
+                IdentityResult result = await _userManager.CreateAsync(user, model.Password!);
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);

@@ -18,6 +18,8 @@ namespace GallifreyPlanet.Data
         public DbSet<Friend> Friend { get; set; } = default!;
         public DbSet<Comment> Comment { get; set; } = default!;
         public DbSet<Notification> Notification { get; set; } = default!;
-        public DbSet<MessageViewModel> ChatMessage { get; set; } = default!;
+        public DbSet<Message> ChatMessage { get; set; } = default!;
+        public DbSet<Conversation> Conversation { get; set; } = default!;
+        public DbSet<Message> Message { get; set; } = default!;
     }
 }

@@ -15,7 +15,7 @@ namespace SignalRChat.Hubs
 
         public async Task SendMessage(string chatId, string senderId, string receiverId, string content)
         {
-            MessageViewModel? chatMessage = new MessageViewModel
+            Message chatMessage = new Message
             {
                 ChatId = int.Parse(chatId),
                 SenderId = senderId,
