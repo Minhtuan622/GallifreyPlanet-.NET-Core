@@ -5,8 +5,16 @@ using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-string context = builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
-                 ?? throw new InvalidOperationException(message: "Connection string 'GallifreyPlanetContext' not found.");
+
+string? connectionString = builder.Configuration.GetConnectionString("DEV_TESTContext");
+
+if (connectionString is null)
+{
+    builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext");
+}
+
+string? context = connectionString;
+
 builder.Services
     .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(context));
 builder.Services

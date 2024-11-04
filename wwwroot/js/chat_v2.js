@@ -1,28 +1,33 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
     const chatMessages = document.getElementById('messages-container');
-    
+
+    scrollToBottom();
+
+    document.getElementById("send-message").disabled = true;
+
     connection.start().then(() => {
+        document.getElementById("send-message").disabled = false;
         console.log("Connected to SignalR hub");
     }).catch(err => {
         console.error("SignalR connection error:", err.toString());
     });
 
-    connection.on("ReceiveMessage", (sender, message) => {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message-received mb-3';
-        messageElement.innerHTML = `
-            <div class="d-flex">
-                <div class="message-content bg-body rounded-3 p-3 shadow-sm">
-                    ${escapeHtml(message)}
-                </div>
+    connection.on("ReceiveMessage", (senderId, message) => {
+        if (document.getElementById('senderId').value !== senderId) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message message-received';
+            messageElement.innerHTML = `  
+            <div class="message-content">
+                ${escapeHtml(message)}
             </div>
-            <small class="text-muted ms-2">
+            <span class="message-time">
                 ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
-            </small>
+            </span>
         `;
-        chatMessages.appendChild(messageElement);
-        scrollToBottom();
+            chatMessages.appendChild(messageElement);
+            scrollToBottom();
+        }
     });
 
     function sendMessage() {
@@ -32,31 +37,27 @@
         if (!content) {
             return;
         }
-        
+
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-        
+
         connection
             .invoke(
                 "SendMessage",
-                document.getElementById('chatId'),
-                document.getElementById('senderId'),
+                document.getElementById('chatId').value,
+                document.getElementById('senderId').value,
                 content
             )
             .catch(err => {
                 console.error("Send message error:", err);
             });
-        
+
         const messageElement = document.createElement('div');
-        messageElement.className = 'message-sent mb-3';
+        messageElement.className = 'message message-sent';
         messageElement.innerHTML = `
-            <div class="d-flex justify-content-end">
-                <div class="message-content bg-primary text-white rounded-3 p-3 shadow-sm">
-                    ${escapeHtml(content)}
-                </div>
+            <div class="message-content">
+                ${escapeHtml(content)}
             </div>
-            <div class="text-end">
-                <small class="text-muted me-2">${time}</small>
-            </div>
+            <span class="message-time">${time}</span>
         `;
         chatMessages.appendChild(messageElement);
         contentInput.value = '';
