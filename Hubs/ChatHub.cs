@@ -7,48 +7,18 @@ namespace GallifreyPlanet.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly GallifreyPlanetContext _context;
         private readonly ChatService _chatService;
 
-        public ChatHub(GallifreyPlanetContext context, ChatService chatService)
+        public ChatHub(ChatService chatService)
         {
-            _context = context;
             _chatService = chatService;
         }
 
         public async Task SendMessage(string chatId, string senderId, string content)
         {
-            try 
+            var members = await _chatService.CheckPermission(int.Parse(chatId), senderId);
+            if (members is not null && await _chatService.SaveMessage(int.Parse(chatId), senderId, content))
             {
-                if (string.IsNullOrEmpty(chatId) || !int.TryParse(chatId, out int chatIdInt))
-                {
-                    throw new HubException("Invalid chatId");
-                }
-
-                if (string.IsNullOrEmpty(senderId))
-                {
-                    throw new HubException("SenderId is required");
-                }
-
-                Message chatMessage = new Message
-                {
-                    ChatId = chatIdInt,
-                    SenderId = senderId,
-                    Content = content,
-                    IsRead = false,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-
-                var members = await _chatService.GetMembers(chatIdInt);
-                if (!members.Any(m => m != null && m.Id == senderId))
-                {
-                    throw new HubException("User does not have access to this chat");
-                }
-
-                await _context.ChatMessage.AddAsync(chatMessage);
-                await _context.SaveChangesAsync();
-
                 foreach (var member in members)
                 {
                     if (member?.Id != null)
@@ -56,10 +26,6 @@ namespace GallifreyPlanet.Hubs
                         await Clients.User(member.Id).SendAsync("ReceiveMessage", senderId, content);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new HubException($"Error sending message: {ex.Message}");
             }
         }
 

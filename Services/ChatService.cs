@@ -47,6 +47,34 @@ namespace GallifreyPlanet.Services
             return true;
         }
 
+        public async Task<bool> SaveMessage(int chatId, string senderId, string content)
+        {
+            if (string.IsNullOrEmpty(senderId))
+            {
+                return false;
+            }
+
+            Message chatMessage = new Message
+            {
+                ChatId = chatId,
+                SenderId = senderId,
+                Content = content,
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _context.ChatMessage.AddAsync(chatMessage);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<User?>?> CheckPermission(int chatId, string senderId)
+        {
+            var members = await GetMembers(chatId);
+            return members.Any(m => m != null && m.Id == senderId) ? members : null;
+        }
+
         public Task<ConversationViewModel> GetConversationById(int conversationId)
         {
             var conversation = _context.Conversation.FirstOrDefault(c => c.Id == conversationId);
@@ -90,7 +118,7 @@ namespace GallifreyPlanet.Services
         public async Task<List<User?>> GetMembers(int chatId)
         {
             var conversation = _context.Conversation.FirstOrDefault(c => c.Id == chatId);
-            
+
             var members = conversation?.Members;
             var usersId = members!.Split(',');
             var usersList = new List<User?>();

@@ -6,18 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = builder.Configuration.GetConnectionString("DEV_TESTContext");
-
-if (connectionString is null)
-{
-    builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext");
-}
-
-string? context = connectionString;
-
 builder.Services
-    .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(context));
-builder.Services
+    .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(
+            /*builder.Configuration.GetConnectionString(name: "DEV_TESTContext")*/
+            builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
+        )
+    )
     .AddDefaultIdentity<User>(option => option.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<GallifreyPlanetContext>();
 

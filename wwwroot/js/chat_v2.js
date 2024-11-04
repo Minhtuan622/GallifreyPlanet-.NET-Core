@@ -14,10 +14,11 @@
     });
 
     connection.on("ReceiveMessage", (senderId, message) => {
-        if (document.getElementById('senderId').value !== senderId) {
-            const messageElement = document.createElement('div');
-            messageElement.className = 'message message-received';
-            messageElement.innerHTML = `  
+        const typeMessage = document.getElementById('senderId').value !== senderId ? 'message-received' : 'message-sent';
+        const messageElement = document.createElement('div');
+        
+        messageElement.className = `message ${typeMessage}`;
+        messageElement.innerHTML = `  
             <div class="message-content">
                 ${escapeHtml(message)}
             </div>
@@ -25,9 +26,8 @@
                 ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
             </span>
         `;
-            chatMessages.appendChild(messageElement);
-            scrollToBottom();
-        }
+        chatMessages.appendChild(messageElement);
+        scrollToBottom();
     });
 
     function sendMessage() {
@@ -37,8 +37,6 @@
         if (!content) {
             return;
         }
-
-        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
         connection
             .invoke(
@@ -51,15 +49,6 @@
                 console.error("Send message error:", err);
             });
 
-        const messageElement = document.createElement('div');
-        messageElement.className = 'message message-sent';
-        messageElement.innerHTML = `
-            <div class="message-content">
-                ${escapeHtml(content)}
-            </div>
-            <span class="message-time">${time}</span>
-        `;
-        chatMessages.appendChild(messageElement);
         contentInput.value = '';
         contentInput.focus();
         scrollToBottom();
