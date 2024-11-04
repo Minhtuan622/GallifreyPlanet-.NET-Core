@@ -1,6 +1,5 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
-using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.Chat;
 
 namespace GallifreyPlanet.Services
@@ -73,21 +72,6 @@ namespace GallifreyPlanet.Services
             return newConversations;
         }
 
-        public async Task<List<MessageViewModel>> GetMessagesByUserId(string userId)
-        {
-            var messages = _context.Message
-                .Where(m => (m.SenderId == userId || m.ReceiverId == userId))
-                .ToList();
-            var newMessagesViewModels = new List<MessageViewModel>();
-
-            foreach (Message message in messages)
-            {
-                newMessagesViewModels.Add(await NewMessageViewModel(message));
-            }
-
-            return newMessagesViewModels;
-        }
-
         public async Task<List<MessageViewModel>> GetMessagesByConversationId(int conversationId)
         {
             var messages = _context.Message
@@ -103,9 +87,12 @@ namespace GallifreyPlanet.Services
             return newMessagesViewModels;
         }
 
-        private async Task<List<User?>> GetListUsers(string members)
+        public async Task<List<User?>> GetMembers(int chatId)
         {
-            var usersId = members.Split(',');
+            var conversation = _context.Conversation.FirstOrDefault(c => c.Id == chatId);
+            
+            var members = conversation?.Members;
+            var usersId = members!.Split(',');
             var usersList = new List<User?>();
 
             foreach (string userId in usersId)
@@ -121,7 +108,7 @@ namespace GallifreyPlanet.Services
             return new ConversationViewModel
             {
                 Id = conversation.Id,
-                Members = await GetListUsers(conversation.Members!),
+                Members = await GetMembers(conversation.Id),
                 GroupName = conversation.GroupName,
                 IsGroup = conversation.IsGroup,
                 CreatedAt = conversation.CreatedAt,
@@ -134,7 +121,6 @@ namespace GallifreyPlanet.Services
             {
                 Conversation = await GetConversationById(message.ChatId),
                 Sender = await _userService.GetUserAsyncById(message.SenderId!),
-                Receiver = await _userService.GetUserAsyncById(message.ReceiverId!),
                 Content = message.Content,
                 IsRead = message.IsRead,
                 CreatedAt = message.CreatedAt,

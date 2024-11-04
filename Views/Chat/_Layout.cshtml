@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/chat.css">
 }
 
-<div class="chat-container shadow">
+<div class="chat-container rounded-3">
     <div class="row g-0 h-100">
         <!-- Sidebar -->
         <div class="col-md-4 col-lg-3 chat-sidebar">
@@ -59,6 +59,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script src="~/js/chat_v2.js"></script>
 }

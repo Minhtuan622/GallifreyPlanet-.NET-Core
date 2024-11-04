@@ -1,8 +1,9 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+const sendBtn = $("#sendButton");
 
-$("#sendButton").prop("disabled", true); 
+sendBtn.prop("disabled", true); 
 
 connection.on("ReceiveMessage", function (sender, message) {
     $("#messagesList").append($("<li>").text(`${sender} says: ${message}`));
@@ -14,7 +15,7 @@ connection.start().then(function () {
     console.error(err.toString());
 });
 
-$("#sendButton").on("click", function (event) {
+sendBtn.on("click", function (event) {
     connection.invoke(
         "SendMessage",
         $("#chatIdInput").val(),

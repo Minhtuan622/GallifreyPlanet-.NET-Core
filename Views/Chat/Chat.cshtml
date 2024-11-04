@@ -1,4 +1,7 @@
-﻿<!-- Chat Main Area -->
+﻿@using Humanizer
+@model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
+
+<!-- Chat Main Area -->
 <div class="col-md-8 col-lg-9 chat-main">
     <!-- Chat Header -->
     <div class="chat-header">
@@ -26,20 +29,31 @@
     </div>
 
     <!-- Messages Container -->
-    <div class="messages-container">
-        <div class="message message-received">
-            <div class="message-content">
-                Hi! How are you doing?
-            </div>
-            <span class="message-time">10:30 AM</span>
-        </div>
-
-        <div class="message message-sent">
-            <div class="message-content">
-                I'm doing great, thanks for asking! How about you?
-            </div>
-            <span class="message-time">10:32 AM</span>
-        </div>
+    <div class="messages-container" id="messages-container">
+        @if (Model.Messages is not null)
+        {
+            foreach (var message in Model.Messages)
+            {
+                @if (message.Sender!.UserName != User.Identity!.Name)
+                {
+                    <div class="message message-received">
+                        <div class="message-content">
+                            @message.Content
+                        </div>
+                        <span class="message-time">@message.CreatedAt.Humanize()</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="message message-sent">
+                        <div class="message-content">
+                            @message.Content
+                        </div>
+                        <span class="message-time">@message.CreatedAt.Humanize()</span>
+                    </div>
+                }
+            }
+        }
     </div>
 
     <!-- Chat Input -->
@@ -48,7 +62,9 @@
             <button class="btn" title="Attach File">
                 <i class="fas fa-paperclip"></i>
             </button>
-            <input type="text" id="message-input" placeholder="Viết tin nhắn...">
+            <input type="text" class="d-none" id="chatId" value="@Model.SelectedConversation!.Id">
+            <input type="text" class="d-none" id="senderId" value="@Model.User!.Id">
+            <input type="text" id="content" placeholder="Viết tin nhắn..." autocomplete="off">
             <button class="btn" title="Emoji">
                 <i class="fas fa-smile"></i>
             </button>
@@ -58,3 +74,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/chat_v2.js"></script>
+}

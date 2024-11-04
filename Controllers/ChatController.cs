@@ -28,15 +28,15 @@ public class ChatController : Controller
             return NotFound();
         }
 
-        var conversation = new ChatManagerViewModel
+        var conversations = new ChatManagerViewModel
         {
             Conversations = await _chatService.GetConversationsByUserId(user.Id),
         };
         
-        return View(conversation);
+        return View(conversations);
     }
 
-    [HttpGet]
+    [HttpGet("Chat/{conversationId:int}")]
     public async Task<IActionResult> Chat(int conversationId)
     {
         User? user = await _userService.GetCurrentUserAsync();
@@ -45,13 +45,15 @@ public class ChatController : Controller
             return NotFound();
         }
         
-        var conversation = new ChatManagerViewModel
+        var conversations = new ChatManagerViewModel
         {
+            User = user,
             Conversations = await _chatService.GetConversationsByUserId(user.Id),
+            SelectedConversation = await _chatService.GetConversationById(conversationId),
             Messages = await _chatService.GetMessagesByConversationId(conversationId),
         };
         
-        return View(conversation);
+        return View(conversations);
     }
 
     [HttpPost]
@@ -63,6 +65,7 @@ public class ChatController : Controller
             return NotFound();
         }
 
+        // todo: improve create logic 
         bool result = _chatService.CreateConversation(senderId, receiverId);
         if (!result)
         {

@@ -3,7 +3,6 @@ using GallifreyPlanet.Hubs;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
-using SignalRChat.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 string context = builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
