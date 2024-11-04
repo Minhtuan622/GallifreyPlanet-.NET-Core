@@ -1,18 +1,18 @@
 ﻿@model GallifreyPlanet.ViewModels.Account.LoginViewModel
 @using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> signInManager
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
 
-    var schemes = await signInManager.GetExternalAuthenticationSchemesAsync();
+    var schemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
     var loginProviders = schemes.ToList();
 }
 
 <section class="container mt-5">
     <div class="row justify-content-sm-center">
-        <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+        <div class="col-xl-5 col-lg-5 col-md-7 col-sm-9">
             <!-- Logo with subtle animation -->
             <div class="text-center mb-4">
                 <a asp-controller="Home" asp-action="Index" class="d-inline-block">
@@ -28,14 +28,15 @@
                     <!-- Social Login Buttons -->
                     <div class="mb-4">
                         <div class="d-flex justify-content-center gap-3">
-                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-danger">
+                            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                            <a href="#" class="social-btn btn btn-outline-danger">
                                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
                                      alt="Google" width="20" height="20">
                             </a>
-                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-primary">
+                            <a href="#" class="social-btn btn btn-outline-primary">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a asp-action="LoginWithGoogle" class="social-btn btn btn-outline-dark">
+                            <a href="#" class="social-btn btn btn-outline-dark">
                                 <i class="fab fa-github"></i>
                             </a>
                         </div>

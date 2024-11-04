@@ -17,7 +17,6 @@ namespace GallifreyPlanet.ViewModels.Account
         [StringLength(maximumLength: 100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và tối đa {1} ký tự.", MinimumLength = 6)]
         public string? Password { get; set; }
 
-
         [Display(Name = "Nhập lại mật khẩu", Prompt = "Mật khẩu xác nhận là bắt buộc")]
         [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không trùng khớp")]
         [Required(ErrorMessage = "Chưa xác nhận mật khẩu")]

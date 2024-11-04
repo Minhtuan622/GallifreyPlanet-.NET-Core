@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
+    string fullUrl = Context.Request.Host + Context.Request.Path + Model.User!.Id;
 }
 
 <div class="container">
@@ -242,16 +243,29 @@
                     <div class="card-body">
                         <h5 class="card-title mb-3">Chia sẻ bài viết</h5>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-primary rounded-circle" title="Facebook">
+                            <a 
+                                href="http://www.facebook.com/share.php?u= ' @fullUrl '" 
+                                class="btn btn-outline-primary rounded-circle" 
+                                title="Facebook"
+                                target="_blank" 
+                            >
                                 <i class="fab fa-facebook-f"></i>
-                            </button>
-                            <button class="btn btn-outline-info rounded-circle" title="Twitter">
+                            </a>
+                            <a 
+                                href='http://twitter.com/share?url=" @fullUrl + "&via=AddThis&text=" + title + "'
+                                class="btn btn-outline-info rounded-circle" 
+                                title="Twitter"
+                                target='_blank' 
+                            >
                                 <i class="fab fa-twitter"></i>
-                            </button>
-                            <button class="btn btn-outline-success rounded-circle" title="WhatsApp">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            <button class="btn btn-outline-secondary rounded-circle" title="Copy Link">
+                            </a>
+
+                            <input class="d-none" value="@fullUrl" id="blogLink" />
+                            <button 
+                                class="btn btn-outline-secondary rounded-circle" 
+                                title="Copy Link"
+                                onclick="copy()"
+                            >
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
@@ -268,4 +282,17 @@
 
 @section Scripts {
     <script src="~/js/comment.js"></script>
+
+    <script type="text/javascript">
+        function copy() {
+            var copyText = document.getElementById("blogLink");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+
+            navigator.clipboard.writeText(copyText.value);
+
+            alert("Copied the text: " + copyText.value);
+        }
+    </script>
 }

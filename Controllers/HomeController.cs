@@ -7,17 +7,14 @@ namespace GallifreyPlanet.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly NotificationService _notificationService;
         private readonly UserService _userService;
 
         public HomeController(
-            ILogger<HomeController> logger,
             NotificationService notificationService,
             UserService userService
         )
         {
-            _logger = logger;
             _notificationService = notificationService;
             _userService = userService;
         }

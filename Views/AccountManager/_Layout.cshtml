@@ -4,7 +4,7 @@
 }
 
 @section Styles {
-    @RenderSection("Styles", required: false)
+    @await RenderSectionAsync("Styles", required: false)
 }
 
 <h1>Quản lý tài khoản</h1>
@@ -20,7 +20,7 @@
 </div>
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

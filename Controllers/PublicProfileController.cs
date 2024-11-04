@@ -25,25 +25,28 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> Index(string? username)
         {
             User? currentUser = await _userService.GetCurrentUserAsync();
-            User? user = await _userService.GetUserAsyncByUserName(username!);
-            if (user is null || currentUser is null)
+            User? profileUser = await _userService.GetUserAsyncByUserName(username!);
+            if (profileUser is null || currentUser is null)
             {
                 return NotFound();
             }
 
-            PublicProfileViewModel? publicProfile = new PublicProfileViewModel
+            PublicProfileViewModel publicProfile = new PublicProfileViewModel
             {
-                UserId = user.Id,
-                UserName = user.UserName!,
-                Name = user.Name!,
-                Avatar = user.Avatar!,
-                Email = user.ShowEmail ? user.Email : null,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                RecentBlogs = await _blogService.GetBlogsByUserId(user.Id, count: 6),
-                Friends = await _friendService.GetFriends(user.Id),
-                IsFriend = _friendService.AreFriends(currentUser.Id, user.Id),
-                IsSendRequest = _friendService.Find(user.Id, currentUser!.Id) != null,
+                UserId = profileUser.Id,
+                UserName = profileUser.UserName!,
+                Name = profileUser.Name!,
+                Avatar = profileUser.Avatar!,
+                Email = profileUser.ShowEmail ? profileUser.Email : null,
+                Address = profileUser.Address,
+                PhoneNumber = profileUser.PhoneNumber,
+                RecentBlogs = await _blogService.GetBlogsByUserId(profileUser.Id, count: 6),
+                Friends = await _friendService.GetFriends(profileUser.Id),
+                IsFriend = _friendService.AreFriends(currentUser.Id, profileUser.Id),
+                IsSendRequest = _friendService.Find(profileUser.Id, currentUser!.Id) != null,
+                AllowChat = profileUser.AllowChat,
+                AllowAddFriend = profileUser.AllowAddFriend,
+                CurrentUser = currentUser,
 
                 // test
                 Website = "https://example.com",

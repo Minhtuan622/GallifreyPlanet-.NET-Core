@@ -7,7 +7,7 @@
 
 <div class="container py-5 px-0">
     <!-- Pending Friend Requests Section -->
-    <div class="card border-0 shadow-sm mb-5">
+    <div class="card border-0 mb-5">
         <div class="card-header py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
@@ -32,20 +32,38 @@
                         {
                             <div class="list-group-item">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <img 
-                                            src="@(friendRequest.Friend.Avatar ?? defaultAvatarPath)" 
-                                            class="rounded-circle" 
-                                            style="width: 48px; height: 48px;" 
-                                        />
-                                        <div class="ms-3">
-                                            <h6 class="mb-0">@friendRequest.Friend.Name</h6>
-                                            <small class="text-muted">
-                                                <i class="fa-solid fa-clock"></i>
-                                                @friendRequest.CreatedAt
-                                            </small>
+
+                                    @if (friendRequest.User.UserName == User.Identity!.Name)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <img src="@(friendRequest.Friend.Avatar ?? defaultAvatarPath)"
+                                                 class="rounded-circle"
+                                                 style="width: 48px; height: 48px;" />
+                                            <div class="ms-3">
+                                                <h6 class="mb-0">@friendRequest.Friend.Name</h6>
+                                                <small class="text-muted">
+                                                    <i class="fa-solid fa-clock"></i>
+                                                    @friendRequest.CreatedAt
+                                                </small>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
+
+                                    @if (friendRequest.Friend.UserName == User.Identity!.Name)
+                                    {
+                                        <div class="d-flex align-items-center">
+                                            <img src="@(friendRequest.User.Avatar ?? defaultAvatarPath)"
+                                                 class="rounded-circle"
+                                                 style="width: 48px; height: 48px;" />
+                                            <div class="ms-3">
+                                                <h6 class="mb-0">@friendRequest.User.Name</h6>
+                                                <small class="text-muted">
+                                                    <i class="fa-solid fa-clock"></i>
+                                                    @friendRequest.CreatedAt
+                                                </small>
+                                            </div>
+                                        </div>
+                                    }
 
                                     @if (friendRequest.Friend.UserName == User.Identity!.Name)
                                     {
@@ -117,61 +135,114 @@
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img 
-                                        src="@(item.Friend.Avatar ?? defaultAvatarPath)" 
-                                        class="rounded-circle" 
-                                        style="width: 48px; height: 48px;" 
-                                    />
-                                    <div class="ms-3">
-                                        <a class="text-decoration-none"
-                                           asp-action="Index"
-                                           asp-controller="PublicProfile"
-                                           asp-route-username="@item.Friend.UserName">
-                                            <h5 class="card-title mb-1">@item.Friend.Name</h5>
-                                            <p class="card-subtitle text-muted small">
-                                                @item.Friend.Email
-                                            </p>
-                                        </a>
-                                    </div>
-                                </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle w-100"
-                                            type="button"
-                                            data-bs-toggle="dropdown">
-                                        Actions
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item"
+                                @if (item.User.UserName == User.Identity!.Name)
+                                {
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="@(item.Friend.Avatar ?? defaultAvatarPath)"
+                                             class="rounded-circle"
+                                             style="width: 48px; height: 48px;" />
+                                        <div class="ms-3">
+                                            <a class="text-decoration-none"
                                                asp-action="Index"
                                                asp-controller="PublicProfile"
                                                asp-route-username="@item.Friend.UserName">
-                                                <i class="fa-regular fa-eye"></i>
-                                                View Profile
+                                                <h5 class="card-title mb-1">@item.Friend.Name</h5>
+                                                <p class="card-subtitle text-muted small">
+                                                    @item.Friend.Email
+                                                </p>
                                             </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form asp-action="Remove"
-                                                  asp-controller="Friend"
-                                                  asp-route-friendId="@item.Friend.Id"
-                                                  method="post">
-                                                <button 
-                                                    type="button" 
-                                                    class="dropdown-item text-danger" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmModal"
-                                                    onclick="confirmAction('Xóa bạn bè này?', this)"
-                                                >
-                                                    <i class="fa-regular fa-trash-can"></i>
-                                                    Remove Friend
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                                                type="button"
+                                                data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-action="Index"
+                                                   asp-controller="PublicProfile"
+                                                   asp-route-username="@item.Friend.UserName">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                    View Profile
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="Remove"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.Friend.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Xóa bạn bè này?', this)">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                        Remove Friend
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+
+                                @if (item.Friend.UserName == User.Identity!.Name)
+                                {
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="@(item.User.Avatar ?? defaultAvatarPath)"
+                                             class="rounded-circle"
+                                             style="width: 48px; height: 48px;" />
+                                        <div class="ms-3">
+                                            <a class="text-decoration-none"
+                                               asp-action="Index"
+                                               asp-controller="PublicProfile"
+                                               asp-route-username="@item.User.UserName">
+                                                <h5 class="card-title mb-1">@item.User.Name</h5>
+                                                <p class="card-subtitle text-muted small">
+                                                    @item.User.Email
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                                                type="button"
+                                                data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   asp-action="Index"
+                                                   asp-controller="PublicProfile"
+                                                   asp-route-username="@item.User.UserName">
+                                                    <i class="fa-regular fa-eye"></i>
+                                                    View Profile
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="Remove"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.User.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Xóa bạn bè này?', this)">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                        Remove Friend
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -196,69 +267,128 @@
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="card h-100 border-0 shadow-sm">
                             <div class="card-body">
-                                <div class="d-flex align-items-center mb-3">
-                                    <img 
-                                        src="@(item.Friend.Avatar ?? defaultAvatarPath)"
-                                        class="rounded-circle" 
-                                        style="width: 48px; height: 48px;" 
-                                    />
-                                    <div class="ms-3">
-                                        <a class="text-decoration-none"
-                                           asp-action="Index"
-                                           asp-controller="PublicProfile"
-                                           asp-route-username="@item.Friend.UserName">
-                                            <h5 class="card-title mb-1">@item.Friend.Name</h5>
-                                            <p class="card-subtitle text-muted small">
-                                                @item.Friend.Email
-                                            </p>
-                                        </a>
-                                    </div>
-                                </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle w-100"
-                                            type="button"
-                                            data-bs-toggle="dropdown">
-                                        Actions
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <form asp-action="UnBlocked"
-                                                  asp-controller="Friend"
-                                                  asp-route-friendId="@item.Friend.Id"
-                                                  method="post">
-                                                <button 
-                                                    type="button" 
-                                                    class="dropdown-item" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmModal"
-                                                    onclick="confirmAction('Bỏ chặn bạn bè này?', this)"
-                                                >
-                                                    <i class="fa-regular fa-eye"></i>
-                                                    Bỏ chặn
-                                                </button>
-                                            </form>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form asp-action="Remove"
-                                                  asp-controller="Friend"
-                                                  asp-route-friendId="@item.Friend.Id"
-                                                  method="post">
-                                                <button 
-                                                    type="button" 
-                                                    class="dropdown-item text-danger" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#confirmModal"
-                                                    onclick="confirmAction('Xóa bạn bè này?', this)"
-                                                >
-                                                    <i class="fa-regular fa-trash-can"></i>
-                                                    Remove Friend
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
+                                @if (item.User.UserName == User.Identity!.Name)
+                                {
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="@(item.Friend.Avatar ?? defaultAvatarPath)"
+                                             class="rounded-circle"
+                                             style="width: 48px; height: 48px;" />
+                                        <div class="ms-3">
+                                            <a class="text-decoration-none"
+                                               asp-action="Index"
+                                               asp-controller="PublicProfile"
+                                               asp-route-username="@item.Friend.UserName">
+                                                <h5 class="card-title mb-1">@item.Friend.Name</h5>
+                                                <p class="card-subtitle text-muted small">
+                                                    @item.Friend.Email
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                                                type="button"
+                                                data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form asp-action="UnBlocked"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.Friend.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Bỏ chặn bạn bè này?', this)">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                        Bỏ chặn
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="Remove"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.Friend.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Xóa bạn bè này?', this)">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                        Remove Friend
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+
+                                @if (item.Friend.UserName == User.Identity!.Name)
+                                {
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="@(item.User.Avatar ?? defaultAvatarPath)"
+                                             class="rounded-circle"
+                                             style="width: 48px; height: 48px;" />
+                                        <div class="ms-3">
+                                            <a class="text-decoration-none"
+                                               asp-action="Index"
+                                               asp-controller="PublicProfile"
+                                               asp-route-username="@item.User.UserName">
+                                                <h5 class="card-title mb-1">@item.User.Name</h5>
+                                                <p class="card-subtitle text-muted small">
+                                                    @item.User.Email
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100"
+                                                type="button"
+                                                data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form asp-action="UnBlocked"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.User.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Bỏ chặn bạn bè này?', this)">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                        Bỏ chặn
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="Remove"
+                                                      asp-controller="Friend"
+                                                      asp-route-friendId="@item.User.Id"
+                                                      method="post">
+                                                    <button type="button"
+                                                            class="dropdown-item text-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#confirmModal"
+                                                            onclick="confirmAction('Xóa bạn bè này?', this)">
+                                                        <i class="fa-regular fa-trash-can"></i>
+                                                        Remove Friend
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

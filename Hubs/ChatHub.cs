@@ -1,12 +1,33 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using GallifreyPlanet.Data;
+using GallifreyPlanet.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SignalRChat.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        private readonly GallifreyPlanetContext _context;
+
+        public ChatHub(GallifreyPlanetContext context)
         {
-            await Clients.All.SendAsync(method: "ReceiveMessage", user, message);
+            _context = context;
+        }
+
+        public async Task SendMessage(string chatId, string senderId, string receiverId, string content)
+        {
+            Message chatMessage = new Message
+            {
+                ChatId = int.Parse(chatId),
+                SenderId = senderId,
+                ReceiverId = receiverId,
+                Content = content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.ChatMessage.Add(chatMessage);
+            await _context.SaveChangesAsync();
+
+            await Clients.User(receiverId).SendAsync(method: "ReceiveMessage", senderId, content);
         }
 
         public async Task SendMessageToCaller(string user, string message)

@@ -29,7 +29,7 @@ namespace GallifreyPlanet.Controllers
             }
 
             string userId = user.Id;
-            FriendManagerViewModel? friends = new FriendManagerViewModel
+            FriendManagerViewModel friends = new FriendManagerViewModel
             {
                 Friends = await _friendService.GetFriends(userId),
                 FriendRequests = await _friendService.GetFriendRequests(userId),

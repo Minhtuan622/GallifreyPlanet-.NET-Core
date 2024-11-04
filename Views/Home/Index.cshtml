@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity;
-@inject SignInManager<User> signInManager
+@inject SignInManager<User> SignInManager
 
 @{
     ViewData["Title"] = "Trang chủ";
@@ -8,12 +8,12 @@
 }
 
 <div class="container py-4">
-    @if (signInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User))
     {
         <div class="row g-4">
             <!-- Left Sidebar -->
             <div class="col-lg-3">
-                <div class="card shadow-sm rounded-3 border-0">
+                <div class="card rounded-3 border-0">
                     <div class="card-body">
                         <div class="text-center mb-4">
                             <img src="@(Model.Avatar ?? defaultAvatarPath)" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Avatar">
@@ -46,7 +46,7 @@
             <!-- Main Content -->
             <div class="col-lg-6">
                 <!-- Featured Blogs -->
-                <div class="card shadow-sm rounded-3 border-0 mb-4">
+                <div class="card rounded-3 border-0 mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="fw-bold m-0">Bài viết nổi bật</h5>
@@ -83,7 +83,7 @@
                 </div>
 
                 <!-- Latest Blogs -->
-                <div class="card shadow-sm rounded-3 border-0">
+                <div class="card rounded-3 border-0">
                     <div class="card-body">
                         <h5 class="fw-bold mb-4">Bài viết mới nhất</h5>
 
@@ -125,7 +125,7 @@
             <!-- Right Sidebar -->
             <div class="col-lg-3">
                 <!-- Popular Authors -->
-                <div class="card shadow-sm rounded-3 border-0 mb-4">
+                <div class="card rounded-3 border-0 mb-4">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3">Tác giả nổi bật</h6>
                         @*@foreach (var author in Model.PopularAuthors)
@@ -143,7 +143,7 @@
                 </div>
 
                 <!-- Popular Tags -->
-                <div class="card shadow-sm rounded-3 border-0">
+                <div class="card rounded-3 border-0">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3">Chủ đề phổ biến</h6>
                         <div class="d-flex flex-wrap gap-2">

@@ -2,7 +2,7 @@
 
 @if (!String.IsNullOrEmpty(Model))
 {
-    string? statusMessageClass = Model.StartsWith(value: "Error") ? "danger" : "success";
+    string statusMessageClass = Model.StartsWith(value: "Error") ? "danger" : "success";
     <div class="alert alert-@statusMessageClass alert-dismissible border-0" role="alert">
         @Model
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

@@ -5,9 +5,9 @@ using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 using SignalRChat.Hubs;
 
-WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
-string? context = builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
-            ?? throw new InvalidOperationException(message: "Connection string 'GallifreyPlanetContext' not found.");
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+string context = builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
+                 ?? throw new InvalidOperationException(message: "Connection string 'GallifreyPlanetContext' not found.");
 builder.Services
     .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(context));
 builder.Services
@@ -23,18 +23,25 @@ builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<FriendService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ChatService>();
 
 builder.Services.AddSignalR();
 
 builder.Services.AddSession();
 
-builder.Services.AddAuthentication().AddFacebook(opt =>
-{
-    opt.ClientId = "911162867155408";
-    opt.ClientSecret = "e9538254f42266455dc018eca2f5dd0d";
-});
+builder.Services.AddAuthentication()
+    .AddFacebook(opt =>
+    {
+        opt.ClientId = builder.Configuration[key: "Authentication:Facebook:ClientId"]!;
+        opt.ClientSecret = builder.Configuration[key: "Authentication:Facebook:ClientSecret"]!;
+    })
+    .AddGoogle(opt =>
+    {
+        opt.ClientId = builder.Configuration[key: "Authentication:Google:ClientId"]!;
+        opt.ClientSecret = builder.Configuration[key: "Authentication:Google:ClientSecret"]!;
+    });
 
-WebApplication? app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

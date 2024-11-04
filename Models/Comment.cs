@@ -16,6 +16,6 @@ namespace GallifreyPlanet.Models
 
     public enum CommentableType
     {
-        blog,
+        Blog,
     }
 }

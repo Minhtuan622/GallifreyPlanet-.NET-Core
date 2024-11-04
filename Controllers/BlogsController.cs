@@ -39,7 +39,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            List<BlogViewModel>? blog = await _blogService.GetBlogsByUserId(user.Id);
+            List<BlogViewModel> blog = await _blogService.GetBlogsByUserId(user.Id);
             return View(blog);
         }
 
@@ -63,7 +63,7 @@ namespace GallifreyPlanet.Controllers
             {
                 User = user,
                 BlogViewModel = _blogService.NewBlogViewModel(blog),
-                Comments = await _commentService.Get(CommentableType.blog, id)
+                Comments = await _commentService.Get(CommentableType.Blog, id)
             };
 
             return View(viewModel);
@@ -83,7 +83,7 @@ namespace GallifreyPlanet.Controllers
             if (ModelState.IsValid)
             {
                 User? user = await _userService.GetCurrentUserAsync();
-                Blog? blog = new Blog
+                Blog blog = new Blog
                 {
                     UserId = user!.Id,
                     Title = viewModel.Title,
@@ -95,7 +95,7 @@ namespace GallifreyPlanet.Controllers
 
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                 {
-                    string? file = await _fileService.UploadFileAsync(
+                    string file = await _fileService.UploadFileAsync(
                         viewModel.ThumbnailFile,
                         folder: "/blogs",
                         viewModel.CurrentThumbnailPath!
@@ -159,7 +159,7 @@ namespace GallifreyPlanet.Controllers
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
-                        string? file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
+                        string file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
                         blog.ThumbnailPath = file;
                     }
 
@@ -199,7 +199,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            BlogManagerViewModel? blogViewModel = new BlogManagerViewModel
+            BlogManagerViewModel blogViewModel = new BlogManagerViewModel
             {
                 User = await _userService.GetCurrentUserAsync(),
                 BlogViewModel = _blogService.NewBlogViewModel(blog),

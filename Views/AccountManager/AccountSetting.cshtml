@@ -9,7 +9,7 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card border-0 rounded-4 overflow-hidden">
                 <div class="card-body p-0">
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -24,32 +24,32 @@
                             <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.UserName" class="form-label">Tên người dùng</label>
-                                    <input asp-for="EditProfile!.UserName" class="form-control" required readonly />
+                                    <label asp-for="EditProfile!.UserName" class="form-label"></label>
+                                    <input asp-for="EditProfile!.UserName" class="form-control" required disabled />
                                     <span asp-validation-for="EditProfile!.UserName" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.Name" class="form-label">Họ và tên</label>
+                                    <label asp-for="EditProfile!.Name" class="form-label"></label>
                                     <input asp-for="EditProfile!.Name" class="form-control" required />
                                     <span asp-validation-for="EditProfile!.Name" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.Email" class="form-label">Email</label>
+                                    <label asp-for="EditProfile!.Email" class="form-label"></label>
                                     <input asp-for="EditProfile!.Email" class="form-control" required />
                                     <span asp-validation-for="EditProfile!.Email" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.PhoneNumber" class="form-label">Số điện thoại</label>
+                                    <label asp-for="EditProfile!.PhoneNumber" class="form-label"></label>
                                     <input asp-for="EditProfile!.PhoneNumber" class="form-control" />
                                     <span asp-validation-for="EditProfile!.PhoneNumber" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.Address" class="form-label">Địa chỉ</label>
+                                    <label asp-for="EditProfile!.Address" class="form-label"></label>
                                     <input asp-for="EditProfile!.Address" class="form-control" />
                                     <span asp-validation-for="EditProfile!.Address" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="EditProfile!.AvatarFile" class="form-label">Ảnh đại diện</label>
+                                    <label asp-for="EditProfile!.AvatarFile" class="form-label"></label>
                                     <input asp-for="EditProfile!.AvatarFile" type="file" class="form-control" id="avatarInput" accept="image/*" />
                                     <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
                                     <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
@@ -70,17 +70,17 @@
                             <form asp-action="ChangePassword" method="post">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="mb-3">
-                                    <label asp-for="ChangePassword!.CurrentPassword" class="form-label">Mật khẩu hiện tại</label>
+                                    <label asp-for="ChangePassword!.CurrentPassword" class="form-label"></label>
                                     <input asp-for="ChangePassword!.CurrentPassword" class="form-control" required />
                                     <span asp-validation-for="ChangePassword!.CurrentPassword" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="ChangePassword!.NewPassword" class="form-label">Mật khẩu mới</label>
+                                    <label asp-for="ChangePassword!.NewPassword" class="form-label"></label>
                                     <input asp-for="ChangePassword!.NewPassword" class="form-control" required />
                                     <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
-                                    <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                                    <label asp-for="ChangePassword!.ConfirmNewPassword" class="form-label"></label>
                                     <input asp-for="ChangePassword!.ConfirmNewPassword" class="form-control" required />
                                     <span asp-validation-for="ChangePassword!.ConfirmNewPassword" class="text-danger"></span>
                                 </div>
@@ -94,11 +94,15 @@
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="mb-3 form-check">
                                     <input asp-for="PrivacySettings!.ShowEmail" type="checkbox" class="form-check-input" />
-                                    <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label">Hiển thị email công khai</label>
+                                    <label asp-for="PrivacySettings!.ShowEmail" class="form-check-label"></label>
                                 </div>
                                 <div class="mb-3 form-check">
                                     <input asp-for="PrivacySettings!.AllowMessagesFromNonFriends" type="checkbox" class="form-check-input" />
-                                    <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label">Cho phép nhận tin nhắn từ người lạ</label>
+                                    <label asp-for="PrivacySettings!.AllowMessagesFromNonFriends" class="form-check-label"></label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input asp-for="PrivacySettings!.AllowAddFriend" type="checkbox" class="form-check-input" />
+                                    <label asp-for="PrivacySettings!.AllowAddFriend" class="form-check-label"></label>
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
@@ -110,11 +114,11 @@
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="mb-3 form-check">
                                     <input asp-for="NotificationSettings!.EmailNotifications" type="checkbox" class="form-check-input" />
-                                    <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label">Nhận thông báo qua email</label>
+                                    <label asp-for="NotificationSettings!.EmailNotifications" class="form-check-label"></label>
                                 </div>
                                 <div class="mb-3 form-check">
                                     <input asp-for="NotificationSettings!.PushNotifications" type="checkbox" class="form-check-input" />
-                                    <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label">Nhận thông báo đẩy</label>
+                                    <label asp-for="NotificationSettings!.PushNotifications" class="form-check-label"></label>
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
@@ -126,7 +130,7 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card border-0 rounded-4 overflow-hidden mb-4">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Liên kết tài khoản mạng xã hội</h5>
                     <div class="d-grid gap-2">
@@ -158,7 +162,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card border-0 rounded-4 overflow-hidden">
                 <div class="card-body p-4">
                     <h5 class="card-title text-danger mb-4">Xóa tài khoản</h5>
                     <p class="text-muted">Cảnh báo: Hành động này không thể hoàn tác.</p>

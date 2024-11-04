@@ -9,19 +9,16 @@ namespace GallifreyPlanet.Services
     public class UserService
     {
         private readonly UserManager<User> _userManager;
-        private readonly BlogService _blogService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly GallifreyPlanetContext _context;
 
         public UserService(
             UserManager<User> userManager,
-            BlogService blogService,
             IHttpContextAccessor httpContextAccessor,
             GallifreyPlanetContext context
         )
         {
             _userManager = userManager;
-            _blogService = blogService;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
         }
@@ -81,7 +78,8 @@ namespace GallifreyPlanet.Services
         public async Task<IdentityResult> UpdatePrivacySettingsAsync(User user, PrivacySettingsViewModel model)
         {
             user.ShowEmail = model.ShowEmail;
-            user.AllowMessagesFromNonFriends = model.AllowMessagesFromNonFriends;
+            user.AllowChat = model.AllowMessagesFromNonFriends;
+            user.AllowAddFriend = model.AllowAddFriend;
             return await _userManager.UpdateAsync(user);
         }
 
@@ -126,7 +124,7 @@ namespace GallifreyPlanet.Services
 
         public async Task AddLoginHistoryAsync(string userId, string ipAddress, string userAgent)
         {
-            LoginHistory? loginHistory = new LoginHistory
+            LoginHistory loginHistory = new LoginHistory
             {
                 UserId = userId,
                 LoginTime = DateTime.UtcNow,
