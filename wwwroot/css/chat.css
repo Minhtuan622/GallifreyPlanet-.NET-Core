@@ -102,7 +102,7 @@
 }
 
 .message-received .message-content {
-    background-color: var(--bs-light);
+    background-color: var(--bs-tertiary-bg);
     border-bottom-left-radius: 0.25rem;
 }
 
@@ -121,7 +121,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
-    background-color: var(--bs-light);
+    background-color: var(--bs-tertiary-bg);
     border-radius: 2rem;
 }
 
