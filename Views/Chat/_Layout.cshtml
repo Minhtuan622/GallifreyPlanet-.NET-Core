@@ -37,7 +37,7 @@
                         {
                             @foreach (var member in members)
                             {
-                                @if (member!.Id != Model.User!.Id)
+                                @if (member != null && Model.User != null && member.Id != Model.User.Id)
                                 {
                                     <a asp-action="Chat" asp-route-conversationId="@conversation.Id" class="text-decoration-none">
                                         <div class="conversation-item hover-bg">

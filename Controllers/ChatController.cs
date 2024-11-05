@@ -30,6 +30,7 @@ public class ChatController : Controller
 
         var conversations = new ChatManagerViewModel
         {
+            User = user,
             Conversations = await _chatService.GetConversationsByUserId(user.Id),
         };
         

@@ -115,7 +115,7 @@ namespace GallifreyPlanet.Services
             return newMessagesViewModels;
         }
 
-        public async Task<List<User?>> GetMembers(int chatId)
+        private async Task<List<User?>> GetMembers(int chatId)
         {
             var conversation = _context.Conversation.FirstOrDefault(c => c.Id == chatId);
 
