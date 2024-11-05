@@ -1,5 +1,4 @@
-﻿using GallifreyPlanet.Models;
-using GallifreyPlanet.Services;
+﻿using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.AccountManager;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
