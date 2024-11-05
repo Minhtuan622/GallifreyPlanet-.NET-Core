@@ -12,7 +12,7 @@ namespace GallifreyPlanet.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
 
             return View(model: user);
         }

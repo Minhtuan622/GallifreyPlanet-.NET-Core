@@ -16,7 +16,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            Friend friend = new Friend
+            var friend = new Friend
             {
                 UserId = userId,
                 FriendId = friendId,
@@ -38,7 +38,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            Friend? friend = Find(userId: userId, friendId: friendId);
+            var friend = Find(userId: userId, friendId: friendId);
 
             if (friend is not null)
             {
@@ -58,7 +58,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            Friend? friend = Find(userId: userId, friendId: friendId);
+            var friend = Find(userId: userId, friendId: friendId);
 
             if (friend is not null)
             {
@@ -78,7 +78,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            Friend? friend = Find(userId: userId, friendId: friendId);
+            var friend = Find(userId: userId, friendId: friendId);
 
             if (friend is not null)
             {
@@ -95,7 +95,7 @@ namespace GallifreyPlanet.Services
         {
             if (AreFriends(userId: userId, friendId: friendId))
             {
-                Friend? friend = Find(userId: userId, friendId: friendId);
+                var friend = Find(userId: userId, friendId: friendId);
 
                 if (friend is not null)
                 {
@@ -113,7 +113,7 @@ namespace GallifreyPlanet.Services
         {
             if (AreFriends(userId: userId, friendId: friendId))
             {
-                Friend? friend = Find(userId: userId, friendId: friendId);
+                var friend = Find(userId: userId, friendId: friendId);
 
                 if (friend is not null)
                 {
@@ -131,7 +131,7 @@ namespace GallifreyPlanet.Services
         {
             if (AreFriends(userId: userId, friendId: friendId))
             {
-                Friend? friend = Find(userId: userId, friendId: friendId);
+                var friend = Find(userId: userId, friendId: friendId);
 
                 if (friend is not null)
                 {
@@ -152,7 +152,7 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
 
             List<FriendViewModel> result = new List<FriendViewModel>();
-            foreach (Friend friend in friends)
+            foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
             }
@@ -166,7 +166,7 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
 
             List<FriendViewModel> result = new List<FriendViewModel>();
-            foreach (Friend friend in friends)
+            foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
             }
@@ -180,7 +180,7 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
 
             List<FriendViewModel> result = new List<FriendViewModel>();
-            foreach (Friend friend in friends)
+            foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
             }
@@ -189,7 +189,7 @@ namespace GallifreyPlanet.Services
 
         public bool AreFriends(string userId, string friendId)
         {
-            Friend? friend = Find(userId: userId, friendId: friendId);
+            var friend = Find(userId: userId, friendId: friendId);
 
             if (friend is not null && friend.Status != 0)
             {

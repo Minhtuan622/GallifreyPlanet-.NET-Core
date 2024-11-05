@@ -13,14 +13,14 @@ namespace GallifreyPlanet.Controllers
     {
         public async Task<IActionResult> Index(string? username)
         {
-            User? currentUser = await userService.GetCurrentUserAsync();
-            User? profileUser = await userService.GetUserAsyncByUserName(username: username!);
+            var currentUser = await userService.GetCurrentUserAsync();
+            var profileUser = await userService.GetUserAsyncByUserName(username: username!);
             if (profileUser is null || currentUser is null)
             {
                 return NotFound();
             }
 
-            PublicProfileViewModel publicProfile = new PublicProfileViewModel
+            var publicProfile = new PublicProfileViewModel
             {
                 UserId = profileUser.Id,
                 UserName = profileUser.UserName!,

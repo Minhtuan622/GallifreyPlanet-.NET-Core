@@ -4,7 +4,7 @@ using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args: args);
+var builder = WebApplication.CreateBuilder(args: args);
 
 builder.Services
     .AddDbContext<GallifreyPlanetContext>(optionsAction: options => options.UseSqlServer(
@@ -42,7 +42,7 @@ builder.Services.AddAuthentication()
         opt.ClientSecret = builder.Configuration[key: "Authentication:Google:ClientSecret"]!;
     });
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

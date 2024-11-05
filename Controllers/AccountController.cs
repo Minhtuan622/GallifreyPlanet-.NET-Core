@@ -33,7 +33,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                MailAddress m = new MailAddress(address: emailaddress);
+                var m = new MailAddress(address: emailaddress);
                 return true;
             }
             catch (FormatException)
@@ -47,18 +47,18 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                string? userNameOrEmail = user.UsernameOrEmail;
+                var userNameOrEmail = user.UsernameOrEmail;
 
                 if (IsValidEmail(emailaddress: user.UsernameOrEmail!))
                 {
-                    User? getUser = await userManager.FindByEmailAsync(email: user.UsernameOrEmail!);
+                    var getUser = await userManager.FindByEmailAsync(email: user.UsernameOrEmail!);
                     if (getUser != null)
                     {
                         userNameOrEmail = getUser.UserName;
                     }
                 }
 
-                SignInResult result = await signInManager.PasswordSignInAsync(
+                var result = await signInManager.PasswordSignInAsync(
                     userName: userNameOrEmail!,
                     password: user.Password!,
                     isPersistent: user.RememberMe,
@@ -73,7 +73,7 @@ namespace GallifreyPlanet.Controllers
 
                 if (result.Succeeded)
                 {
-                    User? currentUser = await userService.GetCurrentUserAsync();
+                    var currentUser = await userService.GetCurrentUserAsync();
                     await userService.AddLoginHistoryAsync(
                         userId: currentUser!.Id,
                         ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString()!,
@@ -100,7 +100,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? existingUser = context.Users.FirstOrDefault(predicate: u => u.Email == user.Email);
+                var existingUser = context.Users.FirstOrDefault(predicate: u => u.Email == user.Email);
 
                 if (existingUser != null)
                 {
@@ -108,7 +108,7 @@ namespace GallifreyPlanet.Controllers
                     return View(model: user);
                 }
 
-                User newUser = new User
+                var newUser = new User
                 {
                     Name = user.Name,
                     UserName = user.UserName,
@@ -120,7 +120,7 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await userManager.CreateAsync(user: newUser, password: user.Password!);
+                var result = await userManager.CreateAsync(user: newUser, password: user.Password!);
 
                 if (result.Succeeded)
                 {
@@ -129,7 +129,7 @@ namespace GallifreyPlanet.Controllers
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
 
-                foreach (IdentityError error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(key: "", errorMessage: error.Description);
                 }
@@ -149,15 +149,15 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? user = await userManager.FindByEmailAsync(email: viewModel.Email!);
+                var user = await userManager.FindByEmailAsync(email: viewModel.Email!);
                 if (user == null || !(await userManager.IsEmailConfirmedAsync(user: user)))
                 {
                     return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
                 }
 
-                string code = await userManager.GeneratePasswordResetTokenAsync(user: user);
+                var code = await userManager.GeneratePasswordResetTokenAsync(user: user);
                 code = WebEncoders.Base64UrlEncode(input: Encoding.UTF8.GetBytes(s: code));
-                string? callbackUrl = Url.Page(
+                var callbackUrl = Url.Page(
                 pageName: "/Account/ResetPassword",
                     pageHandler: null,
                     values: new { area = "Identity", code },
@@ -204,7 +204,7 @@ namespace GallifreyPlanet.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string? returnUrl = null)
         {
-            User? user = await signInManager.GetTwoFactorAuthenticationUserAsync();
+            var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
                 return View(viewName: "Error");
@@ -220,8 +220,8 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string? returnurl = null)
         {
-            string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", values: new { returnurl });
-            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider: provider, redirectUrl: redirectUrl);
+            var redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", values: new { returnurl });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider: provider, redirectUrl: redirectUrl);
             return Challenge(properties: properties, authenticationSchemes: provider);
         }
 
@@ -236,13 +236,13 @@ namespace GallifreyPlanet.Controllers
                 return View(viewName: nameof(Login));
             }
 
-            ExternalLoginInfo? info = await signInManager.GetExternalLoginInfoAsync();
+            var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 return RedirectToAction(actionName: nameof(Login));
             }
 
-            SignInResult result = await signInManager.ExternalLoginSignInAsync(
+            var result = await signInManager.ExternalLoginSignInAsync(
                 loginProvider: info.LoginProvider,
                 providerKey: info.ProviderKey,
                 isPersistent: false,
@@ -282,13 +282,13 @@ namespace GallifreyPlanet.Controllers
 
             if (ModelState.IsValid)
             {
-                ExternalLoginInfo? info = await signInManager.GetExternalLoginInfoAsync();
+                var info = await signInManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
                     return NotFound();
                 }
 
-                User user = new User
+                var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email,
@@ -300,7 +300,7 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await userManager.CreateAsync(user: user, password: model.Password!);
+                var result = await userManager.CreateAsync(user: user, password: model.Password!);
                 if (result.Succeeded)
                 {
                     result = await userManager.AddLoginAsync(user: user, login: info);
@@ -326,7 +326,7 @@ namespace GallifreyPlanet.Controllers
 
         private void AddErrors(IdentityResult result)
         {
-            foreach (IdentityError error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
             }

@@ -45,7 +45,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            Message chatMessage = new Message
+            var chatMessage = new Message
             {
                 ChatId = chatId,
                 SenderId = senderId,
@@ -92,7 +92,7 @@ namespace GallifreyPlanet.Services
                 .ToList();
             var newConversations = new List<ConversationViewModel>();
 
-            foreach (Conversation conversation in conversations)
+            foreach (var conversation in conversations)
             {
                 newConversations.Add(item: await NewConversationViewModel(conversation: conversation));
             }
@@ -107,7 +107,7 @@ namespace GallifreyPlanet.Services
                 .ToList();
             var newMessagesViewModels = new List<MessageViewModel>();
 
-            foreach (Message message in messages)
+            foreach (var message in messages)
             {
                 newMessagesViewModels.Add(item: await NewMessageViewModel(message: message));
             }
@@ -129,7 +129,7 @@ namespace GallifreyPlanet.Services
             var usersId = members!.Split(separator: ',');
             var usersList = new List<User?>();
 
-            foreach (string userId in usersId)
+            foreach (var userId in usersId)
             {
                 usersList.Add(item: await userService.GetUserAsyncById(userId: userId));
             }

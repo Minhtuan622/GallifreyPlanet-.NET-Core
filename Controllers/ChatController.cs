@@ -13,7 +13,7 @@ public class ChatController(
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        User? user = await userService.GetCurrentUserAsync();
+        var user = await userService.GetCurrentUserAsync();
         if (user is null)
         {
             return NotFound();
@@ -31,7 +31,7 @@ public class ChatController(
     [HttpGet(template: "Chat/{conversationId:int}")]
     public async Task<IActionResult> Chat(int conversationId)
     {
-        User? user = await userService.GetCurrentUserAsync();
+        var user = await userService.GetCurrentUserAsync();
         if (user is null)
         {
             return NotFound();
@@ -51,14 +51,14 @@ public class ChatController(
     [HttpPost]
     public async Task<IActionResult> CreateConversation(string senderId, string receiverId)
     {
-        User? user = await userService.GetCurrentUserAsync();
+        var user = await userService.GetCurrentUserAsync();
         if (user is null)
         {
             return NotFound();
         }
 
         // todo: improve create logic 
-        bool result = chatService.CreateConversation(senderId: senderId, receiverId: receiverId);
+        var result = chatService.CreateConversation(senderId: senderId, receiverId: receiverId);
         if (!result)
         {
             return NotFound(value: "Could not create conversation, the conversation already exists.");

@@ -9,7 +9,7 @@ namespace GallifreyPlanet.Services
     {
         public async Task CreateNotification(string user, string message)
         {
-            Notification notification = new Notification
+            var notification = new Notification
             {
                 UserId = user,
                 Message = message,
@@ -33,7 +33,7 @@ namespace GallifreyPlanet.Services
 
         public async Task MarkAsRead(int notificationId)
         {
-            Notification? notification = await context.Notification.FindAsync(keyValues: notificationId);
+            var notification = await context.Notification.FindAsync(keyValues: notificationId);
             if (notification != null)
             {
                 notification.IsRead = true;

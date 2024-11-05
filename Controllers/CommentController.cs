@@ -19,7 +19,7 @@ namespace GallifreyPlanet.Controllers
 
         private async Task<User> GetAuthenticatedUserAsync()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 JsonResponse(
@@ -42,7 +42,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                User user = await GetAuthenticatedUserAsync();
+                var user = await GetAuthenticatedUserAsync();
 
                 List<CommentViewModel> data = await commentService.Get(commentableType: CommentableType.Blog, commentableId: commentableId);
                 return JsonResponse(success: true, data: data);
@@ -58,15 +58,15 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                JsonResult? contentValidation = ValidateContent(content: content);
+                var contentValidation = ValidateContent(content: content);
                 if (contentValidation != null)
                 {
                     return contentValidation;
                 }
 
-                User user = await GetAuthenticatedUserAsync();
+                var user = await GetAuthenticatedUserAsync();
 
-                Comment comment = new Comment
+                var comment = new Comment
                 {
                     UserId = user.Id,
                     CommentableId = commentableId,
@@ -94,7 +94,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? comment = commentService.GetById(id: id);
+                var comment = commentService.GetById(id: id);
                 if (comment == null)
                 {
                     return JsonResponse(
@@ -103,7 +103,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                User user = await GetAuthenticatedUserAsync();
+                var user = await GetAuthenticatedUserAsync();
                 if (user.Id != comment.UserId)
                 {
                     return JsonResponse(
@@ -112,7 +112,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                bool deleteSuccess = commentService.DeleteCommentChildren(comment: comment);
+                var deleteSuccess = commentService.DeleteCommentChildren(comment: comment);
 
                 TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(
@@ -131,15 +131,15 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                JsonResult? contentValidation = ValidateContent(content: content);
+                var contentValidation = ValidateContent(content: content);
                 if (contentValidation != null)
                 {
                     return contentValidation;
                 }
 
-                User user = await GetAuthenticatedUserAsync();
+                var user = await GetAuthenticatedUserAsync();
 
-                Comment? parentComment = commentService.GetById(id: commentId);
+                var parentComment = commentService.GetById(id: commentId);
                 if (parentComment == null)
                 {
                     return JsonResponse(
@@ -148,7 +148,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                Comment reply = new Comment
+                var reply = new Comment
                 {
                     ParentId = commentId,
                     CommentableType = CommentableType.Blog,
@@ -174,7 +174,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? reply = commentService.GetById(id: id);
+                var reply = commentService.GetById(id: id);
                 if (reply == null)
                 {
                     return JsonResponse(
@@ -183,7 +183,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                User user = await GetAuthenticatedUserAsync();
+                var user = await GetAuthenticatedUserAsync();
                 if (user.Id != reply.UserId)
                 {
                     return JsonResponse(

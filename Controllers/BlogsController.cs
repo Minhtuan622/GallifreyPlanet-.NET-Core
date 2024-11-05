@@ -18,7 +18,7 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user is null)
             {
                 return NotFound();
@@ -31,20 +31,20 @@ namespace GallifreyPlanet.Controllers
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(int id, string userId)
         {
-            User? user = await userService.GetUserAsyncById(userId: userId);
+            var user = await userService.GetUserAsyncById(userId: userId);
 
             if (user is null || string.IsNullOrEmpty(value: user.Id))
             {
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
+            var blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
             }
 
-            BlogManagerViewModel viewModel = new BlogManagerViewModel
+            var viewModel = new BlogManagerViewModel
             {
                 User = user,
                 BlogViewModel = blogService.NewBlogViewModel(blog: blog),
@@ -67,8 +67,8 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? user = await userService.GetCurrentUserAsync();
-                Blog blog = new Blog
+                var user = await userService.GetCurrentUserAsync();
+                var blog = new Blog
                 {
                     UserId = user!.Id,
                     Title = viewModel.Title,
@@ -80,7 +80,7 @@ namespace GallifreyPlanet.Controllers
 
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                 {
-                    string file = await fileService.UploadFileAsync(
+                    var file = await fileService.UploadFileAsync(
                         file: viewModel.ThumbnailFile,
                         folder: "/blogs",
                         currentFilePath: viewModel.CurrentThumbnailPath!
@@ -104,13 +104,13 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FindAsync(keyValues: id);
+            var blog = await context.Blog.FindAsync(keyValues: id);
             if (blog is null)
             {
                 return NotFound();
             }
 
-            BlogViewModel viewModel = new BlogViewModel
+            var viewModel = new BlogViewModel
             {
                 Id = id ?? 0,
                 Title = blog.Title,
@@ -127,7 +127,7 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BlogViewModel viewModel)
         {
-            Blog? blog = await context.Blog.FindAsync(keyValues: id);
+            var blog = await context.Blog.FindAsync(keyValues: id);
             if (id != blog!.Id)
             {
                 return NotFound();
@@ -144,7 +144,7 @@ namespace GallifreyPlanet.Controllers
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
-                        string file = await fileService.UploadFileAsync(file: viewModel.ThumbnailFile, folder: "/blogs", currentFilePath: blog.ThumbnailPath!);
+                        var file = await fileService.UploadFileAsync(file: viewModel.ThumbnailFile, folder: "/blogs", currentFilePath: blog.ThumbnailPath!);
                         blog.ThumbnailPath = file;
                     }
 
@@ -175,13 +175,13 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
+            var blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
             }
 
-            BlogManagerViewModel blogViewModel = new BlogManagerViewModel
+            var blogViewModel = new BlogManagerViewModel
             {
                 User = await userService.GetCurrentUserAsync(),
                 BlogViewModel = blogService.NewBlogViewModel(blog: blog),
@@ -195,7 +195,7 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Blog? blog = await context.Blog.FindAsync(keyValues: id);
+            var blog = await context.Blog.FindAsync(keyValues: id);
             if (blog is not null)
             {
                 context.Blog.Remove(entity: blog);

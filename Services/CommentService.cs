@@ -23,7 +23,7 @@ namespace GallifreyPlanet.Services
                 .ToListAsync();
 
             List<CommentViewModel> result = new List<CommentViewModel>();
-            foreach (Comment comment in comments)
+            foreach (var comment in comments)
             {
                 result.Add(item: await CreateCommentViewModelAsync(comment: comment));
             }

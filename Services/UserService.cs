@@ -100,7 +100,7 @@ namespace GallifreyPlanet.Services
 
         public async Task TerminateSessionAsync(string userId, string sessionId)
         {
-            UserSession? session = await context.UserSession
+            var session = await context.UserSession
                 .FirstOrDefaultAsync(predicate: us => us.Id.ToString() == sessionId && us.UserId == userId);
 
             if (session != null)
@@ -112,7 +112,7 @@ namespace GallifreyPlanet.Services
 
         public async Task AddLoginHistoryAsync(string userId, string ipAddress, string userAgent)
         {
-            LoginHistory loginHistory = new LoginHistory
+            var loginHistory = new LoginHistory
             {
                 UserId = userId,
                 LoginTime = DateTime.UtcNow,

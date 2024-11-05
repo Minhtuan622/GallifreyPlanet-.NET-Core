@@ -13,13 +13,13 @@ namespace GallifreyPlanet.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            AccountManagerViewModel viewModel = new AccountManagerViewModel
+            var viewModel = new AccountManagerViewModel
             {
                 User = user,
                 LoginHistory = await userService.GetLoginHistoriesAsyncByUserId(userId: user.Id),
@@ -32,13 +32,13 @@ namespace GallifreyPlanet.Controllers
         [HttpGet]
         public async Task<IActionResult> AccountSetting()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            AccountManagerViewModel viewModel = new AccountManagerViewModel
+            var viewModel = new AccountManagerViewModel
             {
                 ChangePassword = new ChangePasswordViewModel(),
                 EditProfile = new EditProfileViewModel
@@ -73,13 +73,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(actionName: nameof(AccountSetting), routeValues: viewModel);
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await userService.ChangePasswordAsync(
+            var result = await userService.ChangePasswordAsync(
                 user: user,
                 currentPassword: viewModel.ChangePassword!.CurrentPassword!,
                 newPassword: viewModel.ChangePassword!.NewPassword!
@@ -103,13 +103,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdateProfileAsync(user: user, model: viewModel.EditProfile!);
+            var result = await userService.UpdateProfileAsync(user: user, model: viewModel.EditProfile!);
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
@@ -139,13 +139,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdatePrivacySettingsAsync(user: user, model: viewModel.PrivacySettings!);
+            var result = await userService.UpdatePrivacySettingsAsync(user: user, model: viewModel.PrivacySettings!);
 
             if (result.Succeeded)
             {
@@ -165,13 +165,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdateNotificationSettingsAsync(user: user, model: viewModel.NotificationSettings!);
+            var result = await userService.UpdateNotificationSettingsAsync(user: user, model: viewModel.NotificationSettings!);
 
             if (result.Succeeded)
             {
@@ -191,29 +191,29 @@ namespace GallifreyPlanet.Controllers
                 return Json(data: new { success = false });
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return Json(data: new { success = false });
             }
 
-            string avatarPath = await fileService.UploadFileAsync(file: avatar, folder: "/accounts/avatars", currentFilePath: user.Avatar!);
+            var avatarPath = await fileService.UploadFileAsync(file: avatar, folder: "/accounts/avatars", currentFilePath: user.Avatar!);
             user.Avatar = avatarPath;
-            IdentityResult result = await userService.UpdateProfileAsync(user: user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
+            var result = await userService.UpdateProfileAsync(user: user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
             return Json(data: new { success = result.Succeeded, avatarUrl = user.Avatar });
         }
 
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            string token = await userService.GenerateTwoFactorTokenAsync(user: user);
-            EnableTwoFactorAuthenticationViewModel model = new EnableTwoFactorAuthenticationViewModel { Token = token };
+            var token = await userService.GenerateTwoFactorTokenAsync(user: user);
+            var model = new EnableTwoFactorAuthenticationViewModel { Token = token };
 
             return View(model: model);
         }
@@ -226,14 +226,14 @@ namespace GallifreyPlanet.Controllers
                 return View(model: model);
             }
 
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            string verificationCode = model.VerificationCode!.Replace(oldValue: " ", newValue: string.Empty).Replace(oldValue: "-", newValue: string.Empty);
-            bool is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user: user, verificationCode: verificationCode);
+            var verificationCode = model.VerificationCode!.Replace(oldValue: " ", newValue: string.Empty).Replace(oldValue: "-", newValue: string.Empty);
+            var is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user: user, verificationCode: verificationCode);
 
             if (!is2FaTokenValid)
             {
@@ -247,7 +247,7 @@ namespace GallifreyPlanet.Controllers
 
         private void AddErrors(IdentityResult result)
         {
-            foreach (IdentityError? error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
             }
@@ -256,7 +256,7 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> TerminateSession(string sessionId)
         {
-            User? user = await userService.GetCurrentUserAsync();
+            var user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
