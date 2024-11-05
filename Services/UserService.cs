@@ -93,9 +93,9 @@ namespace GallifreyPlanet.Services
             return await userManager.VerifyTwoFactorTokenAsync(user: user, tokenProvider: "Authenticator", token: verificationCode);
         }
 
-        public async Task<IdentityResult> SetTwoFactorEnabledAsync(User user, bool enabled)
+        public async Task SetTwoFactorEnabledAsync(User user, bool enabled)
         {
-            return await userManager.SetTwoFactorEnabledAsync(user: user, enabled: enabled);
+            await userManager.SetTwoFactorEnabledAsync(user: user, enabled: enabled);
         }
 
         public async Task TerminateSessionAsync(string userId, string sessionId)

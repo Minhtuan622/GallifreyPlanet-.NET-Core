@@ -40,15 +40,16 @@ namespace GallifreyPlanet.Services
 
             var friend = Find(userId: userId, friendId: friendId);
 
-            if (friend is not null)
+            if (friend is null)
             {
-                context.Friend.Remove(entity: friend);
-                context.SaveChanges();
-
-                return true;
+                return false;
             }
+            
+            context.Friend.Remove(entity: friend);
+            context.SaveChanges();
 
-            return false;
+            return true;
+
         }
 
         public bool Accept(string userId, string friendId)
@@ -60,15 +61,16 @@ namespace GallifreyPlanet.Services
 
             var friend = Find(userId: userId, friendId: friendId);
 
-            if (friend is not null)
+            if (friend is null)
             {
-                friend.Status = 1;
-                context.SaveChanges();
-
-                return true;
+                return false;
             }
+            
+            friend.Status = 1;
+            context.SaveChanges();
 
-            return false;
+            return true;
+
         }
 
         public bool Decline(string userId, string friendId)
@@ -80,78 +82,81 @@ namespace GallifreyPlanet.Services
 
             var friend = Find(userId: userId, friendId: friendId);
 
-            if (friend is not null)
+            if (friend is null)
             {
-                friend.Status = 2;
-                context.SaveChanges();
-
-                return true;
+                return false;
             }
+            
+            friend.Status = 2;
+            context.SaveChanges();
 
-            return false;
+            return true;
         }
 
         public bool Blocked(string userId, string friendId)
         {
-            if (AreFriends(userId: userId, friendId: friendId))
+            if (!AreFriends(userId: userId, friendId: friendId))
             {
-                var friend = Find(userId: userId, friendId: friendId);
-
-                if (friend is not null)
-                {
-                    friend.Status = 3;
-                    context.SaveChanges();
-
-                    return true;
-                }
+                return false;
             }
+            
+            var friend = Find(userId: userId, friendId: friendId);
+            if (friend is null)
+            {
+                return false;
+            }
+            
+            friend.Status = 3;
+            context.SaveChanges();
 
-            return false;
+            return true;
         }
 
         public bool UnBlocked(string userId, string friendId)
         {
-            if (AreFriends(userId: userId, friendId: friendId))
+            if (!AreFriends(userId: userId, friendId: friendId))
             {
-                var friend = Find(userId: userId, friendId: friendId);
-
-                if (friend is not null)
-                {
-                    friend.Status = 1;
-                    context.SaveChanges();
-
-                    return true;
-                }
+                return false;
             }
+            
+            var friend = Find(userId: userId, friendId: friendId);
+            if (friend is null)
+            {
+                return false;
+            }
+                
+            friend.Status = 1;
+            context.SaveChanges();
 
-            return false;
+            return true;
         }
 
         public bool Remove(string userId, string friendId)
         {
-            if (AreFriends(userId: userId, friendId: friendId))
+            if (!AreFriends(userId: userId, friendId: friendId))
             {
-                var friend = Find(userId: userId, friendId: friendId);
-
-                if (friend is not null)
-                {
-                    context.Friend.Remove(entity: friend);
-                    context.SaveChanges();
-                    return true;
-                }
+                return false;
             }
-
-            return false;
+            
+            var friend = Find(userId: userId, friendId: friendId);
+            if (friend is null)
+            {
+                return false;
+            }
+                
+            context.Friend.Remove(entity: friend);
+            context.SaveChanges();
+            return true;
         }
 
         public async Task<List<FriendViewModel>> GetFriends(string userId)
         {
-            List<Friend> friends = await context.Friend
+            var friends = await context.Friend
                 .Where(predicate: f => (f.UserId == userId || f.FriendId == userId)
                                        && f.Status == 1)
                 .ToListAsync();
 
-            List<FriendViewModel> result = new List<FriendViewModel>();
+            var result = new List<FriendViewModel>();
             foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
@@ -161,11 +166,11 @@ namespace GallifreyPlanet.Services
 
         public async Task<List<FriendViewModel>> GetFriendRequests(string userId)
         {
-            List<Friend> friends = await context.Friend
+            var friends = await context.Friend
                 .Where(predicate: f => (f.UserId == userId || f.FriendId == userId) && f.Status == 0)
                 .ToListAsync();
 
-            List<FriendViewModel> result = new List<FriendViewModel>();
+            var result = new List<FriendViewModel>();
             foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
@@ -175,11 +180,11 @@ namespace GallifreyPlanet.Services
 
         public async Task<List<FriendViewModel>> GetBlockedFriends(string userId)
         {
-            List<Friend> friends = await context.Friend
+            var friends = await context.Friend
                 .Where(predicate: f => (f.UserId == userId || f.FriendId == userId) && f.Status == 3)
                 .ToListAsync();
 
-            List<FriendViewModel> result = new List<FriendViewModel>();
+            var result = new List<FriendViewModel>();
             foreach (var friend in friends)
             {
                 result.Add(item: await NewFriendViewModel(friend: friend));
@@ -191,11 +196,7 @@ namespace GallifreyPlanet.Services
         {
             var friend = Find(userId: userId, friendId: friendId);
 
-            if (friend is not null && friend.Status != 0)
-            {
-                return true;
-            }
-            return false;
+            return friend is not null && friend.Status != 0;
         }
 
         public Friend? Find(string userId, string friendId)
@@ -206,7 +207,7 @@ namespace GallifreyPlanet.Services
                         (f.UserId == friendId && f.FriendId == userId));
         }
 
-        public async Task<FriendViewModel> NewFriendViewModel(Friend friend)
+        private async Task<FriendViewModel> NewFriendViewModel(Friend friend)
         {
             return new FriendViewModel
             {

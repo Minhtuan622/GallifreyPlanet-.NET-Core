@@ -9,14 +9,13 @@ namespace GallifreyPlanet.Services
         public BlogViewModel? GetById(int id)
         {
             return context.Blog
-                .Select(selector: NewBlogViewModel)
-                .Where(predicate: b => b.Id == id)
-                .FirstOrDefault();
+                .Select(selector: blog => NewBlogViewModel(blog))
+                .FirstOrDefault(b => b.Id == id);
         }
 
         public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
-            List<Blog> blogs = context.Blog
+            var blogs = context.Blog
                 .Where(predicate: b => b.UserId == userId)
                 .OrderByDescending(keySelector: b => b.Id)
                 .ToList();
