@@ -38,6 +38,7 @@
                         {
                             var member = members[0];
                             var avatar = member!.Avatar ?? defaultAvatarPath;
+                            var isRead = conversation.IsRead;
 
                             <a asp-action="Chat" asp-route-conversationId="@conversation.Id" class="text-decoration-none">
                                 <div class="conversation-item hover-bg">
@@ -50,7 +51,7 @@
                                             <h6 class="mb-0">@member.Name</h6>
                                             <small class="text-muted">@conversation.CreatedAt.Humanize()</small>
                                         </div>
-                                        <p class="text-muted small text-truncate mb-0">
+                                        <p class="text-muted small text-truncate mb-0 @(isRead ? "" : "fw-bold")">
                                             @conversation.LatestMessage
                                         </p>
                                     </div>

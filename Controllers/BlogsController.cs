@@ -163,7 +163,6 @@ namespace GallifreyPlanet.Controllers
                         blog.ThumbnailPath = file;
                     }
 
-
                     _context.Update(blog);
                     await _context.SaveChangesAsync();
                 }
@@ -173,10 +172,8 @@ namespace GallifreyPlanet.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
 
                 TempData[key: "StatusMessage"] = "Cập nhật thành công";

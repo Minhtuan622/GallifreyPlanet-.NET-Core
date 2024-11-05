@@ -1,6 +1,5 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
-using GallifreyPlanet.ViewModels;
 using GallifreyPlanet.ViewModels.Friend;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace GallifreyPlanet.ViewModels.AccountManager
 {
     public class AccountInfoViewModel

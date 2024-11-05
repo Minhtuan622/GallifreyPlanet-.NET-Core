@@ -33,7 +33,7 @@ namespace GallifreyPlanet.Services
                 return false;
             }
 
-            var conversation = new Conversation()
+            var conversation = new Conversation
             {
                 Members = string.Join(",", new List<string> { senderId, receiverId }),
                 GroupName = groupName,
@@ -59,7 +59,6 @@ namespace GallifreyPlanet.Services
                 ChatId = chatId,
                 SenderId = senderId,
                 Content = content,
-                IsRead = false,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -77,7 +76,11 @@ namespace GallifreyPlanet.Services
 
         public Task<ConversationViewModel> GetConversationById(int conversationId)
         {
-            return NewConversationViewModel(_context.Conversation.FirstOrDefault(c => c.Id == conversationId)!);
+            var conversation = _context.Conversation.FirstOrDefault(c => c.Id == conversationId);
+            conversation!.IsRead = true;
+            _context.Conversation.Update(conversation);
+            
+            return NewConversationViewModel(conversation);
         }
 
         public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
@@ -114,12 +117,11 @@ namespace GallifreyPlanet.Services
             return newMessagesViewModels;
         }
 
-        public string? GetLatestMessage(int conversationId)
+        public Message? GetLatestMessage(int conversationId)
         {
             return _context.Message
                 .OrderBy(m => m.CreatedAt)
-                .LastOrDefault(m => m.ChatId == conversationId)!
-                .Content;
+                .LastOrDefault(m => m.ChatId == conversationId);
         }
 
         private async Task<List<User?>> GetMembers(int chatId)
@@ -139,6 +141,8 @@ namespace GallifreyPlanet.Services
 
         private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
         {
+            var message = GetLatestMessage(conversation.Id)!;
+            
             return new ConversationViewModel
             {
                 Id = conversation.Id,
@@ -146,7 +150,7 @@ namespace GallifreyPlanet.Services
                 GroupName = conversation.GroupName,
                 IsGroup = conversation.IsGroup,
                 CreatedAt = conversation.CreatedAt,
-                LatestMessage = GetLatestMessage(conversation.Id)
+                LatestMessage = message.Content,
             };
         }
 
@@ -157,7 +161,6 @@ namespace GallifreyPlanet.Services
                 Conversation = await GetConversationById(message.ChatId),
                 Sender = await _userService.GetUserAsyncById(message.SenderId!),
                 Content = message.Content,
-                IsRead = message.IsRead,
                 CreatedAt = message.CreatedAt,
                 UpdatedAt = message.UpdatedAt,
             };

@@ -1,4 +1,8 @@
-﻿using GallifreyPlanet.Data;
+﻿using System.Net.Mail;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
+using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.Account;
@@ -8,10 +12,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Net.Mail;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers

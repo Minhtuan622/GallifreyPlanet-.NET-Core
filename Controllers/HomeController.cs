@@ -1,7 +1,7 @@
-﻿using GallifreyPlanet.Models;
+﻿using System.Diagnostics;
+using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace GallifreyPlanet.Controllers
 {

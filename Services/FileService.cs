@@ -22,7 +22,7 @@
 
             string fileDir = "uploads" + folder;
             string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, fileDir);
-            string fileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string fileName = Guid.NewGuid() + "_" + file.FileName;
             string filePath = Path.Combine(uploadsFolder, fileName);
 
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
