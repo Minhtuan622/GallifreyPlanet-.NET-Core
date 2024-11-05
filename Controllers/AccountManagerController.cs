@@ -6,24 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class AccountManagerController : Controller
+    public class AccountManagerController(
+        UserService userService,
+        FileService fileService) : Controller
     {
-        private readonly UserService _userService;
-        private readonly FileService _fileService;
-
-        public AccountManagerController(
-            UserService userService,
-            FileService fileService
-        )
-        {
-            _userService = userService;
-            _fileService = fileService;
-        }
-
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
@@ -32,8 +22,8 @@ namespace GallifreyPlanet.Controllers
             AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
                 User = user,
-                LoginHistory = await _userService.GetLoginHistoriesAsyncByUserId(user.Id),
-                ActiveSessions = await _userService.GetActiveSessionsAsyncByUser(user.Id),
+                LoginHistory = await userService.GetLoginHistoriesAsyncByUserId(user.Id),
+                ActiveSessions = await userService.GetActiveSessionsAsyncByUser(user.Id),
             };
 
             return View(viewModel);
@@ -42,7 +32,7 @@ namespace GallifreyPlanet.Controllers
         [HttpGet]
         public async Task<IActionResult> AccountSetting()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
@@ -83,13 +73,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(nameof(AccountSetting), viewModel);
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await _userService.ChangePasswordAsync(
+            IdentityResult result = await userService.ChangePasswordAsync(
                 user,
                 viewModel.ChangePassword!.CurrentPassword!,
                 viewModel.ChangePassword!.NewPassword!
@@ -113,22 +103,22 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(nameof(AccountSetting));
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await _userService.UpdateProfileAsync(user, viewModel.EditProfile!);
+            IdentityResult result = await userService.UpdateProfileAsync(user, viewModel.EditProfile!);
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
-                user.Avatar = await _fileService.UploadFileAsync(
+                user.Avatar = await fileService.UploadFileAsync(
                     viewModel.EditProfile.AvatarFile,
                     folder: "/accounts/avatars",
                     user.Avatar!
                 );
-                await _userService.UpdateProfileAsync(user, viewModel.EditProfile);
+                await userService.UpdateProfileAsync(user, viewModel.EditProfile);
             }
 
             if (result.Succeeded)
@@ -149,13 +139,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(nameof(AccountSetting));
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await _userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
+            IdentityResult result = await userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
 
             if (result.Succeeded)
             {
@@ -175,13 +165,13 @@ namespace GallifreyPlanet.Controllers
                 return RedirectToAction(nameof(AccountSetting));
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            IdentityResult result = await _userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
+            IdentityResult result = await userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
 
             if (result.Succeeded)
             {
@@ -201,28 +191,28 @@ namespace GallifreyPlanet.Controllers
                 return Json(new { success = false });
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return Json(new { success = false });
             }
 
-            string avatarPath = await _fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
+            string avatarPath = await fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
             user.Avatar = avatarPath;
-            IdentityResult result = await _userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
+            IdentityResult result = await userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
             return Json(new { success = result.Succeeded, avatarUrl = user.Avatar });
         }
 
         public async Task<IActionResult> EnableTwoFactorAuthentication()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            string token = await _userService.GenerateTwoFactorTokenAsync(user);
+            string token = await userService.GenerateTwoFactorTokenAsync(user);
             EnableTwoFactorAuthenticationViewModel model = new EnableTwoFactorAuthenticationViewModel { Token = token };
 
             return View(model);
@@ -236,14 +226,14 @@ namespace GallifreyPlanet.Controllers
                 return View(model);
             }
 
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
             string verificationCode = model.VerificationCode!.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
-            bool is2FaTokenValid = await _userService.VerifyTwoFactorTokenAsync(user, verificationCode);
+            bool is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user, verificationCode);
 
             if (!is2FaTokenValid)
             {
@@ -251,7 +241,7 @@ namespace GallifreyPlanet.Controllers
                 return View(model);
             }
 
-            await _userService.SetTwoFactorEnabledAsync(user, enabled: true);
+            await userService.SetTwoFactorEnabledAsync(user, enabled: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -266,13 +256,13 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> TerminateSession(string sessionId)
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            await _userService.TerminateSessionAsync(user.Id, sessionId);
+            await userService.TerminateSessionAsync(user.Id, sessionId);
             return RedirectToAction(nameof(Index));
         }
     }

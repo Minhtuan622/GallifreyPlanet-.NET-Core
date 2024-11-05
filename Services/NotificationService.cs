@@ -5,17 +5,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Services
 {
-    public class NotificationService
+    public class NotificationService(GallifreyPlanetContext context, IHubContext<NotificationHub> hubContext)
     {
-        private readonly GallifreyPlanetContext _context;
-        private readonly IHubContext<NotificationHub> _hubContext;
-
-        public NotificationService(GallifreyPlanetContext context, IHubContext<NotificationHub> hubContext)
-        {
-            _context = context;
-            _hubContext = hubContext;
-        }
-
         public async Task CreateNotification(string user, string message)
         {
             Notification notification = new Notification
@@ -26,15 +17,15 @@ namespace GallifreyPlanet.Services
                 IsRead = false
             };
 
-            _context.Notification.Add(notification);
-            await _context.SaveChangesAsync();
+            context.Notification.Add(notification);
+            await context.SaveChangesAsync();
 
-            await _hubContext.Clients.All.SendAsync(method: "ReceiveNotification", user, message);
+            await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", user, message);
         }
 
         public List<Notification> GetUserNotifications(string user)
         {
-            return _context.Notification
+            return context.Notification
                 .Where(n => n.UserId == user)
                 .OrderByDescending(n => n.CreatedAt)
                 .ToList();
@@ -42,11 +33,11 @@ namespace GallifreyPlanet.Services
 
         public async Task MarkAsRead(int notificationId)
         {
-            Notification? notification = await _context.Notification.FindAsync(notificationId);
+            Notification? notification = await context.Notification.FindAsync(notificationId);
             if (notification != null)
             {
                 notification.IsRead = true;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
         }
     }

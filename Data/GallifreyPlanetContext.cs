@@ -4,13 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Data
 {
-    public class GallifreyPlanetContext : IdentityDbContext<User>
+    public class GallifreyPlanetContext(DbContextOptions<GallifreyPlanetContext> options)
+        : IdentityDbContext<User>(options)
     {
-        public GallifreyPlanetContext(DbContextOptions<GallifreyPlanetContext> options) : base(options)
-        {
-
-        }
-
         public DbSet<User> User { get; set; } = default!;
         public DbSet<LoginHistory> LoginHistory { get; set; } = default!;
         public DbSet<UserSession> UserSession { get; set; } = default!;

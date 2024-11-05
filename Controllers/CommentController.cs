@@ -6,23 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class CommentController : Controller
+    public class CommentController(
+        GallifreyPlanetContext context,
+        UserService userService,
+        CommentService commentService)
+        : Controller
     {
-        private readonly GallifreyPlanetContext _context;
-        private readonly UserService _userService;
-        private readonly CommentService _commentService;
-
-        public CommentController(
-            GallifreyPlanetContext context,
-            UserService userService,
-            CommentService commentService
-        )
-        {
-            _context = context;
-            _userService = userService;
-            _commentService = commentService;
-        }
-
         private JsonResult JsonResponse(bool success, string message = "", object? data = null)
         {
             return Json(new { success, message, data });
@@ -30,7 +19,7 @@ namespace GallifreyPlanet.Controllers
 
         private async Task<User> GetAuthenticatedUserAsync()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
                 JsonResponse(
@@ -55,7 +44,7 @@ namespace GallifreyPlanet.Controllers
             {
                 User user = await GetAuthenticatedUserAsync();
 
-                List<CommentViewModel> data = await _commentService.Get(CommentableType.Blog, commentableId);
+                List<CommentViewModel> data = await commentService.Get(CommentableType.Blog, commentableId);
                 return JsonResponse(success: true, data: data);
             }
             catch (Exception ex)
@@ -86,8 +75,8 @@ namespace GallifreyPlanet.Controllers
                     CreatedAt = DateTime.Now
                 };
 
-                await _context.Comment.AddAsync(comment);
-                await _context.SaveChangesAsync();
+                await context.Comment.AddAsync(comment);
+                await context.SaveChangesAsync();
 
                 return JsonResponse(
                     success: true,
@@ -105,7 +94,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? comment = _commentService.GetById(id);
+                Comment? comment = commentService.GetById(id);
                 if (comment == null)
                 {
                     return JsonResponse(
@@ -123,7 +112,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                bool deleteSuccess = _commentService.DeleteCommentChildren(comment);
+                bool deleteSuccess = commentService.DeleteCommentChildren(comment);
 
                 TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(
@@ -150,7 +139,7 @@ namespace GallifreyPlanet.Controllers
 
                 User user = await GetAuthenticatedUserAsync();
 
-                Comment? parentComment = _commentService.GetById(commentId);
+                Comment? parentComment = commentService.GetById(commentId);
                 if (parentComment == null)
                 {
                     return JsonResponse(
@@ -169,8 +158,8 @@ namespace GallifreyPlanet.Controllers
                     CreatedAt = DateTime.Now
                 };
 
-                await _context.Comment.AddAsync(reply);
-                await _context.SaveChangesAsync();
+                await context.Comment.AddAsync(reply);
+                await context.SaveChangesAsync();
 
                 return JsonResponse(success: true, message: "Phản hồi thành công");
             }
@@ -185,7 +174,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? reply = _commentService.GetById(id);
+                Comment? reply = commentService.GetById(id);
                 if (reply == null)
                 {
                     return JsonResponse(
@@ -203,8 +192,8 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                _context.Comment.Remove(reply);
-                await _context.SaveChangesAsync();
+                context.Comment.Remove(reply);
+                await context.SaveChangesAsync();
 
                 TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(success: true, message: "Xóa bình luận thành công");

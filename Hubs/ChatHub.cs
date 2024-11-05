@@ -3,19 +3,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Hubs
 {
-    public class ChatHub : Hub
+    public class ChatHub(ChatService chatService) : Hub
     {
-        private readonly ChatService _chatService;
-
-        public ChatHub(ChatService chatService)
-        {
-            _chatService = chatService;
-        }
-
         public async Task SendMessage(string chatId, string senderId, string content)
         {
-            var members = await _chatService.CheckPermission(int.Parse(chatId), senderId);
-            if (members is not null && await _chatService.SaveMessage(int.Parse(chatId), senderId, content))
+            var members = await chatService.CheckPermission(int.Parse(chatId), senderId);
+            if (members is not null && await chatService.SaveMessage(int.Parse(chatId), senderId, content))
             {
                 foreach (var member in members)
                 {

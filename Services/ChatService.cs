@@ -4,23 +4,14 @@ using GallifreyPlanet.ViewModels.Chat;
 
 namespace GallifreyPlanet.Services
 {
-    public class ChatService
+    public class ChatService(
+        GallifreyPlanetContext context,
+        UserService userService
+    )
     {
-        private readonly GallifreyPlanetContext _context;
-        private readonly UserService _userService;
-
-        public ChatService(
-            GallifreyPlanetContext context,
-            UserService userService
-        )
-        {
-            _context = context;
-            _userService = userService;
-        }
-
         public bool CreateConversation(string senderId, string receiverId, string? groupName = null)
         {
-            var existingConversation = _context.Conversation
+            var existingConversation = context.Conversation
                 .FirstOrDefault(c =>
                     c.Members != null &&
                     c.Members.Contains(senderId) &&
@@ -41,8 +32,8 @@ namespace GallifreyPlanet.Services
                 CreatedAt = DateTime.Now,
             };
 
-            _context.Conversation.Add(conversation);
-            _context.SaveChanges();
+            context.Conversation.Add(conversation);
+            context.SaveChanges();
 
             return true;
         }
@@ -63,8 +54,8 @@ namespace GallifreyPlanet.Services
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _context.ChatMessage.AddAsync(chatMessage);
-            await _context.SaveChangesAsync();
+            await context.ChatMessage.AddAsync(chatMessage);
+            await context.SaveChangesAsync();
             return true;
         }
 
@@ -76,16 +67,18 @@ namespace GallifreyPlanet.Services
 
         public Task<ConversationViewModel> GetConversationById(int conversationId)
         {
-            var conversation = _context.Conversation.FirstOrDefault(c => c.Id == conversationId);
+            var conversation = context.Conversation.FirstOrDefault(c => c.Id == conversationId);
             conversation!.IsRead = true;
-            _context.Conversation.Update(conversation);
-            
+
+            context.Conversation.Update(conversation);
+            context.SaveChanges();
+
             return NewConversationViewModel(conversation);
         }
 
         public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
         {
-            var conversations = _context.Conversation
+            var conversations = context.Conversation
                 .Where(c =>
                     c.Members != null &&
                     c.Members.Contains(userId)
@@ -104,7 +97,7 @@ namespace GallifreyPlanet.Services
 
         public async Task<List<MessageViewModel>> GetMessagesByConversationId(int conversationId)
         {
-            var messages = _context.Message
+            var messages = context.Message
                 .Where(m => m.ChatId == conversationId)
                 .ToList();
             var newMessagesViewModels = new List<MessageViewModel>();
@@ -117,23 +110,23 @@ namespace GallifreyPlanet.Services
             return newMessagesViewModels;
         }
 
-        public Message? GetLatestMessage(int conversationId)
+        private Message? GetLatestMessage(int conversationId)
         {
-            return _context.Message
+            return context.Message
                 .OrderBy(m => m.CreatedAt)
                 .LastOrDefault(m => m.ChatId == conversationId);
         }
 
         private async Task<List<User?>> GetMembers(int chatId)
         {
-            var conversation = _context.Conversation.FirstOrDefault(c => c.Id == chatId);
+            var conversation = context.Conversation.FirstOrDefault(c => c.Id == chatId);
             var members = conversation?.Members;
             var usersId = members!.Split(',');
             var usersList = new List<User?>();
 
             foreach (string userId in usersId)
             {
-                usersList.Add(await _userService.GetUserAsyncById(userId));
+                usersList.Add(await userService.GetUserAsyncById(userId));
             }
 
             return usersList;
@@ -142,7 +135,7 @@ namespace GallifreyPlanet.Services
         private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
         {
             var message = GetLatestMessage(conversation.Id)!;
-            
+
             return new ConversationViewModel
             {
                 Id = conversation.Id,
@@ -159,7 +152,7 @@ namespace GallifreyPlanet.Services
             return new MessageViewModel
             {
                 Conversation = await GetConversationById(message.ChatId),
-                Sender = await _userService.GetUserAsyncById(message.SenderId!),
+                Sender = await userService.GetUserAsyncById(message.SenderId!),
                 Content = message.Content,
                 CreatedAt = message.CreatedAt,
                 UpdatedAt = message.UpdatedAt,

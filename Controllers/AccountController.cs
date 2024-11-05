@@ -16,29 +16,14 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController(
+        SignInManager<User> signInManager,
+        UserManager<User> userManager,
+        GallifreyPlanetContext context,
+        IEmailSender emailSender,
+        UserService userService)
+        : Controller
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
-        private readonly GallifreyPlanetContext _context;
-        private readonly IEmailSender _emailSender;
-        private readonly UserService _userService;
-
-        public AccountController(
-            SignInManager<User> signInManager,
-            UserManager<User> userManager,
-            GallifreyPlanetContext context,
-            IEmailSender emailSender,
-            UserService userService
-        )
-        {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _context = context;
-            _emailSender = emailSender;
-            _userService = userService;
-        }
-
         [HttpGet]
         public IActionResult Login()
         {
@@ -66,14 +51,14 @@ namespace GallifreyPlanet.Controllers
 
                 if (IsValidEmail(user.UsernameOrEmail!))
                 {
-                    User? getUser = await _userManager.FindByEmailAsync(user.UsernameOrEmail!);
+                    User? getUser = await userManager.FindByEmailAsync(user.UsernameOrEmail!);
                     if (getUser != null)
                     {
                         userNameOrEmail = getUser.UserName;
                     }
                 }
 
-                SignInResult result = await _signInManager.PasswordSignInAsync(
+                SignInResult result = await signInManager.PasswordSignInAsync(
                     userNameOrEmail!,
                     user.Password!,
                     user.RememberMe,
@@ -88,8 +73,8 @@ namespace GallifreyPlanet.Controllers
 
                 if (result.Succeeded)
                 {
-                    User? currentUser = await _userService.GetCurrentUserAsync();
-                    await _userService.AddLoginHistoryAsync(
+                    User? currentUser = await userService.GetCurrentUserAsync();
+                    await userService.AddLoginHistoryAsync(
                         currentUser!.Id,
                         HttpContext.Connection.RemoteIpAddress?.ToString()!,
                         HttpContext.Request.Headers[key: "User-Agent"].ToString()
@@ -115,7 +100,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? existingUser = _context.Users.FirstOrDefault(u => u.Email == user.Email);
+                User? existingUser = context.Users.FirstOrDefault(u => u.Email == user.Email);
 
                 if (existingUser != null)
                 {
@@ -135,11 +120,11 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await _userManager.CreateAsync(newUser, user.Password!);
+                IdentityResult result = await userManager.CreateAsync(newUser, user.Password!);
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(newUser, isPersistent: false);
+                    await signInManager.SignInAsync(newUser, isPersistent: false);
 
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
@@ -164,13 +149,13 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? user = await _userManager.FindByEmailAsync(viewModel.Email!);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                User? user = await userManager.FindByEmailAsync(viewModel.Email!);
+                if (user == null || !(await userManager.IsEmailConfirmedAsync(user)))
                 {
                     return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
                 }
 
-                string code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                string code = await userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 string? callbackUrl = Url.Page(
                 pageName: "/Account/ResetPassword",
@@ -179,7 +164,7 @@ namespace GallifreyPlanet.Controllers
                     protocol: Request.Scheme
                 );
 
-                await _emailSender.SendEmailAsync(
+                await emailSender.SendEmailAsync(
                     viewModel.Email!,
                     subject: "Khôi phục mật khẩu",
                     htmlMessage: $"Để khôi phục mật khẩu của bạn, vui lòng <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>nhấp vào đây</a>."
@@ -219,7 +204,7 @@ namespace GallifreyPlanet.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> VerifyAuthenticatorCode(bool rememberMe, string? returnUrl = null)
         {
-            User? user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            User? user = await signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
                 return View(viewName: "Error");
@@ -236,7 +221,7 @@ namespace GallifreyPlanet.Controllers
         public IActionResult ExternalLogin(string provider, string? returnurl = null)
         {
             string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", new { returnurl });
-            AuthenticationProperties properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
 
@@ -251,13 +236,13 @@ namespace GallifreyPlanet.Controllers
                 return View(nameof(Login));
             }
 
-            ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
+            ExternalLoginInfo? info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            SignInResult result = await _signInManager.ExternalLoginSignInAsync(
+            SignInResult result = await signInManager.ExternalLoginSignInAsync(
                 info.LoginProvider,
                 info.ProviderKey,
                 isPersistent: false,
@@ -266,7 +251,7 @@ namespace GallifreyPlanet.Controllers
 
             if (result.Succeeded)
             {
-                await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                await signInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return LocalRedirect(returnurl);
             }
 
@@ -297,7 +282,7 @@ namespace GallifreyPlanet.Controllers
 
             if (ModelState.IsValid)
             {
-                ExternalLoginInfo? info = await _signInManager.GetExternalLoginInfoAsync();
+                ExternalLoginInfo? info = await signInManager.GetExternalLoginInfoAsync();
                 if (info == null)
                 {
                     return NotFound();
@@ -315,14 +300,14 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await _userManager.CreateAsync(user, model.Password!);
+                IdentityResult result = await userManager.CreateAsync(user, model.Password!);
                 if (result.Succeeded)
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
+                    result = await userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
+                        await signInManager.SignInAsync(user, isPersistent: false);
+                        await signInManager.UpdateExternalAuthenticationTokensAsync(info);
                         return LocalRedirect(returnurl);
                     }
                 }
@@ -335,7 +320,7 @@ namespace GallifreyPlanet.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await signInManager.SignOutAsync();
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
 

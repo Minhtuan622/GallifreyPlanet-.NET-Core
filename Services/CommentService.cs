@@ -5,24 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services
 {
-    public class CommentService
+    public class CommentService(GallifreyPlanetContext context, UserService userService)
     {
-        private readonly GallifreyPlanetContext _context;
-        private readonly UserService _userService;
-
-        public CommentService(GallifreyPlanetContext context, UserService userService)
-        {
-            _context = context;
-            _userService = userService;
-        }
-
         private async Task<List<CommentViewModel>> FetchCommentsAsync(
             CommentableType commentableType,
             int commentableId,
             int? parentId = null
         )
         {
-            List<Comment> comments = await _context.Comment
+            List<Comment> comments = await context.Comment
                 .Where(c =>
                     c.CommentableType == commentableType &&
                     c.CommentableId == commentableId &&
@@ -46,7 +37,7 @@ namespace GallifreyPlanet.Services
 
         public Comment? GetById(int id)
         {
-            return _context.Comment.FirstOrDefault(c => c.Id == id);
+            return context.Comment.FirstOrDefault(c => c.Id == id);
         }
 
         public Task<List<CommentViewModel>> GetReplies(CommentableType commentableType, int commentableId, int parentId)
@@ -58,7 +49,7 @@ namespace GallifreyPlanet.Services
         {
             try
             {
-                List<Comment> replies = _context.Comment
+                List<Comment> replies = context.Comment
                     .Where(c =>
                         c.CommentableType == comment.CommentableType &&
                         c.CommentableId == comment.CommentableId &&
@@ -66,9 +57,9 @@ namespace GallifreyPlanet.Services
                     )
                     .ToList();
 
-                _context.Comment.RemoveRange(replies);
-                _context.Comment.Remove(comment);
-                _context.SaveChanges();
+                context.Comment.RemoveRange(replies);
+                context.Comment.Remove(comment);
+                context.SaveChanges();
 
                 return true;
             }
@@ -83,7 +74,7 @@ namespace GallifreyPlanet.Services
             return new CommentViewModel
             {
                 Id = comment.Id,
-                User = await _userService.GetUserAsyncById(comment.UserId!),
+                User = await userService.GetUserAsyncById(comment.UserId!),
                 ParentId = comment.ParentId,
                 Replies = await FetchCommentsAsync(comment.CommentableType, comment.CommentableId, comment.Id),
                 CommentableId = comment.CommentableId,

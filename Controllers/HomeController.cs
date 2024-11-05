@@ -5,23 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(
+        NotificationService notificationService,
+        UserService userService)
+        : Controller
     {
-        private readonly NotificationService _notificationService;
-        private readonly UserService _userService;
-
-        public HomeController(
-            NotificationService notificationService,
-            UserService userService
-        )
-        {
-            _notificationService = notificationService;
-            _userService = userService;
-        }
-
         public async Task<IActionResult> Index()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
 
             return View(user);
         }
@@ -39,7 +30,7 @@ namespace GallifreyPlanet.Controllers
 
         public async Task<IActionResult> SendNotification()
         {
-            await _notificationService.CreateNotification(user: "username", message: "Your message here");
+            await notificationService.CreateNotification(user: "username", message: "Your message here");
             return Ok();
         }
     }

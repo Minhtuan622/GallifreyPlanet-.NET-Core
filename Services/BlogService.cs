@@ -4,18 +4,11 @@ using GallifreyPlanet.ViewModels.Blog;
 
 namespace GallifreyPlanet.Services
 {
-    public class BlogService
+    public class BlogService(GallifreyPlanetContext context)
     {
-        private readonly GallifreyPlanetContext _context;
-
-        public BlogService(GallifreyPlanetContext context)
-        {
-            _context = context;
-        }
-
         public BlogViewModel? GetById(int id)
         {
-            return _context.Blog
+            return context.Blog
                 .Select(NewBlogViewModel)
                 .Where(b => b.Id == id)
                 .FirstOrDefault();
@@ -23,7 +16,7 @@ namespace GallifreyPlanet.Services
 
         public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
-            List<Blog> blogs = _context.Blog
+            List<Blog> blogs = context.Blog
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.Id)
                 .ToList();
@@ -53,7 +46,7 @@ namespace GallifreyPlanet.Services
 
         public bool BlogExists(int id)
         {
-            return _context.Blog.Any(e => e.Id == id);
+            return context.Blog.Any(e => e.Id == id);
         }
     }
 }

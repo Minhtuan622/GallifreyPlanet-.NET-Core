@@ -7,53 +7,38 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Controllers
 {
-    public class BlogsController : Controller
+    public class BlogsController(
+        GallifreyPlanetContext context,
+        UserService userService,
+        BlogService blogService,
+        FileService fileService,
+        CommentService commentService)
+        : Controller
     {
-        private readonly GallifreyPlanetContext _context;
-        private readonly UserService _userService;
-        private readonly BlogService _blogService;
-        private readonly FileService _fileService;
-        private readonly CommentService _commentService;
-
-        public BlogsController(
-            GallifreyPlanetContext context,
-            UserService userService,
-            BlogService blogService,
-            FileService fileService,
-            CommentService commentService
-        )
-        {
-            _context = context;
-            _userService = userService;
-            _blogService = blogService;
-            _fileService = fileService;
-            _commentService = commentService;
-        }
-
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            User? user = await _userService.GetCurrentUserAsync();
+            User? user = await userService.GetCurrentUserAsync();
             if (user is null)
             {
                 return NotFound();
             }
 
-            List<BlogViewModel> blog = await _blogService.GetBlogsByUserId(user.Id);
+            List<BlogViewModel> blog = await blogService.GetBlogsByUserId(user.Id);
             return View(blog);
         }
 
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(int id, string userId)
         {
-            User? user = await _userService.GetUserAsyncById(userId);
+            User? user = await userService.GetUserAsyncById(userId);
 
             if (user is null || string.IsNullOrEmpty(user.Id))
             {
                 return NotFound();
             }
 
-            Blog? blog = await _context.Blog.FirstOrDefaultAsync(m => m.Id == id);
+            Blog? blog = await context.Blog.FirstOrDefaultAsync(m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
@@ -62,8 +47,8 @@ namespace GallifreyPlanet.Controllers
             BlogManagerViewModel viewModel = new BlogManagerViewModel
             {
                 User = user,
-                BlogViewModel = _blogService.NewBlogViewModel(blog),
-                Comments = await _commentService.Get(CommentableType.Blog, id)
+                BlogViewModel = blogService.NewBlogViewModel(blog),
+                Comments = await commentService.Get(CommentableType.Blog, id)
             };
 
             return View(viewModel);
@@ -82,7 +67,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? user = await _userService.GetCurrentUserAsync();
+                User? user = await userService.GetCurrentUserAsync();
                 Blog blog = new Blog
                 {
                     UserId = user!.Id,
@@ -95,7 +80,7 @@ namespace GallifreyPlanet.Controllers
 
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                 {
-                    string file = await _fileService.UploadFileAsync(
+                    string file = await fileService.UploadFileAsync(
                         viewModel.ThumbnailFile,
                         folder: "/blogs",
                         viewModel.CurrentThumbnailPath!
@@ -103,8 +88,8 @@ namespace GallifreyPlanet.Controllers
                     blog.ThumbnailPath = file;
                 }
 
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
+                context.Add(blog);
+                await context.SaveChangesAsync();
                 TempData[key: "StatusMessage"] = "Tạo thành công";
                 return RedirectToAction(nameof(Index));
             }
@@ -119,7 +104,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await _context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(id);
             if (blog is null)
             {
                 return NotFound();
@@ -142,7 +127,7 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BlogViewModel viewModel)
         {
-            Blog? blog = await _context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(id);
             if (id != blog!.Id)
             {
                 return NotFound();
@@ -159,16 +144,16 @@ namespace GallifreyPlanet.Controllers
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
-                        string file = await _fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
+                        string file = await fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
                         blog.ThumbnailPath = file;
                     }
 
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    context.Update(blog);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_blogService.BlogExists(blog.Id))
+                    if (!blogService.BlogExists(blog.Id))
                     {
                         return NotFound();
                     }
@@ -190,7 +175,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await _context.Blog.FirstOrDefaultAsync(m => m.Id == id);
+            Blog? blog = await context.Blog.FirstOrDefaultAsync(m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
@@ -198,8 +183,8 @@ namespace GallifreyPlanet.Controllers
 
             BlogManagerViewModel blogViewModel = new BlogManagerViewModel
             {
-                User = await _userService.GetCurrentUserAsync(),
-                BlogViewModel = _blogService.NewBlogViewModel(blog),
+                User = await userService.GetCurrentUserAsync(),
+                BlogViewModel = blogService.NewBlogViewModel(blog),
             };
 
             return View(blogViewModel);
@@ -210,13 +195,13 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Blog? blog = await _context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(id);
             if (blog is not null)
             {
-                _context.Blog.Remove(blog);
+                context.Blog.Remove(blog);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             TempData[key: "StatusMessage"] = "Xóa thành công";
             return RedirectToAction(nameof(Index));
         }
