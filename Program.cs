@@ -8,8 +8,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(
-            /*builder.Configuration.GetConnectionString(name: "DEV_TESTContext")*/
-            builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")
+            builder.Configuration.GetConnectionString(name: "DEV_TESTContext")
+            /*builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")*/
         )
     )
     .AddDefaultIdentity<User>(option => option.SignIn.RequireConfirmedAccount = true)

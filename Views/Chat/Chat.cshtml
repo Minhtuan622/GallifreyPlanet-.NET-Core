@@ -1,19 +1,36 @@
 ﻿@using Humanizer
 @model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
 
+@{
+    string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
+}
+
 <!-- Chat Main Area -->
 <div class="col-md-8 col-lg-9 chat-main">
     <!-- Chat Header -->
     <div class="chat-header">
         <div class="user-info">
-            <div class="position-relative">
-                <img src="/api/placeholder/40/40" class="rounded-circle" width="48" height="48" alt="User">
-                <span class="status-dot bg-success"></span>
-            </div>
-            <div>
-                <h6 class="mb-0">John Doe</h6>
-                <small class="text-success">Trực tuyến</small>
-            </div>
+
+            @{
+                var members = Model.SelectedConversation!.Members;
+                if (members is not null && members.Count() == 2)
+                {
+                    @foreach (var member in members)
+                    {
+                        @if (member!.Id != Model.User!.Id)
+                        {
+                            <div class="position-relative">
+                                <img src="@(member.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48" height="48" alt="User">
+                                <span class="status-dot bg-success"></span>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">@member.Name</h6>
+                                <small class="text-success">Trực tuyến</small>
+                            </div>
+                        }
+                    }
+                }
+            }
         </div>
         <div class="header-actions">
             <button class="btn rounded-circle" title="Voice Call">
