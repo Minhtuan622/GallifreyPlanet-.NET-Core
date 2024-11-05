@@ -9,5 +9,6 @@ namespace GallifreyPlanet.ViewModels.Chat
         public string? GroupName { get; set; }
         public bool IsGroup { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string? LatestMessage { get; set; }
     }
 }

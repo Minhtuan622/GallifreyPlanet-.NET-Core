@@ -77,10 +77,7 @@ namespace GallifreyPlanet.Services
 
         public Task<ConversationViewModel> GetConversationById(int conversationId)
         {
-            var conversation = _context.Conversation.FirstOrDefault(c => c.Id == conversationId);
-            var newConversation = NewConversationViewModel(conversation!);
-
-            return newConversation;
+            return NewConversationViewModel(_context.Conversation.FirstOrDefault(c => c.Id == conversationId)!);
         }
 
         public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
@@ -89,7 +86,9 @@ namespace GallifreyPlanet.Services
                 .Where(c =>
                     c.Members != null &&
                     c.Members.Contains(userId)
-                ).ToList();
+                )
+                .OrderBy(c => c.CreatedAt)
+                .ToList();
             var newConversations = new List<ConversationViewModel>();
 
             foreach (Conversation conversation in conversations)
@@ -115,10 +114,17 @@ namespace GallifreyPlanet.Services
             return newMessagesViewModels;
         }
 
+        public string? GetLatestMessage(int conversationId)
+        {
+            return _context.Message
+                .OrderBy(m => m.CreatedAt)
+                .LastOrDefault(m => m.ChatId == conversationId)!
+                .Content;
+        }
+
         private async Task<List<User?>> GetMembers(int chatId)
         {
             var conversation = _context.Conversation.FirstOrDefault(c => c.Id == chatId);
-
             var members = conversation?.Members;
             var usersId = members!.Split(',');
             var usersList = new List<User?>();
@@ -140,6 +146,7 @@ namespace GallifreyPlanet.Services
                 GroupName = conversation.GroupName,
                 IsGroup = conversation.IsGroup,
                 CreatedAt = conversation.CreatedAt,
+                LatestMessage = GetLatestMessage(conversation.Id)
             };
         }
 

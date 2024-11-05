@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Chat Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
@@ -28,34 +28,34 @@
 
             <!-- Conversation List -->
             <div class="conversation-list">
-                @if (Model.Conversations is not null)
+                @if (Model.Conversations is not null && Model.User is not null)
                 {
-                    @foreach (var conversation in Model.Conversations)
+                    foreach (var conversation in Model.Conversations)
                     {
-                        var members = conversation.Members;
-                        if (members is not null && members.Count() == 2)
+                        var members = conversation.Members?.Where(m => m?.Id != Model.User.Id).ToList();
+
+                        if (members?.Count == 1)
                         {
-                            @foreach (var member in members)
-                            {
-                                @if (member != null && Model.User != null && member.Id != Model.User.Id)
-                                {
-                                    <a asp-action="Chat" asp-route-conversationId="@conversation.Id" class="text-decoration-none">
-                                        <div class="conversation-item hover-bg">
-                                            <div class="position-relative">
-                                                <img src="@(member.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48" height="48" alt="User">
-                                                <span class="status-dot bg-success"></span>
-                                            </div>
-                                            <div class="conversation-content ms-3">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <h6 class="mb-0">@member.Name</h6>
-                                                    <small class="text-muted">@conversation.CreatedAt.Humanize()</small>
-                                                </div>
-                                                @*<p class="text-muted small text-truncate mb-0">Thanks for the update!</p>*@
-                                            </div>
+                            var member = members[0];
+                            var avatar = member!.Avatar ?? defaultAvatarPath;
+
+                            <a asp-action="Chat" asp-route-conversationId="@conversation.Id" class="text-decoration-none">
+                                <div class="conversation-item hover-bg">
+                                    <div class="position-relative">
+                                        <img src="@avatar" class="rounded-circle" width="48" height="48" alt="User">
+                                        <span class="status-dot bg-success"></span>
+                                    </div>
+                                    <div class="conversation-content ms-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">@member.Name</h6>
+                                            <small class="text-muted">@conversation.CreatedAt.Humanize()</small>
                                         </div>
-                                    </a>
-                                }
-                            }
+                                        <p class="text-muted small text-truncate mb-0">
+                                            @conversation.LatestMessage
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
                         }
                     }
                 }

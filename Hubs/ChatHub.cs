@@ -1,6 +1,4 @@
-﻿using GallifreyPlanet.Data;
-using GallifreyPlanet.Models;
-using GallifreyPlanet.Services;
+﻿using GallifreyPlanet.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Hubs
