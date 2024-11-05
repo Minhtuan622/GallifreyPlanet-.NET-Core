@@ -1,6 +1,6 @@
 ﻿@model GallifreyPlanet.ViewModels.Blog.BlogManagerViewModel
 @{
-    ViewData["Title"] = "Xóa bài viết";
+    ViewData[index: "Title"] = "Xóa bài viết";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -72,7 +72,7 @@
                                     </div>
                                     <div>
                                         <small class="text-muted d-block">Ngày đăng</small>
-                                        <strong>@Model.BlogViewModel!.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</strong>
+                                        <strong>@Model.BlogViewModel!.CreatedAt?.ToString(format: "dd/MM/yyyy HH:mm")</strong>
                                     </div>
                                 </div>
                             </div>

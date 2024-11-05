@@ -3,7 +3,7 @@
 <div class="row col-md-10 offset-md-1">
     <h1 class="text-primary text-center pt-2">Verfiy Authenticator Code</h1>
     <form method="post" asp-controller="Account" asp-action="VerifyAuthenticatorCode"
-          asp-route-returnurl="@ViewData["ReturnUrl"]">
+          asp-route-returnurl="@ViewData[index: "ReturnUrl"]">
         <input asp-for="RememberMe" type="hidden" />
         <div class="border p-2 rounded">
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -29,6 +29,6 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 }

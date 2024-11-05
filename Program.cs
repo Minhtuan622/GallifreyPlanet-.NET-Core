@@ -4,15 +4,15 @@ using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args: args);
 
 builder.Services
-    .AddDbContext<GallifreyPlanetContext>(options => options.UseSqlServer(
-            builder.Configuration.GetConnectionString(name: "DEV_TESTContext")
+    .AddDbContext<GallifreyPlanetContext>(optionsAction: options => options.UseSqlServer(
+            connectionString: builder.Configuration.GetConnectionString(name: "DEV_TESTContext")
             /*builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")*/
         )
     )
-    .AddDefaultIdentity<User>(option => option.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<User>(configureOptions: option => option.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<GallifreyPlanetContext>();
 
 // Add services to the container.
@@ -31,12 +31,12 @@ builder.Services.AddSignalR();
 builder.Services.AddSession();
 
 builder.Services.AddAuthentication()
-    .AddFacebook(opt =>
+    .AddFacebook(configureOptions: opt =>
     {
         opt.ClientId = builder.Configuration[key: "Authentication:Facebook:ClientId"]!;
         opt.ClientSecret = builder.Configuration[key: "Authentication:Facebook:ClientSecret"]!;
     })
-    .AddGoogle(opt =>
+    .AddGoogle(configureOptions: opt =>
     {
         opt.ClientId = builder.Configuration[key: "Authentication:Google:ClientId"]!;
         opt.ClientSecret = builder.Configuration[key: "Authentication:Google:ClientSecret"]!;
@@ -66,7 +66,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
-app.MapHub<ChatHub>("/chatHub");
-app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<ChatHub>(pattern: "/chatHub");
+app.MapHub<NotificationHub>(pattern: "/notificationHub");
 
 app.Run();

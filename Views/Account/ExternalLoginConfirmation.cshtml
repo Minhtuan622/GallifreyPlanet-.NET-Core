@@ -6,7 +6,7 @@
     <form 
         asp-controller="Account" 
         asp-action="ExternalLoginConfirmation"
-        asp-route-returnurl="@ViewData["ReturnUrl"]"
+        asp-route-returnurl="@ViewData[index: "ReturnUrl"]"
         method="post"
         class="bg-body p-4 rounded-3"
         autocomplete="off"
@@ -15,7 +15,7 @@
 
         <div class="provider-info">
             <p class="m-0">
-                Bạn đã kết nối thành công với <strong>@ViewData["ProviderDisplayName"]</strong>.
+                Bạn đã kết nối thành công với <strong>@ViewData[index: "ProviderDisplayName"]</strong>.
                 Hãy hoàn thiện thông tin bên dưới.
             </p>
         </div>
@@ -126,6 +126,6 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 }

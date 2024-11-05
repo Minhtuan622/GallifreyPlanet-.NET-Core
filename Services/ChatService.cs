@@ -12,7 +12,7 @@ namespace GallifreyPlanet.Services
         public bool CreateConversation(string senderId, string receiverId, string? groupName = null)
         {
             var existingConversation = context.Conversation
-                .FirstOrDefault(c =>
+                .FirstOrDefault(predicate: c =>
                     c.Members != null &&
                     c.Members.Contains(senderId) &&
                     c.Members.Contains(receiverId) &&
@@ -26,13 +26,13 @@ namespace GallifreyPlanet.Services
 
             var conversation = new Conversation
             {
-                Members = string.Join(",", new List<string> { senderId, receiverId }),
+                Members = string.Join(separator: ",", values: new List<string> { senderId, receiverId }),
                 GroupName = groupName,
                 IsGroup = false,
                 CreatedAt = DateTime.Now,
             };
 
-            context.Conversation.Add(conversation);
+            context.Conversation.Add(entity: conversation);
             context.SaveChanges();
 
             return true;
@@ -40,7 +40,7 @@ namespace GallifreyPlanet.Services
 
         public async Task<bool> SaveMessage(int chatId, string senderId, string content)
         {
-            if (string.IsNullOrEmpty(senderId))
+            if (string.IsNullOrEmpty(value: senderId))
             {
                 return false;
             }
@@ -54,42 +54,47 @@ namespace GallifreyPlanet.Services
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await context.ChatMessage.AddAsync(chatMessage);
+            await context.ChatMessage.AddAsync(entity: chatMessage);
             await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<List<User?>?> CheckPermission(int chatId, string senderId)
         {
-            var members = await GetMembers(chatId);
-            return members.Any(m => m != null && m.Id == senderId) ? members : null;
+            var members = await GetMembers(chatId: chatId);
+            return members.Any(predicate: m => m != null && m.Id == senderId) ? members : null;
+        }
+
+        private void ReadMessages(Conversation conversation)
+        {
+            conversation.IsRead = true;
+
+            context.Update(entity: conversation);
+            context.SaveChanges();
         }
 
         public Task<ConversationViewModel> GetConversationById(int conversationId)
         {
-            var conversation = context.Conversation.FirstOrDefault(c => c.Id == conversationId);
-            conversation!.IsRead = true;
+            var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == conversationId)!;
+            ReadMessages(conversation: conversation);
 
-            context.Conversation.Update(conversation);
-            context.SaveChanges();
-
-            return NewConversationViewModel(conversation);
+            return NewConversationViewModel(conversation: conversation);
         }
 
         public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
         {
             var conversations = context.Conversation
-                .Where(c =>
+                .Where(predicate: c =>
                     c.Members != null &&
                     c.Members.Contains(userId)
                 )
-                .OrderBy(c => c.CreatedAt)
+                .OrderBy(keySelector: c => c.CreatedAt)
                 .ToList();
             var newConversations = new List<ConversationViewModel>();
 
             foreach (Conversation conversation in conversations)
             {
-                newConversations.Add(await NewConversationViewModel(conversation));
+                newConversations.Add(item: await NewConversationViewModel(conversation: conversation));
             }
 
             return newConversations;
@@ -98,13 +103,13 @@ namespace GallifreyPlanet.Services
         public async Task<List<MessageViewModel>> GetMessagesByConversationId(int conversationId)
         {
             var messages = context.Message
-                .Where(m => m.ChatId == conversationId)
+                .Where(predicate: m => m.ChatId == conversationId)
                 .ToList();
             var newMessagesViewModels = new List<MessageViewModel>();
 
             foreach (Message message in messages)
             {
-                newMessagesViewModels.Add(await NewMessageViewModel(message));
+                newMessagesViewModels.Add(item: await NewMessageViewModel(message: message));
             }
 
             return newMessagesViewModels;
@@ -113,20 +118,20 @@ namespace GallifreyPlanet.Services
         private Message? GetLatestMessage(int conversationId)
         {
             return context.Message
-                .OrderBy(m => m.CreatedAt)
-                .LastOrDefault(m => m.ChatId == conversationId);
+                .OrderBy(keySelector: m => m.CreatedAt)
+                .LastOrDefault(predicate: m => m.ChatId == conversationId);
         }
 
         private async Task<List<User?>> GetMembers(int chatId)
         {
-            var conversation = context.Conversation.FirstOrDefault(c => c.Id == chatId);
+            var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == chatId);
             var members = conversation?.Members;
-            var usersId = members!.Split(',');
+            var usersId = members!.Split(separator: ',');
             var usersList = new List<User?>();
 
             foreach (string userId in usersId)
             {
-                usersList.Add(await userService.GetUserAsyncById(userId));
+                usersList.Add(item: await userService.GetUserAsyncById(userId: userId));
             }
 
             return usersList;
@@ -134,12 +139,12 @@ namespace GallifreyPlanet.Services
 
         private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
         {
-            var message = GetLatestMessage(conversation.Id)!;
+            var message = GetLatestMessage(conversationId: conversation.Id)!;
 
             return new ConversationViewModel
             {
                 Id = conversation.Id,
-                Members = await GetMembers(conversation.Id),
+                Members = await GetMembers(chatId: conversation.Id),
                 GroupName = conversation.GroupName,
                 IsGroup = conversation.IsGroup,
                 CreatedAt = conversation.CreatedAt,
@@ -151,8 +156,8 @@ namespace GallifreyPlanet.Services
         {
             return new MessageViewModel
             {
-                Conversation = await GetConversationById(message.ChatId),
-                Sender = await userService.GetUserAsyncById(message.SenderId!),
+                Conversation = await GetConversationById(conversationId: message.ChatId),
+                Sender = await userService.GetUserAsyncById(userId: message.SenderId!),
                 Content = message.Content,
                 CreatedAt = message.CreatedAt,
                 UpdatedAt = message.UpdatedAt,

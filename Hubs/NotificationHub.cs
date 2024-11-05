@@ -6,7 +6,7 @@ namespace GallifreyPlanet.Hubs
     {
         public async Task SendNotification(string user, string message)
         {
-            await Clients.All.SendAsync(method: "ReceiveNotification", user, message);
+            await Clients.All.SendAsync(method: "ReceiveNotification", arg1: user, arg2: message);
         }
     }
 }

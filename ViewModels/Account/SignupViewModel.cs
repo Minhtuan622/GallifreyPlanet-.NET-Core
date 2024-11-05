@@ -7,7 +7,7 @@ namespace GallifreyPlanet.ViewModels.Account
     {
         [Display(Name = "Họ và tên")]
         [Required(ErrorMessage = "Họ và tên là bắt buộc")]
-        [StringLength(100, ErrorMessage = "Họ và tên không được quá 100 ký tự")]
+        [StringLength(maximumLength: 100, ErrorMessage = "Họ và tên không được quá 100 ký tự")]
         public string? Name { get; set; }
 
         [Display(Name = "Tên người dùng")]
@@ -25,7 +25,7 @@ namespace GallifreyPlanet.ViewModels.Account
 
 
         [Display(Name = "Xác nhận mật khẩu")]
-        [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không trùng khớp")]
+        [Compare(otherProperty: "Password", ErrorMessage = "Mật khẩu xác nhận không trùng khớp")]
         [Required(ErrorMessage = "Chưa xác nhận mật khẩu")]
         public string? ConfirmPassword { get; set; }
     }

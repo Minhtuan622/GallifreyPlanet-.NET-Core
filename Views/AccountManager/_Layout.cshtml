@@ -1,10 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Quản lý tài khoản";
+    ViewData[index: "Title"] = "Quản lý tài khoản";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Styles {
-    @await RenderSectionAsync("Styles", required: false)
+    @await RenderSectionAsync(name: "Styles", required: false)
 }
 
 <h1>Quản lý tài khoản</h1>
@@ -20,9 +20,9 @@
 </div>
 
 @section Scripts {
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(name: "Scripts", required: false)
 
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 }

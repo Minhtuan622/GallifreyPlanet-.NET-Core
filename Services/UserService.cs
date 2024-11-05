@@ -13,12 +13,12 @@ namespace GallifreyPlanet.Services
     {
         public async Task<User?> GetCurrentUserAsync()
         {
-            return await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
+            return await userManager.GetUserAsync(principal: httpContextAccessor.HttpContext!.User);
         }
 
         public async Task<User?> GetUserAsyncByUserName(string username)
         {
-            return await userManager.FindByNameAsync(username);
+            return await userManager.FindByNameAsync(userName: username);
         }
 
         public async Task<List<User>?> GetUsersAsync()
@@ -28,14 +28,14 @@ namespace GallifreyPlanet.Services
 
         public async Task<User?> GetUserAsyncById(string userId)
         {
-            return await userManager.FindByIdAsync(userId);
+            return await userManager.FindByIdAsync(userId: userId);
         }
 
         public async Task<List<ActiveSessionViewModel>> GetActiveSessionsAsyncByUser(string userId)
         {
             return await context.UserSession
-                .Where(us => us.UserId == userId && us.LogoutTime == null)
-                .Select(us => new ActiveSessionViewModel
+                .Where(predicate: us => us.UserId == userId && us.LogoutTime == null)
+                .Select(selector: us => new ActiveSessionViewModel
                 {
                     Id = us.Id.ToString(),
                     DeviceName = us.DeviceName,
@@ -48,8 +48,8 @@ namespace GallifreyPlanet.Services
         public async Task<List<LoginHistory>> GetLoginHistoriesAsyncByUserId(string userId)
         {
             return await context.LoginHistory
-                .Where(lh => lh.UserId == userId)
-                .OrderByDescending(lh => lh.LoginTime)
+                .Where(predicate: lh => lh.UserId == userId)
+                .OrderByDescending(keySelector: lh => lh.LoginTime)
                 .Take(count: 10)
                 .ToListAsync();
         }
@@ -60,7 +60,7 @@ namespace GallifreyPlanet.Services
             user.Email = model.Email;
             user.Address = model.Address;
             user.PhoneNumber = model.PhoneNumber;
-            return await userManager.UpdateAsync(user);
+            return await userManager.UpdateAsync(user: user);
         }
 
         public async Task<IdentityResult> UpdatePrivacySettingsAsync(User user, PrivacySettingsViewModel model)
@@ -68,40 +68,40 @@ namespace GallifreyPlanet.Services
             user.ShowEmail = model.ShowEmail;
             user.AllowChat = model.AllowMessagesFromNonFriends;
             user.AllowAddFriend = model.AllowAddFriend;
-            return await userManager.UpdateAsync(user);
+            return await userManager.UpdateAsync(user: user);
         }
 
         public async Task<IdentityResult> UpdateNotificationSettingsAsync(User user, NotificationSettingsViewModel model)
         {
             user.EmailNotifications = model.EmailNotifications;
             user.PushNotifications = model.PushNotifications;
-            return await userManager.UpdateAsync(user);
+            return await userManager.UpdateAsync(user: user);
         }
 
         public async Task<IdentityResult> ChangePasswordAsync(User user, string currentPassword, string newPassword)
         {
-            return await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return await userManager.ChangePasswordAsync(user: user, currentPassword: currentPassword, newPassword: newPassword);
         }
 
         public async Task<string> GenerateTwoFactorTokenAsync(User user)
         {
-            return await userManager.GenerateTwoFactorTokenAsync(user, tokenProvider: "Authenticator");
+            return await userManager.GenerateTwoFactorTokenAsync(user: user, tokenProvider: "Authenticator");
         }
 
         public async Task<bool> VerifyTwoFactorTokenAsync(User user, string verificationCode)
         {
-            return await userManager.VerifyTwoFactorTokenAsync(user, tokenProvider: "Authenticator", verificationCode);
+            return await userManager.VerifyTwoFactorTokenAsync(user: user, tokenProvider: "Authenticator", token: verificationCode);
         }
 
         public async Task<IdentityResult> SetTwoFactorEnabledAsync(User user, bool enabled)
         {
-            return await userManager.SetTwoFactorEnabledAsync(user, enabled);
+            return await userManager.SetTwoFactorEnabledAsync(user: user, enabled: enabled);
         }
 
         public async Task TerminateSessionAsync(string userId, string sessionId)
         {
             UserSession? session = await context.UserSession
-                .FirstOrDefaultAsync(us => us.Id.ToString() == sessionId && us.UserId == userId);
+                .FirstOrDefaultAsync(predicate: us => us.Id.ToString() == sessionId && us.UserId == userId);
 
             if (session != null)
             {
@@ -120,7 +120,7 @@ namespace GallifreyPlanet.Services
                 UserAgent = userAgent
             };
 
-            context.LoginHistory.Add(loginHistory);
+            context.LoginHistory.Add(entity: loginHistory);
             await context.SaveChangesAsync();
         }
     }

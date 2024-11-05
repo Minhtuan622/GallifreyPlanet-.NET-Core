@@ -17,23 +17,23 @@ namespace GallifreyPlanet.Services
                 IsRead = false
             };
 
-            context.Notification.Add(notification);
+            context.Notification.Add(entity: notification);
             await context.SaveChangesAsync();
 
-            await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", user, message);
+            await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", arg1: user, arg2: message);
         }
 
         public List<Notification> GetUserNotifications(string user)
         {
             return context.Notification
-                .Where(n => n.UserId == user)
-                .OrderByDescending(n => n.CreatedAt)
+                .Where(predicate: n => n.UserId == user)
+                .OrderByDescending(keySelector: n => n.CreatedAt)
                 .ToList();
         }
 
         public async Task MarkAsRead(int notificationId)
         {
-            Notification? notification = await context.Notification.FindAsync(notificationId);
+            Notification? notification = await context.Notification.FindAsync(keyValues: notificationId);
             if (notification != null)
             {
                 notification.IsRead = true;

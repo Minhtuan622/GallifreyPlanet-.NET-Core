@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-signin-client_id" content="213691583329-acmg55u737khdtf2h31bkhe5a5vt98e5.apps.googleusercontent.com">
-    <title>@ViewData["Title"] - Authentication GallifreyPlanet</title>
+    <title>@ViewData[index: "Title"] - Authentication GallifreyPlanet</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GallifreyPlanet.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-    @RenderSection("Styles", required: false)
+    @RenderSection(name: "Styles", required: false)
 </head>
 <body class="d-flex justify-content-center align-items-center bg-body-secondary user-select-none">
     <div class="container-fluid p-3">
@@ -22,6 +22,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/font-awesome/js/all.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(name: "Scripts", required: false)
 </body>
 </html>

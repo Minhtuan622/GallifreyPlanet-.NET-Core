@@ -14,7 +14,7 @@ namespace GallifreyPlanet.Controllers
     {
         private JsonResult JsonResponse(bool success, string message = "", object? data = null)
         {
-            return Json(new { success, message, data });
+            return Json(data: new { success, message, data });
         }
 
         private async Task<User> GetAuthenticatedUserAsync()
@@ -32,7 +32,7 @@ namespace GallifreyPlanet.Controllers
 
         private JsonResult? ValidateContent(string content)
         {
-            return string.IsNullOrWhiteSpace(content)
+            return string.IsNullOrWhiteSpace(value: content)
                 ? JsonResponse(success: false, message: "Bình luận không được để trống")
                 : null;
         }
@@ -44,12 +44,12 @@ namespace GallifreyPlanet.Controllers
             {
                 User user = await GetAuthenticatedUserAsync();
 
-                List<CommentViewModel> data = await commentService.Get(CommentableType.Blog, commentableId);
+                List<CommentViewModel> data = await commentService.Get(commentableType: CommentableType.Blog, commentableId: commentableId);
                 return JsonResponse(success: true, data: data);
             }
             catch (Exception ex)
             {
-                return JsonResponse(success: false, ex.Message);
+                return JsonResponse(success: false, message: ex.Message);
             }
         }
 
@@ -58,7 +58,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                JsonResult? contentValidation = ValidateContent(content);
+                JsonResult? contentValidation = ValidateContent(content: content);
                 if (contentValidation != null)
                 {
                     return contentValidation;
@@ -75,7 +75,7 @@ namespace GallifreyPlanet.Controllers
                     CreatedAt = DateTime.Now
                 };
 
-                await context.Comment.AddAsync(comment);
+                await context.Comment.AddAsync(entity: comment);
                 await context.SaveChangesAsync();
 
                 return JsonResponse(
@@ -85,7 +85,7 @@ namespace GallifreyPlanet.Controllers
             }
             catch (Exception ex)
             {
-                return JsonResponse(success: false, ex.Message);
+                return JsonResponse(success: false, message: ex.Message);
             }
         }
 
@@ -94,7 +94,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? comment = commentService.GetById(id);
+                Comment? comment = commentService.GetById(id: id);
                 if (comment == null)
                 {
                     return JsonResponse(
@@ -112,17 +112,17 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                bool deleteSuccess = commentService.DeleteCommentChildren(comment);
+                bool deleteSuccess = commentService.DeleteCommentChildren(comment: comment);
 
                 TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
                 return JsonResponse(
-                    deleteSuccess,
-                    deleteSuccess ? "Xóa bình luận thành công" : "Xóa bình luận không thành công"
+                    success: deleteSuccess,
+                    message: deleteSuccess ? "Xóa bình luận thành công" : "Xóa bình luận không thành công"
                 );
             }
             catch (Exception ex)
             {
-                return JsonResponse(success: false, ex.Message);
+                return JsonResponse(success: false, message: ex.Message);
             }
         }
 
@@ -131,7 +131,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                JsonResult? contentValidation = ValidateContent(content);
+                JsonResult? contentValidation = ValidateContent(content: content);
                 if (contentValidation != null)
                 {
                     return contentValidation;
@@ -139,7 +139,7 @@ namespace GallifreyPlanet.Controllers
 
                 User user = await GetAuthenticatedUserAsync();
 
-                Comment? parentComment = commentService.GetById(commentId);
+                Comment? parentComment = commentService.GetById(id: commentId);
                 if (parentComment == null)
                 {
                     return JsonResponse(
@@ -158,14 +158,14 @@ namespace GallifreyPlanet.Controllers
                     CreatedAt = DateTime.Now
                 };
 
-                await context.Comment.AddAsync(reply);
+                await context.Comment.AddAsync(entity: reply);
                 await context.SaveChangesAsync();
 
                 return JsonResponse(success: true, message: "Phản hồi thành công");
             }
             catch (Exception ex)
             {
-                return JsonResponse(success: false, ex.Message);
+                return JsonResponse(success: false, message: ex.Message);
             }
         }
 
@@ -174,7 +174,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                Comment? reply = commentService.GetById(id);
+                Comment? reply = commentService.GetById(id: id);
                 if (reply == null)
                 {
                     return JsonResponse(
@@ -192,7 +192,7 @@ namespace GallifreyPlanet.Controllers
                     );
                 }
 
-                context.Comment.Remove(reply);
+                context.Comment.Remove(entity: reply);
                 await context.SaveChangesAsync();
 
                 TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
@@ -200,7 +200,7 @@ namespace GallifreyPlanet.Controllers
             }
             catch (Exception ex)
             {
-                return JsonResponse(success: false, ex.Message);
+                return JsonResponse(success: false, message: ex.Message);
             }
         }
     }

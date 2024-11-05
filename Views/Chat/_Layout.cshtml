@@ -2,14 +2,14 @@
 @model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
 
 @{
-    ViewData["Title"] = "Chat Manager";
+    ViewData[index: "Title"] = "Chat Manager";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
 @section Styles {
-    @await RenderSectionAsync("Styles", required: false)
+    @await RenderSectionAsync(name: "Styles", required: false)
 
     <link rel="stylesheet" href="~/css/chat.css">
 }
@@ -32,13 +32,12 @@
                 {
                     foreach (var conversation in Model.Conversations)
                     {
-                        var members = conversation.Members?.Where(m => m?.Id != Model.User.Id).ToList();
+                        var members = conversation.Members?.Where(predicate: m => m?.Id != Model.User.Id).ToList();
 
                         if (members?.Count == 1)
                         {
-                            var member = members[0];
+                            var member = members[index: 0];
                             var avatar = member!.Avatar ?? defaultAvatarPath;
-                            var isRead = conversation.IsRead;
 
                             <a asp-action="Chat" asp-route-conversationId="@conversation.Id" class="text-decoration-none">
                                 <div class="conversation-item hover-bg">
@@ -51,7 +50,8 @@
                                             <h6 class="mb-0">@member.Name</h6>
                                             <small class="text-muted">@conversation.CreatedAt.Humanize()</small>
                                         </div>
-                                        <p class="text-muted small text-truncate mb-0 @(isRead ? "" : "fw-bold")">
+                                        @conversation.IsRead
+                                        <p class="text-muted small text-truncate mb-0 @(conversation.IsRead ? "" : "fw-bold")">
                                             @conversation.LatestMessage
                                         </p>
                                     </div>
@@ -67,9 +67,9 @@
 </div>
 
 @section Scripts {
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(name: "Scripts", required: false)
 
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 }

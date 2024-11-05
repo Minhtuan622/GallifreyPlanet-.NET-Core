@@ -18,7 +18,7 @@ namespace GallifreyPlanet.ViewModels.Account
         public string? Password { get; set; }
 
         [Display(Name = "Nhập lại mật khẩu", Prompt = "Mật khẩu xác nhận là bắt buộc")]
-        [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không trùng khớp")]
+        [Compare(otherProperty: "Password", ErrorMessage = "Mật khẩu xác nhận không trùng khớp")]
         [Required(ErrorMessage = "Chưa xác nhận mật khẩu")]
         public string? ConfirmPassword { get; set; }
     }

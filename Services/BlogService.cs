@@ -9,24 +9,24 @@ namespace GallifreyPlanet.Services
         public BlogViewModel? GetById(int id)
         {
             return context.Blog
-                .Select(NewBlogViewModel)
-                .Where(b => b.Id == id)
+                .Select(selector: NewBlogViewModel)
+                .Where(predicate: b => b.Id == id)
                 .FirstOrDefault();
         }
 
         public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)
         {
             List<Blog> blogs = context.Blog
-                .Where(b => b.UserId == userId)
-                .OrderByDescending(b => b.Id)
+                .Where(predicate: b => b.UserId == userId)
+                .OrderByDescending(keySelector: b => b.Id)
                 .ToList();
 
             if (count is not null)
             {
-                blogs = blogs.Take(count.Value).ToList();
+                blogs = blogs.Take(count: count.Value).ToList();
             }
 
-            return Task.FromResult(blogs.Select(NewBlogViewModel).ToList());
+            return Task.FromResult(result: blogs.Select(selector: NewBlogViewModel).ToList());
         }
 
         public BlogViewModel NewBlogViewModel(Blog blog)
@@ -46,7 +46,7 @@ namespace GallifreyPlanet.Services
 
         public bool BlogExists(int id)
         {
-            return context.Blog.Any(e => e.Id == id);
+            return context.Blog.Any(predicate: e => e.Id == id);
         }
     }
 }

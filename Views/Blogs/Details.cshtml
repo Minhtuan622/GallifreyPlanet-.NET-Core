@@ -1,7 +1,7 @@
 ﻿@model GallifreyPlanet.ViewModels.Blog.BlogManagerViewModel
 
 @{
-    ViewData["Title"] = Model.BlogViewModel!.Title;
+    ViewData[index: "Title"] = Model.BlogViewModel!.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
@@ -42,7 +42,7 @@
                         @Model.BlogViewModel.Description
                     </div>
                     <div class="blog-content">
-                        @Html.Raw(Model.BlogViewModel.Content)
+                        @Html.Raw(value: Model.BlogViewModel.Content)
                     </div>
                 </div>
             </article>

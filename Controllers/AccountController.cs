@@ -33,7 +33,7 @@ namespace GallifreyPlanet.Controllers
         {
             try
             {
-                MailAddress m = new MailAddress(emailaddress);
+                MailAddress m = new MailAddress(address: emailaddress);
                 return true;
             }
             catch (FormatException)
@@ -49,9 +49,9 @@ namespace GallifreyPlanet.Controllers
             {
                 string? userNameOrEmail = user.UsernameOrEmail;
 
-                if (IsValidEmail(user.UsernameOrEmail!))
+                if (IsValidEmail(emailaddress: user.UsernameOrEmail!))
                 {
-                    User? getUser = await userManager.FindByEmailAsync(user.UsernameOrEmail!);
+                    User? getUser = await userManager.FindByEmailAsync(email: user.UsernameOrEmail!);
                     if (getUser != null)
                     {
                         userNameOrEmail = getUser.UserName;
@@ -59,25 +59,25 @@ namespace GallifreyPlanet.Controllers
                 }
 
                 SignInResult result = await signInManager.PasswordSignInAsync(
-                    userNameOrEmail!,
-                    user.Password!,
-                    user.RememberMe,
+                    userName: userNameOrEmail!,
+                    password: user.Password!,
+                    isPersistent: user.RememberMe,
                     lockoutOnFailure: false
                 );
 
                 if (result.IsNotAllowed)
                 {
                     ModelState.AddModelError(key: "", errorMessage: "Xác thực Email để đăng nhập.");
-                    return View(user);
+                    return View(model: user);
                 }
 
                 if (result.Succeeded)
                 {
                     User? currentUser = await userService.GetCurrentUserAsync();
                     await userService.AddLoginHistoryAsync(
-                        currentUser!.Id,
-                        HttpContext.Connection.RemoteIpAddress?.ToString()!,
-                        HttpContext.Request.Headers[key: "User-Agent"].ToString()
+                        userId: currentUser!.Id,
+                        ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString()!,
+                        userAgent: HttpContext.Request.Headers[key: "User-Agent"].ToString()
                     );
 
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
@@ -86,7 +86,7 @@ namespace GallifreyPlanet.Controllers
                 ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
             }
 
-            return View(user);
+            return View(model: user);
         }
 
         [HttpGet]
@@ -100,12 +100,12 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? existingUser = context.Users.FirstOrDefault(u => u.Email == user.Email);
+                User? existingUser = context.Users.FirstOrDefault(predicate: u => u.Email == user.Email);
 
                 if (existingUser != null)
                 {
                     ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
-                    return View(user);
+                    return View(model: user);
                 }
 
                 User newUser = new User
@@ -120,22 +120,22 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await userManager.CreateAsync(newUser, user.Password!);
+                IdentityResult result = await userManager.CreateAsync(user: newUser, password: user.Password!);
 
                 if (result.Succeeded)
                 {
-                    await signInManager.SignInAsync(newUser, isPersistent: false);
+                    await signInManager.SignInAsync(user: newUser, isPersistent: false);
 
                     return RedirectToAction(actionName: "Index", controllerName: "Home");
                 }
 
                 foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError(key: "", error.Description);
+                    ModelState.AddModelError(key: "", errorMessage: error.Description);
                 }
             }
 
-            return View(user);
+            return View(model: user);
         }
 
         [HttpGet]
@@ -149,14 +149,14 @@ namespace GallifreyPlanet.Controllers
         {
             if (ModelState.IsValid)
             {
-                User? user = await userManager.FindByEmailAsync(viewModel.Email!);
-                if (user == null || !(await userManager.IsEmailConfirmedAsync(user)))
+                User? user = await userManager.FindByEmailAsync(email: viewModel.Email!);
+                if (user == null || !(await userManager.IsEmailConfirmedAsync(user: user)))
                 {
                     return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
                 }
 
-                string code = await userManager.GeneratePasswordResetTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                string code = await userManager.GeneratePasswordResetTokenAsync(user: user);
+                code = WebEncoders.Base64UrlEncode(input: Encoding.UTF8.GetBytes(s: code));
                 string? callbackUrl = Url.Page(
                 pageName: "/Account/ResetPassword",
                     pageHandler: null,
@@ -165,15 +165,15 @@ namespace GallifreyPlanet.Controllers
                 );
 
                 await emailSender.SendEmailAsync(
-                    viewModel.Email!,
+                    email: viewModel.Email!,
                     subject: "Khôi phục mật khẩu",
-                    htmlMessage: $"Để khôi phục mật khẩu của bạn, vui lòng <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>nhấp vào đây</a>."
+                    htmlMessage: $"Để khôi phục mật khẩu của bạn, vui lòng <a href='{HtmlEncoder.Default.Encode(value: callbackUrl!)}'>nhấp vào đây</a>."
                 );
 
                 return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
             }
 
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         [HttpGet]
@@ -197,7 +197,7 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public IActionResult ResetPassword(ResetPasswordViewModel viewModel)
         {
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         [HttpGet]
@@ -220,9 +220,9 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string? returnurl = null)
         {
-            string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", new { returnurl });
-            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
+            string? redirectUrl = Url.Action(action: "ExternalLoginCallback", controller: "Account", values: new { returnurl });
+            AuthenticationProperties properties = signInManager.ConfigureExternalAuthenticationProperties(provider: provider, redirectUrl: redirectUrl);
+            return Challenge(properties: properties, authenticationSchemes: provider);
         }
 
         [HttpGet]
@@ -232,32 +232,32 @@ namespace GallifreyPlanet.Controllers
             returnurl ??= Url.Content(contentPath: "~/");
             if (remoteError != null)
             {
-                ModelState.AddModelError(string.Empty, errorMessage: $"Error from external provider: {remoteError}");
-                return View(nameof(Login));
+                ModelState.AddModelError(key: string.Empty, errorMessage: $"Error from external provider: {remoteError}");
+                return View(viewName: nameof(Login));
             }
 
             ExternalLoginInfo? info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction(actionName: nameof(Login));
             }
 
             SignInResult result = await signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider,
-                info.ProviderKey,
+                loginProvider: info.LoginProvider,
+                providerKey: info.ProviderKey,
                 isPersistent: false,
                 bypassTwoFactor: true
             );
 
             if (result.Succeeded)
             {
-                await signInManager.UpdateExternalAuthenticationTokensAsync(info);
-                return LocalRedirect(returnurl);
+                await signInManager.UpdateExternalAuthenticationTokensAsync(externalLogin: info);
+                return LocalRedirect(localUrl: returnurl);
             }
 
             if (result.RequiresTwoFactor)
             {
-                return RedirectToAction(nameof(VerifyAuthenticatorCode), new { returnurl });
+                return RedirectToAction(actionName: nameof(VerifyAuthenticatorCode), routeValues: new { returnurl });
             }
 
             ViewData[index: "ReturnUrl"] = returnurl;
@@ -265,8 +265,8 @@ namespace GallifreyPlanet.Controllers
 
             return View(viewName: "ExternalLoginConfirmation", model: new ExternalLoginConfirmationViewModel
             {
-                Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                Name = info.Principal.FindFirstValue(ClaimTypes.Name)
+                Email = info.Principal.FindFirstValue(claimType: ClaimTypes.Email),
+                Name = info.Principal.FindFirstValue(claimType: ClaimTypes.Name)
             });
         }
 
@@ -300,21 +300,21 @@ namespace GallifreyPlanet.Controllers
                     PushNotifications = false,
                 };
 
-                IdentityResult result = await userManager.CreateAsync(user, model.Password!);
+                IdentityResult result = await userManager.CreateAsync(user: user, password: model.Password!);
                 if (result.Succeeded)
                 {
-                    result = await userManager.AddLoginAsync(user, info);
+                    result = await userManager.AddLoginAsync(user: user, login: info);
                     if (result.Succeeded)
                     {
-                        await signInManager.SignInAsync(user, isPersistent: false);
-                        await signInManager.UpdateExternalAuthenticationTokensAsync(info);
-                        return LocalRedirect(returnurl);
+                        await signInManager.SignInAsync(user: user, isPersistent: false);
+                        await signInManager.UpdateExternalAuthenticationTokensAsync(externalLogin: info);
+                        return LocalRedirect(localUrl: returnurl);
                     }
                 }
-                AddErrors(result);
+                AddErrors(result: result);
             }
             ViewData[index: "ReturnUrl"] = returnurl;
-            return View(model);
+            return View(model: model);
         }
 
         [HttpGet]
@@ -328,7 +328,7 @@ namespace GallifreyPlanet.Controllers
         {
             foreach (IdentityError error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
             }
         }
     }

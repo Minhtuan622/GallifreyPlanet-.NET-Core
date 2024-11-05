@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = $"Hồ sơ của {Model.Name}";
+    ViewData[index: "Title"] = $"Hồ sơ của {Model.Name}";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
@@ -104,7 +104,7 @@
                     }
 
 
-                    @if (!string.IsNullOrEmpty(Model.Email))
+                    @if (!string.IsNullOrEmpty(value: Model.Email))
                     {
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-envelope text-primary me-3"></i>
@@ -112,7 +112,7 @@
                         </div>
                     }
 
-                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    @if (!string.IsNullOrEmpty(value: Model.PhoneNumber))
                     {
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-phone text-primary me-3"></i>
@@ -120,7 +120,7 @@
                         </div>
                     }
 
-                    @if (!string.IsNullOrEmpty(Model.Address))
+                    @if (!string.IsNullOrEmpty(value: Model.Address))
                     {
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-map-marker-alt text-primary me-3"></i>
@@ -134,31 +134,31 @@
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Liên kết mạng xã hội</h5>
                     <div class="d-flex flex-wrap gap-3">
-                        @if (!string.IsNullOrEmpty(Model.Website))
+                        @if (!string.IsNullOrEmpty(value: Model.Website))
                         {
                             <a href="@Model.Website" target="_blank" class="btn btn-outline-primary rounded-pill">
                                 <i class="fas fa-globe me-2"></i>Website
                             </a>
                         }
-                        @if (!string.IsNullOrEmpty(Model.Github))
+                        @if (!string.IsNullOrEmpty(value: Model.Github))
                         {
                             <a href="@Model.Github" target="_blank" class="btn btn-outline-dark rounded-pill">
                                 <i class="fab fa-github me-2"></i>Github
                             </a>
                         }
-                        @if (!string.IsNullOrEmpty(Model.Twitter))
+                        @if (!string.IsNullOrEmpty(value: Model.Twitter))
                         {
                             <a href="@Model.Twitter" target="_blank" class="btn btn-outline-info rounded-pill">
                                 <i class="fab fa-twitter me-2"></i>Twitter
                             </a>
                         }
-                        @if (!string.IsNullOrEmpty(Model.Instagram))
+                        @if (!string.IsNullOrEmpty(value: Model.Instagram))
                         {
                             <a href="@Model.Instagram" target="_blank" class="btn btn-outline-danger rounded-pill">
                                 <i class="fab fa-instagram me-2"></i>Instagram
                             </a>
                         }
-                        @if (!string.IsNullOrEmpty(Model.Facebook))
+                        @if (!string.IsNullOrEmpty(value: Model.Facebook))
                         {
                             <a href="@Model.Facebook" target="_blank" class="btn btn-outline-primary rounded-pill">
                                 <i class="fab fa-facebook-f me-2"></i>Facebook
@@ -361,7 +361,7 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 
     <script>

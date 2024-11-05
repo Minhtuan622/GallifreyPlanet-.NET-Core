@@ -1,11 +1,11 @@
 ﻿@model GallifreyPlanet.ViewModels.AccountManager.AccountManagerViewModel
 
 @{
-    ViewData["Title"] = "Cài đặt tài khoản";
+    ViewData[index: "Title"] = "Cài đặt tài khoản";
 }
 
 <div class="container my-5">
-    <h1 class="mb-4 text-center">@ViewData["Title"]</h1>
+    <h1 class="mb-4 text-center">@ViewData[index: "Title"]</h1>
 
     <div class="row g-4">
         <div class="col-lg-8">
@@ -54,7 +54,7 @@
                                     <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
                                     <span asp-validation-for="EditProfile!.AvatarFile" class="text-danger"></span>
                                 </div>
-                                @if (!string.IsNullOrEmpty(Model.EditProfile!.CurrentAvatar))
+                                @if (!string.IsNullOrEmpty(value: Model.EditProfile!.CurrentAvatar))
                                 {
                                     <div class="mb-3">
                                         <img src="@Model.EditProfile!.CurrentAvatar" alt="Current Avatar" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;" />
@@ -134,7 +134,7 @@
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4">Liên kết tài khoản mạng xã hội</h5>
                     <div class="d-grid gap-2">
-                        @if (Model.LinkedAccounts.Contains("Google"))
+                        @if (Model.LinkedAccounts.Contains(item: "Google"))
                         {
                             <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Google">
                                 <i class="fab fa-google me-2"></i> Hủy liên kết Google
@@ -147,7 +147,7 @@
                             </button>
                         }
 
-                        @if (Model.LinkedAccounts.Contains("Facebook"))
+                        @if (Model.LinkedAccounts.Contains(item: "Facebook"))
                         {
                             <button class="btn btn-outline-danger" asp-action="UnlinkAccount" asp-route-provider="Facebook">
                                 <i class="fab fa-facebook-f me-2"></i> Hủy liên kết Facebook

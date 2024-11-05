@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Bạn bè";
+    ViewData[index: "Title"] = "Bạn bè";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
@@ -419,7 +419,7 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
 
     <script>

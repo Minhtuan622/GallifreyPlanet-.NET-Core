@@ -22,11 +22,11 @@ namespace GallifreyPlanet.Controllers
             AccountManagerViewModel viewModel = new AccountManagerViewModel
             {
                 User = user,
-                LoginHistory = await userService.GetLoginHistoriesAsyncByUserId(user.Id),
-                ActiveSessions = await userService.GetActiveSessionsAsyncByUser(user.Id),
+                LoginHistory = await userService.GetLoginHistoriesAsyncByUserId(userId: user.Id),
+                ActiveSessions = await userService.GetActiveSessionsAsyncByUser(userId: user.Id),
             };
 
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         [HttpGet]
@@ -62,7 +62,7 @@ namespace GallifreyPlanet.Controllers
                 },
             };
 
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         [HttpPost]
@@ -70,7 +70,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(AccountSetting), viewModel);
+                return RedirectToAction(actionName: nameof(AccountSetting), routeValues: viewModel);
             }
 
             User? user = await userService.GetCurrentUserAsync();
@@ -80,19 +80,19 @@ namespace GallifreyPlanet.Controllers
             }
 
             IdentityResult result = await userService.ChangePasswordAsync(
-                user,
-                viewModel.ChangePassword!.CurrentPassword!,
-                viewModel.ChangePassword!.NewPassword!
+                user: user,
+                currentPassword: viewModel.ChangePassword!.CurrentPassword!,
+                newPassword: viewModel.ChangePassword!.NewPassword!
             );
 
             if (result.Succeeded)
             {
                 TempData[key: "StatusMessage"] = "Đổi mật khẩu thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
-            AddErrors(result);
-            return RedirectToAction(nameof(AccountSetting), viewModel);
+            AddErrors(result: result);
+            return RedirectToAction(actionName: nameof(AccountSetting), routeValues: viewModel);
         }
 
         [HttpPost]
@@ -100,7 +100,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(AccountSetting));
+                return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
             User? user = await userService.GetCurrentUserAsync();
@@ -109,26 +109,26 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdateProfileAsync(user, viewModel.EditProfile!);
+            IdentityResult result = await userService.UpdateProfileAsync(user: user, model: viewModel.EditProfile!);
 
             if (viewModel.EditProfile!.AvatarFile != null)
             {
                 user.Avatar = await fileService.UploadFileAsync(
-                    viewModel.EditProfile.AvatarFile,
+                    file: viewModel.EditProfile.AvatarFile,
                     folder: "/accounts/avatars",
-                    user.Avatar!
+                    currentFilePath: user.Avatar!
                 );
-                await userService.UpdateProfileAsync(user, viewModel.EditProfile);
+                await userService.UpdateProfileAsync(user: user, model: viewModel.EditProfile);
             }
 
             if (result.Succeeded)
             {
                 TempData[key: "StatusMessage"] = "Cập nhật thông tin cá nhân thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
-            AddErrors(result);
-            return RedirectToAction(nameof(AccountSetting));
+            AddErrors(result: result);
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         [HttpPost]
@@ -136,7 +136,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(AccountSetting));
+                return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
             User? user = await userService.GetCurrentUserAsync();
@@ -145,16 +145,16 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdatePrivacySettingsAsync(user, viewModel.PrivacySettings!);
+            IdentityResult result = await userService.UpdatePrivacySettingsAsync(user: user, model: viewModel.PrivacySettings!);
 
             if (result.Succeeded)
             {
                 TempData[key: "StatusMessage"] = "Cập nhật cài đặt quyền riêng tư thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
-            AddErrors(result);
-            return RedirectToAction(nameof(AccountSetting));
+            AddErrors(result: result);
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         [HttpPost]
@@ -162,7 +162,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(AccountSetting));
+                return RedirectToAction(actionName: nameof(AccountSetting));
             }
 
             User? user = await userService.GetCurrentUserAsync();
@@ -171,16 +171,16 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            IdentityResult result = await userService.UpdateNotificationSettingsAsync(user, viewModel.NotificationSettings!);
+            IdentityResult result = await userService.UpdateNotificationSettingsAsync(user: user, model: viewModel.NotificationSettings!);
 
             if (result.Succeeded)
             {
                 TempData[key: "StatusMessage"] = "Cập nhật cài đặt thông báo thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
-            AddErrors(result);
-            return RedirectToAction(nameof(AccountSetting));
+            AddErrors(result: result);
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         [HttpPost]
@@ -188,20 +188,20 @@ namespace GallifreyPlanet.Controllers
         {
             if (avatar.Length == 0)
             {
-                return Json(new { success = false });
+                return Json(data: new { success = false });
             }
 
             User? user = await userService.GetCurrentUserAsync();
             if (user == null)
             {
-                return Json(new { success = false });
+                return Json(data: new { success = false });
             }
 
-            string avatarPath = await fileService.UploadFileAsync(avatar, folder: "/accounts/avatars", user.Avatar!);
+            string avatarPath = await fileService.UploadFileAsync(file: avatar, folder: "/accounts/avatars", currentFilePath: user.Avatar!);
             user.Avatar = avatarPath;
-            IdentityResult result = await userService.UpdateProfileAsync(user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
+            IdentityResult result = await userService.UpdateProfileAsync(user: user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
-            return Json(new { success = result.Succeeded, avatarUrl = user.Avatar });
+            return Json(data: new { success = result.Succeeded, avatarUrl = user.Avatar });
         }
 
         public async Task<IActionResult> EnableTwoFactorAuthentication()
@@ -212,10 +212,10 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            string token = await userService.GenerateTwoFactorTokenAsync(user);
+            string token = await userService.GenerateTwoFactorTokenAsync(user: user);
             EnableTwoFactorAuthenticationViewModel model = new EnableTwoFactorAuthenticationViewModel { Token = token };
 
-            return View(model);
+            return View(model: model);
         }
 
         [HttpPost]
@@ -223,7 +223,7 @@ namespace GallifreyPlanet.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(model: model);
             }
 
             User? user = await userService.GetCurrentUserAsync();
@@ -232,24 +232,24 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            string verificationCode = model.VerificationCode!.Replace(oldValue: " ", string.Empty).Replace(oldValue: "-", string.Empty);
-            bool is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user, verificationCode);
+            string verificationCode = model.VerificationCode!.Replace(oldValue: " ", newValue: string.Empty).Replace(oldValue: "-", newValue: string.Empty);
+            bool is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user: user, verificationCode: verificationCode);
 
             if (!is2FaTokenValid)
             {
                 ModelState.AddModelError(key: "VerificationCode", errorMessage: "Mã xác thực không hợp lệ.");
-                return View(model);
+                return View(model: model);
             }
 
-            await userService.SetTwoFactorEnabledAsync(user, enabled: true);
-            return RedirectToAction(nameof(Index));
+            await userService.SetTwoFactorEnabledAsync(user: user, enabled: true);
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         private void AddErrors(IdentityResult result)
         {
             foreach (IdentityError? error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
             }
         }
 
@@ -262,8 +262,8 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            await userService.TerminateSessionAsync(user.Id, sessionId);
-            return RedirectToAction(nameof(Index));
+            await userService.TerminateSessionAsync(userId: user.Id, sessionId: sessionId);
+            return RedirectToAction(actionName: nameof(Index));
         }
     }
 }

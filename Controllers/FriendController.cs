@@ -22,12 +22,12 @@ namespace GallifreyPlanet.Controllers
             string userId = user.Id;
             FriendManagerViewModel friends = new FriendManagerViewModel
             {
-                Friends = await friendService.GetFriends(userId),
-                FriendRequests = await friendService.GetFriendRequests(userId),
-                BlockedFriends = await friendService.GetBlockedFriends(userId),
+                Friends = await friendService.GetFriends(userId: userId),
+                FriendRequests = await friendService.GetFriendRequests(userId: userId),
+                BlockedFriends = await friendService.GetBlockedFriends(userId: userId),
             };
 
-            return View(friends);
+            return View(model: friends);
         }
 
         [HttpPost]
@@ -39,14 +39,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Send(user.Id, friendId))
+            if (friendService.Send(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while sending friend request";
-            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", new { username = user.UserName });
+            return RedirectToAction(actionName: nameof(Index), controllerName: "PublicProfile", routeValues: new { username = user.UserName });
         }
 
         [HttpPost]
@@ -58,14 +58,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Cancel(user.Id, friendId))
+            if (friendService.Cancel(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Hủy lời mời kết bạn thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while canceling friend request";
-            return RedirectToAction(nameof(Index), controllerName: "PublicProfile", new { username = user.UserName });
+            return RedirectToAction(actionName: nameof(Index), controllerName: "PublicProfile", routeValues: new { username = user.UserName });
         }
 
         [HttpPost]
@@ -77,14 +77,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Accept(user.Id, friendId))
+            if (friendService.Accept(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Đã chấp nhận lời mời kết bạn";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while accept friend request";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         [HttpPost]
@@ -96,14 +96,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Decline(user.Id, friendId))
+            if (friendService.Decline(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Đã từ chối lời mời kết bạn";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while decline friend request";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         [HttpPost]
@@ -115,14 +115,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Blocked(user.Id, friendId))
+            if (friendService.Blocked(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Đã chặn thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while block friend";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         [HttpPost]
@@ -134,14 +134,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.UnBlocked(user.Id, friendId))
+            if (friendService.UnBlocked(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Bỏ chặn thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while unblock friend";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         [HttpPost]
@@ -153,14 +153,14 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (friendService.Remove(user.Id, friendId))
+            if (friendService.Remove(userId: user.Id, friendId: friendId))
             {
                 TempData[key: "StatusMessage"] = "Đã hủy kết bạn thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
 
             TempData[key: "StatusMessage"] = "Error while remove friend";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
     }
 }

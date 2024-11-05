@@ -2,13 +2,13 @@
 @inject SignInManager<User> SignInManager
 
 @{
-    ViewData["Title"] = "Trang chủ";
+    ViewData[index: "Title"] = "Trang chủ";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
 <div class="container py-4">
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(principal: User))
     {
         <div class="row g-4">
             <!-- Left Sidebar -->

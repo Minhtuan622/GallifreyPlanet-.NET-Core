@@ -1,7 +1,7 @@
 ﻿@model GallifreyPlanet.ViewModels.AccountManager.AccountManagerViewModel
 
 @{
-    ViewData["Title"] = "Quản lý tài khoản";
+    ViewData[index: "Title"] = "Quản lý tài khoản";
     Layout = "~/Views/AccountManager/_Layout.cshtml";
 
     string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
@@ -125,7 +125,7 @@
                             @foreach (var login in Model.LoginHistory)
                             {
                                 <tr>
-                                    <td>@login.LoginTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@login.LoginTime.ToString(format: "dd/MM/yyyy HH:mm")</td>
                                     <td>@login.IpAddress</td>
                                     <td>@login.UserAgent</td>
                                 </tr>

@@ -11,7 +11,7 @@ namespace GallifreyPlanet.ViewModels.Account
 
 		[Display(Name = "Mật khẩu")]
 		[Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
-		[DataType(DataType.Password)]
+		[DataType(dataType: DataType.Password)]
 		public string? Password { get; set; }
 
 		[Display(Name = "Duy trì đăng nhập")]

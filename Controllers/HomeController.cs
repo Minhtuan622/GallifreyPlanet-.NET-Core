@@ -14,7 +14,7 @@ namespace GallifreyPlanet.Controllers
         {
             User? user = await userService.GetCurrentUserAsync();
 
-            return View(user);
+            return View(model: user);
         }
 
         public IActionResult Privacy()

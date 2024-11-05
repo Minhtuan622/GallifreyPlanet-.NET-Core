@@ -22,13 +22,13 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(user.Id),
+            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
         };
 
-        return View(conversations);
+        return View(model: conversations);
     }
 
-    [HttpGet("Chat/{conversationId:int}")]
+    [HttpGet(template: "Chat/{conversationId:int}")]
     public async Task<IActionResult> Chat(int conversationId)
     {
         User? user = await userService.GetCurrentUserAsync();
@@ -40,12 +40,12 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(user.Id),
-            SelectedConversation = await chatService.GetConversationById(conversationId),
-            Messages = await chatService.GetMessagesByConversationId(conversationId),
+            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
+            SelectedConversation = await chatService.GetConversationById(conversationId: conversationId),
+            Messages = await chatService.GetMessagesByConversationId(conversationId: conversationId),
         };
 
-        return View(conversations);
+        return View(model: conversations);
     }
 
     [HttpPost]
@@ -58,12 +58,12 @@ public class ChatController(
         }
 
         // todo: improve create logic 
-        bool result = chatService.CreateConversation(senderId, receiverId);
+        bool result = chatService.CreateConversation(senderId: senderId, receiverId: receiverId);
         if (!result)
         {
-            return NotFound("Could not create conversation, the conversation already exists.");
+            return NotFound(value: "Could not create conversation, the conversation already exists.");
         }
 
-        return RedirectToAction(nameof(Index), controllerName: "Chat");
+        return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
     }
 }

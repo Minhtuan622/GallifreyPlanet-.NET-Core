@@ -1,6 +1,6 @@
 ﻿@model GallifreyPlanet.ViewModels.Blog.BlogViewModel
 @{
-    ViewData["Title"] = "Tạo bài viết mới";
+    ViewData[index: "Title"] = "Tạo bài viết mới";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -21,7 +21,7 @@
                         <div class="feature-icon bg-primary bg-gradient rounded-circle p-3 me-3">
                             <i class="fas fa-edit text-white fa-lg"></i>
                         </div>
-                        <h4 class="card-title mb-0">@ViewData["Title"]</h4>
+                        <h4 class="card-title mb-0">@ViewData[index: "Title"]</h4>
                     </div>
 
                     <form asp-action="Create" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -96,7 +96,7 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
     <script src="~/lib/ckeditor5/ckeditor.min.js"></script>
     <script src="~/js/blogs.js"></script>

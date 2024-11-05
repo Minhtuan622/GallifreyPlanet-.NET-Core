@@ -1,7 +1,7 @@
 ﻿@model GallifreyPlanet.ViewModels.Account.SignupViewModel
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData[index: "Title"] = "Register";
     Layout = "~/Views/Shared/_Auth.cshtml";
 }
 
@@ -134,7 +134,7 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
     <script src="~/js/auth.js"></script>
 }

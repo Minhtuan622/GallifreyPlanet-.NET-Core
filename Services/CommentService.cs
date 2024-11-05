@@ -14,35 +14,35 @@ namespace GallifreyPlanet.Services
         )
         {
             List<Comment> comments = await context.Comment
-                .Where(c =>
+                .Where(predicate: c =>
                     c.CommentableType == commentableType &&
                     c.CommentableId == commentableId &&
                     c.ParentId == parentId
                 )
-                .OrderByDescending(c => c.CreatedAt)
+                .OrderByDescending(keySelector: c => c.CreatedAt)
                 .ToListAsync();
 
             List<CommentViewModel> result = new List<CommentViewModel>();
             foreach (Comment comment in comments)
             {
-                result.Add(await CreateCommentViewModelAsync(comment));
+                result.Add(item: await CreateCommentViewModelAsync(comment: comment));
             }
             return result;
         }
 
         public Task<List<CommentViewModel>> Get(CommentableType commentableType, int commentableId)
         {
-            return FetchCommentsAsync(commentableType, commentableId);
+            return FetchCommentsAsync(commentableType: commentableType, commentableId: commentableId);
         }
 
         public Comment? GetById(int id)
         {
-            return context.Comment.FirstOrDefault(c => c.Id == id);
+            return context.Comment.FirstOrDefault(predicate: c => c.Id == id);
         }
 
         public Task<List<CommentViewModel>> GetReplies(CommentableType commentableType, int commentableId, int parentId)
         {
-            return FetchCommentsAsync(commentableType, commentableId, parentId);
+            return FetchCommentsAsync(commentableType: commentableType, commentableId: commentableId, parentId: parentId);
         }
 
         public bool DeleteCommentChildren(Comment comment)
@@ -50,15 +50,15 @@ namespace GallifreyPlanet.Services
             try
             {
                 List<Comment> replies = context.Comment
-                    .Where(c =>
+                    .Where(predicate: c =>
                         c.CommentableType == comment.CommentableType &&
                         c.CommentableId == comment.CommentableId &&
                         c.ParentId == comment.Id
                     )
                     .ToList();
 
-                context.Comment.RemoveRange(replies);
-                context.Comment.Remove(comment);
+                context.Comment.RemoveRange(entities: replies);
+                context.Comment.Remove(entity: comment);
                 context.SaveChanges();
 
                 return true;
@@ -74,9 +74,9 @@ namespace GallifreyPlanet.Services
             return new CommentViewModel
             {
                 Id = comment.Id,
-                User = await userService.GetUserAsyncById(comment.UserId!),
+                User = await userService.GetUserAsyncById(userId: comment.UserId!),
                 ParentId = comment.ParentId,
-                Replies = await FetchCommentsAsync(comment.CommentableType, comment.CommentableId, comment.Id),
+                Replies = await FetchCommentsAsync(commentableType: comment.CommentableType, commentableId: comment.CommentableId, parentId: comment.Id),
                 CommentableId = comment.CommentableId,
                 CommentableType = comment.CommentableType,
                 Content = comment.Content,

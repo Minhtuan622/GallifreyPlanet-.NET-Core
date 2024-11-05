@@ -3,7 +3,7 @@
 @inject SignInManager<User> SignInManager
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData[index: "Title"] = "Login";
     Layout = "~/Views/Shared/_Auth.cshtml";
 
     var schemes = await SignInManager.GetExternalAuthenticationSchemesAsync();
@@ -139,7 +139,7 @@
                 <section>
                     <p>User another service to log in.</p>
                     <form asp-controller="Account" asp-action="ExternalLogin"
-                          asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post" role="form">
+                          asp-route-returnUrl="@ViewData[index: "ReturnUrl"]" method="post" role="form">
                         <div>
                             <p>
                                 @foreach (var provider in loginProviders)
@@ -166,7 +166,7 @@
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
     }
     <script src="~/js/auth.js"></script>
 }

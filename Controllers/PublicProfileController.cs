@@ -14,7 +14,7 @@ namespace GallifreyPlanet.Controllers
         public async Task<IActionResult> Index(string? username)
         {
             User? currentUser = await userService.GetCurrentUserAsync();
-            User? profileUser = await userService.GetUserAsyncByUserName(username!);
+            User? profileUser = await userService.GetUserAsyncByUserName(username: username!);
             if (profileUser is null || currentUser is null)
             {
                 return NotFound();
@@ -29,10 +29,10 @@ namespace GallifreyPlanet.Controllers
                 Email = profileUser.ShowEmail ? profileUser.Email : null,
                 Address = profileUser.Address,
                 PhoneNumber = profileUser.PhoneNumber,
-                RecentBlogs = await blogService.GetBlogsByUserId(profileUser.Id, count: 6),
-                Friends = await friendService.GetFriends(profileUser.Id),
-                IsFriend = friendService.AreFriends(currentUser.Id, profileUser.Id),
-                IsSendRequest = friendService.Find(profileUser.Id, currentUser!.Id) != null,
+                RecentBlogs = await blogService.GetBlogsByUserId(userId: profileUser.Id, count: 6),
+                Friends = await friendService.GetFriends(userId: profileUser.Id),
+                IsFriend = friendService.AreFriends(userId: currentUser.Id, friendId: profileUser.Id),
+                IsSendRequest = friendService.Find(userId: profileUser.Id, friendId: currentUser!.Id) != null,
                 AllowChat = profileUser.AllowChat,
                 AllowAddFriend = profileUser.AllowAddFriend,
                 CurrentUser = currentUser,
@@ -53,7 +53,7 @@ namespace GallifreyPlanet.Controllers
                 },
             };
 
-            return View(publicProfile);
+            return View(model: publicProfile);
         }
     }
 }

@@ -2,7 +2,7 @@
 @inject SignInManager<User> SignInManager
 
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(principal: User))
     {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"

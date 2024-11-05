@@ -24,21 +24,21 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            List<BlogViewModel> blog = await blogService.GetBlogsByUserId(user.Id);
-            return View(blog);
+            List<BlogViewModel> blog = await blogService.GetBlogsByUserId(userId: user.Id);
+            return View(model: blog);
         }
 
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details(int id, string userId)
         {
-            User? user = await userService.GetUserAsyncById(userId);
+            User? user = await userService.GetUserAsyncById(userId: userId);
 
-            if (user is null || string.IsNullOrEmpty(user.Id))
+            if (user is null || string.IsNullOrEmpty(value: user.Id))
             {
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FirstOrDefaultAsync(m => m.Id == id);
+            Blog? blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
@@ -47,11 +47,11 @@ namespace GallifreyPlanet.Controllers
             BlogManagerViewModel viewModel = new BlogManagerViewModel
             {
                 User = user,
-                BlogViewModel = blogService.NewBlogViewModel(blog),
-                Comments = await commentService.Get(CommentableType.Blog, id)
+                BlogViewModel = blogService.NewBlogViewModel(blog: blog),
+                Comments = await commentService.Get(commentableType: CommentableType.Blog, commentableId: id)
             };
 
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         // GET: Blogs/Create
@@ -81,19 +81,19 @@ namespace GallifreyPlanet.Controllers
                 if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                 {
                     string file = await fileService.UploadFileAsync(
-                        viewModel.ThumbnailFile,
+                        file: viewModel.ThumbnailFile,
                         folder: "/blogs",
-                        viewModel.CurrentThumbnailPath!
+                        currentFilePath: viewModel.CurrentThumbnailPath!
                     );
                     blog.ThumbnailPath = file;
                 }
 
-                context.Add(blog);
+                context.Add(entity: blog);
                 await context.SaveChangesAsync();
                 TempData[key: "StatusMessage"] = "Tạo thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         // GET: Blogs/Edit/5
@@ -104,7 +104,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(keyValues: id);
             if (blog is null)
             {
                 return NotFound();
@@ -119,7 +119,7 @@ namespace GallifreyPlanet.Controllers
                 CurrentThumbnailPath = blog.ThumbnailPath
             };
 
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         // POST: Blogs/Edit/5
@@ -127,7 +127,7 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BlogViewModel viewModel)
         {
-            Blog? blog = await context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(keyValues: id);
             if (id != blog!.Id)
             {
                 return NotFound();
@@ -144,16 +144,16 @@ namespace GallifreyPlanet.Controllers
 
                     if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
                     {
-                        string file = await fileService.UploadFileAsync(viewModel.ThumbnailFile, folder: "/blogs", blog.ThumbnailPath!);
+                        string file = await fileService.UploadFileAsync(file: viewModel.ThumbnailFile, folder: "/blogs", currentFilePath: blog.ThumbnailPath!);
                         blog.ThumbnailPath = file;
                     }
 
-                    context.Update(blog);
+                    context.Update(entity: blog);
                     await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!blogService.BlogExists(blog.Id))
+                    if (!blogService.BlogExists(id: blog.Id))
                     {
                         return NotFound();
                     }
@@ -162,9 +162,9 @@ namespace GallifreyPlanet.Controllers
                 }
 
                 TempData[key: "StatusMessage"] = "Cập nhật thành công";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(actionName: nameof(Index));
             }
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         // GET: Blogs/Delete/5
@@ -175,7 +175,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            Blog? blog = await context.Blog.FirstOrDefaultAsync(m => m.Id == id);
+            Blog? blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
             if (blog is null)
             {
                 return NotFound();
@@ -184,10 +184,10 @@ namespace GallifreyPlanet.Controllers
             BlogManagerViewModel blogViewModel = new BlogManagerViewModel
             {
                 User = await userService.GetCurrentUserAsync(),
-                BlogViewModel = blogService.NewBlogViewModel(blog),
+                BlogViewModel = blogService.NewBlogViewModel(blog: blog),
             };
 
-            return View(blogViewModel);
+            return View(model: blogViewModel);
         }
 
         // POST: Blogs/Delete/5
@@ -195,15 +195,15 @@ namespace GallifreyPlanet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Blog? blog = await context.Blog.FindAsync(id);
+            Blog? blog = await context.Blog.FindAsync(keyValues: id);
             if (blog is not null)
             {
-                context.Blog.Remove(blog);
+                context.Blog.Remove(entity: blog);
             }
 
             await context.SaveChangesAsync();
             TempData[key: "StatusMessage"] = "Xóa thành công";
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
     }
 }

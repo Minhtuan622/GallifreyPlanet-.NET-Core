@@ -6,13 +6,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - GallifreyPlanet</title>
+    <title>@ViewData[index: "Title"] - GallifreyPlanet</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GallifreyPlanet.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/notification.css" />
-    @RenderSection("Styles", required: false)
+    @RenderSection(name: "Styles", required: false)
 </head>
 <body class="user-select-none bg-body-tertiary">
     <header>
@@ -46,7 +46,7 @@
                         </li>
                     </ul>
                     <div class="d-flex" style="gap: 0.5rem;">
-                        @if (SignInManager.IsSignedIn(User))
+                        @if (SignInManager.IsSignedIn(principal: User))
                         {
                             <partial name="_Messages" />
                             <partial name="_Notifications" />
@@ -92,7 +92,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/notification.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync(name: "Scripts", required: false)
 
     <script type="text/javascript">
         function switchTheme() {
