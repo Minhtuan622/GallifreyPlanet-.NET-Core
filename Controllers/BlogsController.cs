@@ -24,7 +24,7 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            List<BlogViewModel> blog = await blogService.GetBlogsByUserId(userId: user.Id);
+            var blog = await blogService.GetBlogsByUserId(userId: user.Id);
             return View(model: blog);
         }
 
@@ -78,7 +78,7 @@ namespace GallifreyPlanet.Controllers
                     UpdatedAt = DateTime.Now,
                 };
 
-                if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
+                if (viewModel.ThumbnailFile is { Length: > 0 })
                 {
                     var file = await fileService.UploadFileAsync(
                         file: viewModel.ThumbnailFile,
@@ -112,7 +112,7 @@ namespace GallifreyPlanet.Controllers
 
             var viewModel = new BlogViewModel
             {
-                Id = id ?? 0,
+                Id = (int)id,
                 Title = blog.Title,
                 Description = blog.Description,
                 Content = blog.Content,
@@ -133,38 +133,39 @@ namespace GallifreyPlanet.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    blog.Title = viewModel.Title;
-                    blog.Description = viewModel.Description;
-                    blog.Content = viewModel.Content;
-                    blog.UpdatedAt = DateTime.Now;
-
-                    if (viewModel.ThumbnailFile != null && viewModel.ThumbnailFile.Length > 0)
-                    {
-                        var file = await fileService.UploadFileAsync(file: viewModel.ThumbnailFile, folder: "/blogs", currentFilePath: blog.ThumbnailPath!);
-                        blog.ThumbnailPath = file;
-                    }
-
-                    context.Update(entity: blog);
-                    await context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!blogService.BlogExists(id: blog.Id))
-                    {
-                        return NotFound();
-                    }
-
-                    throw;
-                }
-
-                TempData[key: "StatusMessage"] = "Cập nhật thành công";
-                return RedirectToAction(actionName: nameof(Index));
+                return View(model: viewModel);
             }
-            return View(model: viewModel);
+            
+            try
+            {
+                blog.Title = viewModel.Title;
+                blog.Description = viewModel.Description;
+                blog.Content = viewModel.Content;
+                blog.UpdatedAt = DateTime.Now;
+
+                if (viewModel.ThumbnailFile is { Length: > 0 })
+                {
+                    var file = await fileService.UploadFileAsync(file: viewModel.ThumbnailFile, folder: "/blogs", currentFilePath: blog.ThumbnailPath!);
+                    blog.ThumbnailPath = file;
+                }
+
+                context.Update(entity: blog);
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!blogService.BlogExists(id: blog.Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            TempData[key: "StatusMessage"] = "Cập nhật thành công";
+            return RedirectToAction(actionName: nameof(Index));
         }
 
         // GET: Blogs/Delete/5

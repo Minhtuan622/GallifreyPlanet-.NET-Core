@@ -27,11 +27,11 @@ namespace GallifreyPlanet.Controllers
         {
             return View();
         }
-        public bool IsValidEmail(string emailaddress)
+        public bool IsValidEmail(string emailAddress)
         {
             try
             {
-                var m = new MailAddress(address: emailaddress);
+                var m = new MailAddress(address: emailAddress);
                 return true;
             }
             catch (FormatException)
@@ -43,46 +43,48 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var userNameOrEmail = user.UsernameOrEmail;
+                return View(model: user);
+            }
+            
+            var userNameOrEmail = user.UsernameOrEmail;
 
-                if (IsValidEmail(emailaddress: user.UsernameOrEmail!))
+            if (IsValidEmail(emailAddress: user.UsernameOrEmail!))
+            {
+                var getUser = await userManager.FindByEmailAsync(email: user.UsernameOrEmail!);
+                if (getUser != null)
                 {
-                    var getUser = await userManager.FindByEmailAsync(email: user.UsernameOrEmail!);
-                    if (getUser != null)
-                    {
-                        userNameOrEmail = getUser.UserName;
-                    }
+                    userNameOrEmail = getUser.UserName;
                 }
+            }
 
-                var result = await signInManager.PasswordSignInAsync(
-                    userName: userNameOrEmail!,
-                    password: user.Password!,
-                    isPersistent: user.RememberMe,
-                    lockoutOnFailure: false
+            var result = await signInManager.PasswordSignInAsync(
+                userName: userNameOrEmail!,
+                password: user.Password!,
+                isPersistent: user.RememberMe,
+                lockoutOnFailure: false
+            );
+
+            if (result.IsNotAllowed)
+            {
+                ModelState.AddModelError(key: "", errorMessage: "Xác thực Email để đăng nhập.");
+                return View(model: user);
+            }
+
+            if (result.Succeeded)
+            {
+                var currentUser = await userService.GetCurrentUserAsync();
+                await userService.AddLoginHistoryAsync(
+                    userId: currentUser!.Id,
+                    ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString()!,
+                    userAgent: HttpContext.Request.Headers.UserAgent.ToString()
                 );
 
-                if (result.IsNotAllowed)
-                {
-                    ModelState.AddModelError(key: "", errorMessage: "Xác thực Email để đăng nhập.");
-                    return View(model: user);
-                }
-
-                if (result.Succeeded)
-                {
-                    var currentUser = await userService.GetCurrentUserAsync();
-                    await userService.AddLoginHistoryAsync(
-                        userId: currentUser!.Id,
-                        ipAddress: HttpContext.Connection.RemoteIpAddress?.ToString()!,
-                        userAgent: HttpContext.Request.Headers[key: "User-Agent"].ToString()
-                    );
-
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
-                }
-
-                ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
+                return RedirectToAction(actionName: "Index", controllerName: "Home");
             }
+
+            ModelState.AddModelError(key: "", errorMessage: "Vui lòng kiểm tra tên người dùng hoặc mật khẩu.");
 
             return View(model: user);
         }
@@ -96,41 +98,43 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(SignupViewModel user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var existingUser = context.Users.FirstOrDefault(predicate: u => u.Email == user.Email);
+                return View(model: user);
+            }
+            
+            var existingUser = context.Users.FirstOrDefault(predicate: u => u.Email == user.Email);
 
-                if (existingUser != null)
-                {
-                    ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
-                    return View(model: user);
-                }
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(key: "", errorMessage: "Email đã tồn tại.");
+                return View(model: user);
+            }
 
-                var newUser = new User
-                {
-                    Name = user.Name,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    EmailConfirmed = true,
-                    ShowEmail = false,
-                    AllowChat = false,
-                    EmailNotifications = false,
-                    PushNotifications = false,
-                };
+            var newUser = new User
+            {
+                Name = user.Name,
+                UserName = user.UserName,
+                Email = user.Email,
+                EmailConfirmed = true,
+                ShowEmail = false,
+                AllowChat = false,
+                EmailNotifications = false,
+                PushNotifications = false,
+            };
 
-                var result = await userManager.CreateAsync(user: newUser, password: user.Password!);
+            var result = await userManager.CreateAsync(user: newUser, password: user.Password!);
 
-                if (result.Succeeded)
-                {
-                    await signInManager.SignInAsync(user: newUser, isPersistent: false);
+            if (result.Succeeded)
+            {
+                await signInManager.SignInAsync(user: newUser, isPersistent: false);
 
-                    return RedirectToAction(actionName: "Index", controllerName: "Home");
-                }
+                return RedirectToAction(actionName: "Index", controllerName: "Home");
+            }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(key: "", errorMessage: error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(key: "", errorMessage: error.Description);
             }
 
             return View(model: user);
@@ -145,33 +149,34 @@ namespace GallifreyPlanet.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await userManager.FindByEmailAsync(email: viewModel.Email!);
-                if (user == null || !(await userManager.IsEmailConfirmedAsync(user: user)))
-                {
-                    return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
-                }
-
-                var code = await userManager.GeneratePasswordResetTokenAsync(user: user);
-                code = WebEncoders.Base64UrlEncode(input: Encoding.UTF8.GetBytes(s: code));
-                var callbackUrl = Url.Page(
-                pageName: "/Account/ResetPassword",
-                    pageHandler: null,
-                    values: new { area = "Identity", code },
-                    protocol: Request.Scheme
-                );
-
-                await emailSender.SendEmailAsync(
-                    email: viewModel.Email!,
-                    subject: "Khôi phục mật khẩu",
-                    htmlMessage: $"Để khôi phục mật khẩu của bạn, vui lòng <a href='{HtmlEncoder.Default.Encode(value: callbackUrl!)}'>nhấp vào đây</a>."
-                );
-
+                return View(model: viewModel);
+            }
+            
+            var user = await userManager.FindByEmailAsync(email: viewModel.Email!);
+            if (user == null || !(await userManager.IsEmailConfirmedAsync(user: user)))
+            {
                 return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
             }
 
-            return View(model: viewModel);
+            var code = await userManager.GeneratePasswordResetTokenAsync(user: user);
+            code = WebEncoders.Base64UrlEncode(input: Encoding.UTF8.GetBytes(s: code));
+            var callbackUrl = Url.Page(
+                pageName: "/Account/ResetPassword",
+                pageHandler: null,
+                values: new { area = "Identity", code },
+                protocol: Request.Scheme
+            );
+
+            await emailSender.SendEmailAsync(
+                email: viewModel.Email!,
+                subject: "Khôi phục mật khẩu",
+                htmlMessage: $"Để khôi phục mật khẩu của bạn, vui lòng <a href='{HtmlEncoder.Default.Encode(value: callbackUrl!)}'>nhấp vào đây</a>."
+            );
+
+            return RedirectToAction(actionName: "ForgotPasswordConfirmation", controllerName: "Account");
+
         }
 
         [HttpGet]
@@ -225,9 +230,9 @@ namespace GallifreyPlanet.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string? returnurl = null, string? remoteError = null)
+        public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
         {
-            returnurl ??= Url.Content(contentPath: "~/");
+            returnUrl ??= Url.Content(contentPath: "~/");
             if (remoteError != null)
             {
                 ModelState.AddModelError(key: string.Empty, errorMessage: $"Error from external provider: {remoteError}");
@@ -250,15 +255,15 @@ namespace GallifreyPlanet.Controllers
             if (result.Succeeded)
             {
                 await signInManager.UpdateExternalAuthenticationTokensAsync(externalLogin: info);
-                return LocalRedirect(localUrl: returnurl);
+                return LocalRedirect(localUrl: returnUrl);
             }
 
             if (result.RequiresTwoFactor)
             {
-                return RedirectToAction(actionName: nameof(VerifyAuthenticatorCode), routeValues: new { returnurl });
+                return RedirectToAction(actionName: nameof(VerifyAuthenticatorCode), routeValues: new { returnurl = returnUrl });
             }
 
-            ViewData[index: "ReturnUrl"] = returnurl;
+            ViewData[index: "ReturnUrl"] = returnUrl;
             ViewData[index: "ProviderDisplayName"] = info.ProviderDisplayName;
 
             return View(viewName: "ExternalLoginConfirmation", model: new ExternalLoginConfirmationViewModel
@@ -273,10 +278,10 @@ namespace GallifreyPlanet.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginConfirmation(
             ExternalLoginConfirmationViewModel model,
-            string? returnurl = null
+            string? returnUrl = null
         )
         {
-            returnurl ??= Url.Content(contentPath: "~/");
+            returnUrl ??= Url.Content(contentPath: "~/");
 
             if (ModelState.IsValid)
             {
@@ -306,12 +311,12 @@ namespace GallifreyPlanet.Controllers
                     {
                         await signInManager.SignInAsync(user: user, isPersistent: false);
                         await signInManager.UpdateExternalAuthenticationTokensAsync(externalLogin: info);
-                        return LocalRedirect(localUrl: returnurl);
+                        return LocalRedirect(localUrl: returnUrl);
                     }
                 }
                 AddErrors(result: result);
             }
-            ViewData[index: "ReturnUrl"] = returnurl;
+            ViewData[index: "ReturnUrl"] = returnUrl;
             return View(model: model);
         }
 

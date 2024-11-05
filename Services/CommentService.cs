@@ -13,7 +13,7 @@ namespace GallifreyPlanet.Services
             int? parentId = null
         )
         {
-            List<Comment> comments = await context.Comment
+            var comments = await context.Comment
                 .Where(predicate: c =>
                     c.CommentableType == commentableType &&
                     c.CommentableId == commentableId &&
@@ -22,7 +22,7 @@ namespace GallifreyPlanet.Services
                 .OrderByDescending(keySelector: c => c.CreatedAt)
                 .ToListAsync();
 
-            List<CommentViewModel> result = new List<CommentViewModel>();
+            var result = new List<CommentViewModel>();
             foreach (var comment in comments)
             {
                 result.Add(item: await CreateCommentViewModelAsync(comment: comment));
@@ -49,7 +49,7 @@ namespace GallifreyPlanet.Services
         {
             try
             {
-                List<Comment> replies = context.Comment
+                var replies = context.Comment
                     .Where(predicate: c =>
                         c.CommentableType == comment.CommentableType &&
                         c.CommentableId == comment.CommentableId &&

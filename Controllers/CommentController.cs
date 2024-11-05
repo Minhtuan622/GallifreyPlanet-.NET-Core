@@ -44,7 +44,7 @@ namespace GallifreyPlanet.Controllers
             {
                 var user = await GetAuthenticatedUserAsync();
 
-                List<CommentViewModel> data = await commentService.Get(commentableType: CommentableType.Blog, commentableId: commentableId);
+                var data = await commentService.Get(commentableType: CommentableType.Blog, commentableId: commentableId);
                 return JsonResponse(success: true, data: data);
             }
             catch (Exception ex)
