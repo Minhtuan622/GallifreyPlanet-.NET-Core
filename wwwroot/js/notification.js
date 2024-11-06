@@ -27,8 +27,20 @@ connection.on("ReceiveNotification", (userId, message, type) => {
 
 function showToast(message) {
     const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.textContent = message;
+    toast.className = "toast-container position-fixed bottom-0 end-0 p-3";
+    toast.innerHTML = `
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <img src="..." class="rounded me-2" alt="...">
+              <strong class="me-auto">Thông báo mới</strong>
+              <small>Bây giờ</small>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              ${message}
+            </div>
+        </div>
+    `;
     document.body.appendChild(toast);
 
     setTimeout(() => {
