@@ -10,7 +10,7 @@ public class BlogService(GallifreyPlanetContext context)
     {
         return context.Blog
             .Select(selector: blog => NewBlogViewModel(blog))
-            .FirstOrDefault(b => b.Id == id);
+            .FirstOrDefault(predicate: b => b.Id == id);
     }
 
     public Task<List<BlogViewModel>> GetBlogsByUserId(string userId, int? count = null)

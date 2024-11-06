@@ -1,12 +1,19 @@
 ﻿$(document).ready(function () {
     fetchComments($('input[name="blogId"]').val());
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/commentHub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.start().catch(err => console.error(err));
 });
 
 function fetchComments(commentableId) {
     $.ajax({
         url: '/Comment/Get',
         type: 'GET',
-        data: { commentableId },
+        data: {commentableId},
         contentType: 'application/json',
     }).done(response => {
         console.table(response);
@@ -18,7 +25,7 @@ function showReplyForm(commentId) {
     const existingForm = $(replyFormId);
 
     if (existingForm.length) {
-        existingForm.remove(); 
+        existingForm.remove();
         return;
     }
 

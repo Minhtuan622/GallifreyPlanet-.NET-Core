@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\CommentHub\Controllers\" />
+    <Folder Include="Areas\CommentHub\Data\" />
+    <Folder Include="Areas\CommentHub\Models\" />
+    <Folder Include="Areas\CommentHub\Views\" />
     <Folder Include="Views\Friend\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\js\" />

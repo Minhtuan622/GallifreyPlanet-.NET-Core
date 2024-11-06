@@ -68,5 +68,6 @@ app.MapRazorPages();
 
 app.MapHub<ChatHub>(pattern: "/chatHub");
 app.MapHub<NotificationHub>(pattern: "/notificationHub");
+app.MapHub<CommentHub>(pattern: "/commentHub");
 
 app.Run();

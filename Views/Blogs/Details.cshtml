@@ -92,104 +92,108 @@
                         <div class="comments-list">
                             @foreach (var comment in Model.Comments)
                             {
-                                @if (comment.User is not null)
+                                @if (comment.User is null)
                                 {
-                                    <div class="comment-item">
-                                        <div class="d-flex">
-                                            <!-- User Avatar -->
-                                            <div class="avatar-placeholder me-3">
-                                                <img src="@(comment.User.Avatar ?? defaultAvatarPath)"
-                                                     alt="@comment.User.Name"
-                                                     class="h-100 w-100 object-fit-cover rounded-circle" />
-                                            </div>
+                                    continue;
+                                }
 
-                                            <!-- Comment Content -->
-                                            <div class="flex-grow-1">
-                                                <div class="rounded-4 p-3">
-                                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                                        <h6 class="mb-0">@comment.User.Name</h6>
-                                                        @if (comment.User.Id == Model.User?.Id)
-                                                        {
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                                                    <i class="fas fa-ellipsis-v"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                                    <li>
-                                                                        <a class="dropdown-item text-danger" href="#"
-                                                                           onclick="deleteComment(@comment.Id)">
-                                                                            <i class="fas fa-trash-alt me-2"></i>Xóa
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                    <p class="mb-1">@comment.Content</p>
-                                                    <small class="text-muted">
-                                                        <i class="far fa-clock me-1"></i>@comment.CreatedAt
-                                                    </small>
-                                                    <br />
-                                                    <!-- Reply Link -->
-                                                    <button class="btn btn-link text-decoration-none p-0"
-                                                            onclick="showReplyForm(@comment.Id)">
-                                                        <i class="fas fa-reply me-1"></i>
-                                                        Trả lời
-                                                    </button>
-                                                    <div data-comment-id="@comment.Id"></div>
+                                <div class="comment-item">
+                                    <div class="d-flex">
+                                        <!-- User Avatar -->
+                                        <div class="avatar-placeholder me-3">
+                                            <img src="@(comment.User.Avatar ?? defaultAvatarPath)"
+                                                 alt="@comment.User.Name"
+                                                 class="h-100 w-100 object-fit-cover rounded-circle" />
+                                        </div>
+
+                                        <!-- Comment Content -->
+                                        <div class="flex-grow-1">
+                                            <div class="rounded-4 p-3">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <h6 class="mb-0">@comment.User.Name</h6>
+                                                    @if (comment.User.Id == Model.User?.Id)
+                                                    {
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li>
+                                                                    <a class="dropdown-item text-danger" href="#"
+                                                                       onclick="deleteComment(@comment.Id)">
+                                                                        <i class="fas fa-trash-alt me-2"></i>Xóa
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    }
                                                 </div>
-
-
-                                                <!-- Replies -->
-                                                @if (comment.Replies?.Count > 0)
-                                                {
-                                                    <div class="ms-4 mt-3">
-                                                        @foreach (var reply in comment.Replies)
-                                                        {
-                                                            @if(reply.User is not null)
-                                                            {
-                                                                <div class="d-flex mb-3">
-                                                                    <div class="avatar-placeholder me-2" style="width: 32px; height: 32px;">
-                                                                        <img src="@(reply.User.Avatar ?? defaultAvatarPath)"
-                                                                             alt="@reply.User.Name"
-                                                                             class="h-100 w-100 object-fit-cover rounded-circle" />
-                                                                    </div>
-                                                                    <div class="flex-grow-1">
-                                                                        <div class="rounded-4 p-3">
-                                                                            <div class="d-flex justify-content-between align-items-start">
-                                                                                <h6 class="mb-1 fs-6">@reply.User.Name</h6>
-                                                                                @if (reply.User.Id == Model.User?.Id)
-                                                                                {
-                                                                                    <div class="dropdown">
-                                                                                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
-                                                                                            <i class="fas fa-ellipsis-v"></i>
-                                                                                        </button>
-                                                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                                                            <li>
-                                                                                                <a class="dropdown-item text-danger" href="#"
-                                                                                                   onclick="deleteReply(@reply.Id)">
-                                                                                                    <i class="fas fa-trash-alt me-2"></i>Xóa
-                                                                                                </a>
-                                                                                            </li>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                }
-                                                                            </div>
-                                                                            <p class="mb-1">@reply.Content</p>
-                                                                            <small class="text-muted">
-                                                                                <i class="far fa-clock me-1"></i>@reply.CreatedAt
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    </div>
-                                                }
+                                                <p class="mb-1">@comment.Content</p>
+                                                <small class="text-muted">
+                                                    <i class="far fa-clock me-1"></i>@comment.CreatedAt
+                                                </small>
+                                                <br />
+                                                <!-- Reply Link -->
+                                                <button class="btn btn-link text-decoration-none p-0"
+                                                        onclick="showReplyForm(@comment.Id)">
+                                                    <i class="fas fa-reply me-1"></i>
+                                                    Trả lời
+                                                </button>
+                                                <div data-comment-id="@comment.Id"></div>
                                             </div>
+
+
+                                            <!-- Replies -->
+                                            @if (comment.Replies?.Count > 0)
+                                            {
+                                                <div class="ms-4 mt-3">
+                                                    @foreach (var reply in comment.Replies)
+                                                    {
+                                                        if (reply.User is null)
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        <div class="d-flex mb-3">
+                                                            <div class="avatar-placeholder me-2" style="width: 32px; height: 32px;">
+                                                                <img src="@(reply.User.Avatar ?? defaultAvatarPath)"
+                                                                     alt="@reply.User.Name"
+                                                                     class="h-100 w-100 object-fit-cover rounded-circle" />
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <div class="rounded-4 p-3">
+                                                                    <div class="d-flex justify-content-between align-items-start">
+                                                                        <h6 class="mb-1 fs-6">@reply.User.Name</h6>
+                                                                        @if (reply.User.Id == Model.User?.Id)
+                                                                        {
+                                                                            <div class="dropdown">
+                                                                                <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                                                                    <i class="fas fa-ellipsis-v"></i>
+                                                                                </button>
+                                                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                                                    <li>
+                                                                                        <a class="dropdown-item text-danger" href="#"
+                                                                                           onclick="deleteReply(@reply.Id)">
+                                                                                            <i class="fas fa-trash-alt me-2"></i>Xóa
+                                                                                        </a>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                    <p class="mb-1">@reply.Content</p>
+                                                                    <small class="text-muted">
+                                                                        <i class="far fa-clock me-1"></i>@reply.CreatedAt
+                                                                    </small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
                                         </div>
                                     </div>
-                                }
+                                </div>
                             }
                         </div>
                     }
