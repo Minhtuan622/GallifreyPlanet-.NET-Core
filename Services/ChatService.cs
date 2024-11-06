@@ -147,6 +147,7 @@ namespace GallifreyPlanet.Services
                 Members = await GetMembers(chatId: conversation.Id),
                 GroupName = conversation.GroupName,
                 IsGroup = conversation.IsGroup,
+                IsRead = conversation.IsRead,
                 CreatedAt = conversation.CreatedAt,
                 LatestMessage = message.Content,
             };
