@@ -9,7 +9,9 @@ namespace GallifreyPlanet.Controllers;
 public class CommentController(
     GallifreyPlanetContext context,
     UserService userService,
-    CommentService commentService)
+    CommentService commentService,
+    NotificationService notificationService
+)
     : Controller
 {
     private JsonResult JsonResponse(bool success, string message = "", object? data = null)
@@ -27,6 +29,7 @@ public class CommentController(
                 message: "Vui lòng đăng nhập để sử dụng tính năng này"
             );
         }
+
         return user!;
     }
 
@@ -65,7 +68,6 @@ public class CommentController(
             }
 
             var user = await GetAuthenticatedUserAsync();
-
             var comment = new Comment
             {
                 UserId = user.Id,
@@ -77,6 +79,12 @@ public class CommentController(
 
             await context.Comment.AddAsync(entity: comment);
             await context.SaveChangesAsync();
+
+            await notificationService.CreateNotification(
+                userId: user.Id,
+                message: "test notification when comment",
+                type: NotificationType.Friend
+            );
 
             return JsonResponse(
                 success: true,
@@ -138,7 +146,6 @@ public class CommentController(
             }
 
             var user = await GetAuthenticatedUserAsync();
-
             var parentComment = commentService.GetById(id: commentId);
             if (parentComment == null)
             {
