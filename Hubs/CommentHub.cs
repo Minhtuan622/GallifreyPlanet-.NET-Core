@@ -4,13 +4,13 @@ namespace GallifreyPlanet.Hubs;
 
 public class CommentHub : Hub
 {
-    public async Task SendComment(string userId, string message)
+    public async Task SendComment(int commentableId, string content, string userName)
     {
-        await Clients.All.SendAsync(method: "ReceiveComment", arg1: userId, arg2: message);
+        await Clients.All.SendAsync("ReceiveComment", commentableId, content, userName);
     }
 
-    public async Task ReplyToComment(string userId, int parentCommentId, string message)
+    public async Task ReplyToComment(int parentCommentId, string content, string userName)
     {
-        await Clients.All.SendAsync(method: "ReceiveChildComment", arg1: userId, arg2: parentCommentId, arg3: message);
+        await Clients.All.SendAsync("ReceiveReply", parentCommentId, content, userName);
     }
 }

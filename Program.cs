@@ -5,12 +5,12 @@ using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args: args);
+//var connectionString = builder.Configuration.GetConnectionString("DEV_TESTContext");
+var connectionString = builder.Configuration.GetConnectionString("GallifreyPlanetContext");
 
 builder.Services
-    .AddDbContext<GallifreyPlanetContext>(optionsAction: options => options.UseSqlServer(
-            connectionString: builder.Configuration.GetConnectionString(name: "DEV_TESTContext")
-            /*builder.Configuration.GetConnectionString(name: "GallifreyPlanetContext")*/
-        )
+    .AddDbContext<GallifreyPlanetContext>(optionsAction: options =>
+        options.UseSqlServer(connectionString: connectionString)
     )
     .AddDefaultIdentity<User>(configureOptions: option => option.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<GallifreyPlanetContext>();
