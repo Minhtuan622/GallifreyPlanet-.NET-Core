@@ -82,7 +82,7 @@ public class CommentController(
 
             await notificationService.CreateNotification(
                 userId: user.Id,
-                message: "test notification when comment",
+                message: "Có một bình luận mới vào bài viết của bạn.",
                 type: NotificationType.Friend
             );
 

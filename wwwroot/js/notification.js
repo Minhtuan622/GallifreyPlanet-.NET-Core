@@ -9,11 +9,12 @@ connection.on("ReceiveNotification", (userId, message, type) => {
     const notificationList = document.getElementById("notification-list");
     const notificationCount = document.getElementById("notification-count");
 
-    const notification = document.createElement("div");
-    notification.className = "notification-item";
+    const notification = document.createElement("li");
     notification.innerHTML = `
-        <div class="notification-message">${message}</div>
-        <div class="notification-time">Just now</div>
+        <div class="dropdown-item">
+            <p class="notification-message">${message}</p>
+            <small class="notification-time">Just now</small>
+        </div>
     `;
 
     notificationList.insertBefore(notification, notificationList.firstChild);
