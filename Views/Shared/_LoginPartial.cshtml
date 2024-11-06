@@ -1,9 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 
-<ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(principal: User))
-    {
+<div class="collapse navbar-collapse">
+    <ul class="navbar-nav">
+        @if (SignInManager.IsSignedIn(principal: User))
+        {
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"
                href="#"
@@ -52,9 +53,9 @@
                 </li>
             </ul>
         </li>
-    }
-    else
-    {
+        }
+        else
+        {
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">
                 <i class="fa-solid fa-sign-in-alt"></i> Đăng nhập
@@ -65,5 +66,6 @@
                 <i class="fa-solid fa-user-plus"></i> Đăng ký
             </a>
         </li>
-    }
-</ul>
+        }
+    </ul>
+</div>

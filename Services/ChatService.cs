@@ -65,7 +65,7 @@ public class ChatService(
         return members.Any(predicate: m => m != null && m.Id == senderId) ? members : null;
     }
 
-    private void ReadMessages(Conversation conversation)
+    private void MarkAsRead(Conversation conversation)
     {
         conversation.IsRead = true;
 
@@ -76,7 +76,7 @@ public class ChatService(
     public Task<ConversationViewModel> GetConversationById(int conversationId)
     {
         var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == conversationId)!;
-        ReadMessages(conversation: conversation);
+        MarkAsRead(conversation: conversation);
 
         return NewConversationViewModel(conversation: conversation);
     }

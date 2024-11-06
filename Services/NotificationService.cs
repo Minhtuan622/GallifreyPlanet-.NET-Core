@@ -7,12 +7,13 @@ namespace GallifreyPlanet.Services;
 
 public class NotificationService(GallifreyPlanetContext context, IHubContext<NotificationHub> hubContext)
 {
-    public async Task CreateNotification(string user, string message)
+    public async Task CreateNotification(string userId, string message, NotificationType type)
     {
         var notification = new Notification
         {
-            SenderId = user,
-            Message = message,
+            SenderId = userId,
+            Type = type,
+            Content = message,
             CreatedAt = DateTime.UtcNow,
             IsRead = false
         };
@@ -20,13 +21,13 @@ public class NotificationService(GallifreyPlanetContext context, IHubContext<Not
         context.Notification.Add(entity: notification);
         await context.SaveChangesAsync();
 
-        await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", arg1: user, arg2: message);
+        await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", arg1: userId, arg2: message, arg3: type);
     }
 
-    public List<Notification> GetUserNotifications(string user)
+    public List<Notification> GetUserNotifications(string userId)
     {
         return context.Notification
-            .Where(predicate: n => n.SenderId == user)
+            .Where(predicate: n => n.SenderId == userId)
             .OrderByDescending(keySelector: n => n.CreatedAt)
             .ToList();
     }

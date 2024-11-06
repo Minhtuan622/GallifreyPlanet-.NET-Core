@@ -5,9 +5,9 @@
 
 connection.start().catch(err => console.error(err));
 
-connection.on("ReceiveNotification", (user, message) => {
-    const notificationList = document.getElementById("notificationList");
-    const notificationCount = document.getElementById("notificationCount");
+connection.on("ReceiveNotification", (userId, message, type) => {
+    const notificationList = document.getElementById("notification-list");
+    const notificationCount = document.getElementById("notification-count");
 
     const notification = document.createElement("div");
     notification.className = "notification-item";
