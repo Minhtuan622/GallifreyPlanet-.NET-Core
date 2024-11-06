@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GallifreyPlanet.Models
+namespace GallifreyPlanet.Models;
+
+[Table(name: "Messages")]
+public class Message
 {
-    [Table(name: "Messages")]
-    public class Message
-    {
-        public int Id { get; set; }
-        public int ChatId { get; set; }
-        public string? SenderId { get; set; }
-        public string? Content { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-    }
+    public int Id { get; set; }
+    public int ChatId { get; set; }
+    public string? SenderId { get; set; }
+    public string? Content { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

@@ -96,9 +96,10 @@
 
     <script type="text/javascript">
         function switchTheme() {
-            let currentTheme = $('html').attr('data-bs-theme');
+        const htmlTag = $('html');
+            let currentTheme = htmlTag.attr('data-bs-theme');
             let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            $('html').attr('data-bs-theme', newTheme);
+            htmlTag.attr('data-bs-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
 

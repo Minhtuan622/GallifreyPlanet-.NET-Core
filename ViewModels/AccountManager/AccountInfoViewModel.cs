@@ -1,10 +1,9 @@
-namespace GallifreyPlanet.ViewModels.AccountManager
+namespace GallifreyPlanet.ViewModels.AccountManager;
+
+public class AccountInfoViewModel
 {
-    public class AccountInfoViewModel
-    {
-        public string? Name { get; set; }
-        public string? Username { get; set; }
-        public string? Email { get; set; }
-        public string? Avatar { get; set; }
-    }
+    public string? Name { get; set; }
+    public string? Username { get; set; }
+    public string? Email { get; set; }
+    public string? Avatar { get; set; }
 }

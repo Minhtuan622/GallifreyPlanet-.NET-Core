@@ -1,9 +1,8 @@
-﻿namespace GallifreyPlanet.ViewModels.Friend
+﻿namespace GallifreyPlanet.ViewModels.Friend;
+
+public class FriendManagerViewModel
 {
-    public class FriendManagerViewModel
-    {
-        public List<FriendViewModel>? Friends { get; set; }
-        public List<FriendViewModel>? FriendRequests { get; set; }
-        public List<FriendViewModel>? BlockedFriends { get; set; }
-    }
+    public List<FriendViewModel>? Friends { get; set; }
+    public List<FriendViewModel>? FriendRequests { get; set; }
+    public List<FriendViewModel>? BlockedFriends { get; set; }
 }
