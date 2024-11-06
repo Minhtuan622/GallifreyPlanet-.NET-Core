@@ -12,21 +12,20 @@
         <div class="user-info">
             @{
                 var members = Model.SelectedConversation!.Members;
-                if (members is not null && members.Count() == 2)
+                if (members is not null && members.Count == 2)
                 {
-                    @foreach (var member in members)
+                    @foreach (var member in members.Where(member => member!.Id != Model.User!.Id))
                     {
-                        @if (member!.Id != Model.User!.Id)
-                        {
-                            <div class="position-relative">
-                                <img src="@(member.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48" height="48" alt="User">
+                        <div class="position-relative">
+                            <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName">
+                                <img src="@(member?.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48" height="48" alt="User">
                                 <span class="status-dot bg-success"></span>
-                            </div>
-                            <div>
-                                <h6 class="mb-0">@member.Name</h6>
-                                <small class="text-success">Trực tuyến</small>
-                            </div>
-                        }
+                            </a>
+                        </div>
+                        <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName" class="text-decoration-none">
+                            <h6 class="mb-0">@member?.Name</h6>
+                            <small class="text-success">Trực tuyến</small>
+                        </a>
                     }
                 }
             }
