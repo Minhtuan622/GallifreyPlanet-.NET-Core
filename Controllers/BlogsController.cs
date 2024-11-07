@@ -29,29 +29,38 @@ public class BlogsController(
     }
 
     // GET: Blogs/Details/5
+    [HttpGet("Blogs/Details/{id:int}/{userId}")]
     public async Task<IActionResult> Details(int id, string userId)
     {
-        var user = await userService.GetUserAsyncById(userId: userId);
-
-        if (user is null || string.IsNullOrEmpty(value: user.Id))
+        try
         {
-            return NotFound();
+            var user = await userService.GetUserAsyncById(userId: userId);
+
+            if (user is null || string.IsNullOrEmpty(value: user.Id))
+            {
+                return NotFound();
+            }
+
+            var blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
+            if (blog is null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new BlogManagerViewModel
+            {
+                User = user,
+                BlogViewModel = blogService.NewBlogViewModel(blog: blog),
+                Comments = await commentService.Get(commentableType: CommentableType.Blog, commentableId: id)
+            };
+
+            return View(model: viewModel);
         }
-
-        var blog = await context.Blog.FirstOrDefaultAsync(predicate: m => m.Id == id);
-        if (blog is null)
+        catch (Exception e)
         {
-            return NotFound();
+            Console.WriteLine(e);
+            throw;
         }
-
-        var viewModel = new BlogManagerViewModel
-        {
-            User = user,
-            BlogViewModel = blogService.NewBlogViewModel(blog: blog),
-            Comments = await commentService.Get(commentableType: CommentableType.Blog, commentableId: id)
-        };
-
-        return View(model: viewModel);
     }
 
     // GET: Blogs/Create

@@ -5,7 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services;
 
-public class CommentService(GallifreyPlanetContext context, UserService userService)
+public class CommentService(
+    GallifreyPlanetContext context,
+    UserService userService,
+    NotificationService notificationService
+)
 {
     private async Task<List<CommentViewModel>> FetchCommentsAsync(
         CommentableType commentableType,
@@ -25,8 +29,9 @@ public class CommentService(GallifreyPlanetContext context, UserService userServ
         var result = new List<CommentViewModel>();
         foreach (var comment in comments)
         {
-            result.Add(item: await CreateCommentViewModelAsync(comment: comment));
+            result.Add(item: await NewCommentViewModel(comment: comment));
         }
+
         return result;
     }
 
@@ -43,6 +48,43 @@ public class CommentService(GallifreyPlanetContext context, UserService userServ
     public Task<List<CommentViewModel>> GetReplies(CommentableType commentableType, int commentableId, int parentId)
     {
         return FetchCommentsAsync(commentableType: commentableType, commentableId: commentableId, parentId: parentId);
+    }
+
+    public async Task<bool> Add(int commentableId, string content)
+    {
+        try
+        {
+            var user = await userService.GetCurrentUserAsync();
+            if (user is null || string.IsNullOrWhiteSpace(value: content))
+            {
+                return false;
+            }
+
+            var comment = new Comment
+            {
+                UserId = user.Id,
+                CommentableId = commentableId,
+                CommentableType = CommentableType.Blog,
+                Content = content.Trim(),
+                CreatedAt = DateTime.Now
+            };
+
+            await context.Comment.AddAsync(entity: comment);
+            await context.SaveChangesAsync();
+
+            await notificationService.CreateNotification(
+                userId: user.Id,
+                message: "Bài viết của bạn có bình luận mới.",
+                type: NotificationType.Comment
+            );
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
     }
 
     public bool DeleteCommentChildren(Comment comment)
@@ -69,14 +111,15 @@ public class CommentService(GallifreyPlanetContext context, UserService userServ
         }
     }
 
-    private async Task<CommentViewModel> CreateCommentViewModelAsync(Comment comment)
+    private async Task<CommentViewModel> NewCommentViewModel(Comment comment)
     {
         return new CommentViewModel
         {
             Id = comment.Id,
             User = await userService.GetUserAsyncById(userId: comment.UserId!),
             ParentId = comment.ParentId,
-            Replies = await FetchCommentsAsync(commentableType: comment.CommentableType, commentableId: comment.CommentableId, parentId: comment.Id),
+            Replies = await FetchCommentsAsync(commentableType: comment.CommentableType,
+                commentableId: comment.CommentableId, parentId: comment.Id),
             CommentableId = comment.CommentableId,
             CommentableType = comment.CommentableType,
             Content = comment.Content,

@@ -1,7 +1,6 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
-using GallifreyPlanet.ViewModels.Comment;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GallifreyPlanet.Controllers;
@@ -9,8 +8,7 @@ namespace GallifreyPlanet.Controllers;
 public class CommentController(
     GallifreyPlanetContext context,
     UserService userService,
-    CommentService commentService,
-    NotificationService notificationService
+    CommentService commentService
 )
     : Controller
 {
@@ -45,50 +43,12 @@ public class CommentController(
     {
         try
         {
-            var user = await GetAuthenticatedUserAsync();
-
-            var data = await commentService.Get(commentableType: CommentableType.Blog, commentableId: commentableId);
-            return JsonResponse(success: true, data: data);
-        }
-        catch (Exception ex)
-        {
-            return JsonResponse(success: false, message: ex.Message);
-        }
-    }
-
-    [HttpPost]
-    public async Task<JsonResult> Add(int commentableId, string content)
-    {
-        try
-        {
-            var contentValidation = ValidateContent(content: content);
-            if (contentValidation != null)
-            {
-                return contentValidation;
-            }
-
-            var user = await GetAuthenticatedUserAsync();
-            var comment = new Comment
-            {
-                UserId = user.Id,
-                CommentableId = commentableId,
-                CommentableType = CommentableType.Blog,
-                Content = content.Trim(),
-                CreatedAt = DateTime.Now
-            };
-
-            await context.Comment.AddAsync(entity: comment);
-            await context.SaveChangesAsync();
-
-            await notificationService.CreateNotification(
-                userId: user.Id,
-                message: "Có một bình luận mới vào bài viết của bạn.",
-                type: NotificationType.Friend
-            );
-
             return JsonResponse(
                 success: true,
-                message: "Bình luận thành công"
+                data: await commentService.Get(
+                    commentableType: CommentableType.Blog,
+                    commentableId: commentableId
+                )
             );
         }
         catch (Exception ex)
