@@ -50,14 +50,14 @@ public class CommentService(
         return FetchCommentsAsync(commentableType: commentableType, commentableId: commentableId, parentId: parentId);
     }
 
-    public async Task<bool> Add(int commentableId, string content)
+    public async Task<CommentViewModel?> Add(int commentableId, string content)
     {
         try
         {
             var user = await userService.GetCurrentUserAsync();
             if (user is null || string.IsNullOrWhiteSpace(value: content))
             {
-                return false;
+                return null;
             }
 
             var comment = new Comment
@@ -78,12 +78,12 @@ public class CommentService(
                 type: NotificationType.Comment
             );
 
-            return true;
+            return await NewCommentViewModel(comment: comment);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            return false;
+            Console.WriteLine(value: e);
+            return null;
         }
     }
 

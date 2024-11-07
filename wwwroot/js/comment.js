@@ -6,29 +6,35 @@
         .withAutomaticReconnect()
         .build();
 
-    connection.on("ReceiveComment", (commentableId, content, userName, createdAt) => {
-        updateCommentsUI(commentableId, content, userName, createdAt);
+    connection.on("ReceiveComment", (commentableId, content, result) => {
+        updateCommentsUI(commentableId, content, result);
     });
 
-    connection.on("ReceiveReply", (parentCommentId, content, userName, createdAt) => {
-        updateRepliesUI(parentCommentId, content, userName, createdAt);
+    connection.on("ReceiveReply", (parentCommentId, content, result) => {
+        updateRepliesUI(parentCommentId, content, result);
     });
 
     connection.start().catch(err => console.error(err));
 
     $('form[name="commentForm"]').on('submit', function (e) {
         e.preventDefault();
-        
+        $(this).find('button[type="submit"]').disabled = true;
+
+        const contentEl = $(this).find('textarea[name="content"]');
+
         connection
             .invoke(
                 "SendComment",
                 parseInt($('input[name="blogId"]').val()),
-                $(this).find('textarea[name="content"]').val(),
+                contentEl.val(),
                 $('input[name="activeUserName"]').val(),
             )
-            .then(() => {
-                $(this).find('textarea[name="content"]').val("");
-                $(this).find('textarea[name="content"]').focus();
+            .then((e) => {
+                console.log("ahihi")
+                console.log(e)
+                $(this).find('button[type="submit"]').disabled = false;
+                contentEl.val("");
+                contentEl.focus();
             })
             .catch(err => {
                 console.error('Error invoking SendComment:', err)
@@ -166,32 +172,32 @@ function createReplyActions(reply) {
     }
 }
 
-function updateCommentsUI(commentableId, content, userName, createdAt) {
+function updateCommentsUI(commentableId, content, result) {
     $('.comments-list').prepend(createCommentElement({
-        id: -1, // New comment will have an ID assigned by the server
+        id: -1,
         user: {
             id: $('#user-name').val(),
-            name: userName,
+            name: result.User.userName,
             avatar: null
         },
         content: content,
-        createdAt: createdAt,
+        createdAt: result.CreatedAt,
         replies: []
     }));
 }
 
-function updateRepliesUI(parentCommentId, content, userName, createdAt) {
+function updateRepliesUI(parentCommentId, content, result) {
     $(`[data-comment-id="${parentCommentId}"]`)
         .find('.ms-4.mt-3')
         .prepend(createReplyElement({
-            id: -1, // New reply will have an ID assigned by the server
+            id: -1,
             user: {
                 id: $('#user-name').val(),
-                name: userName,
+                name: result.User.userName,
                 avatar: null
             },
             content: content,
-            createdAt: createdAt
+            createdAt: result.CreatedAt
         }));
 }
 

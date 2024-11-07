@@ -5,7 +5,7 @@ using GallifreyPlanet.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args: args);
-var connectionString = builder.Configuration.GetConnectionString("DEV_TESTContext");
+var connectionString = builder.Configuration.GetConnectionString(name: "DEV_TESTContext");
 // var connectionString = builder.Configuration.GetConnectionString("GallifreyPlanetContext");
 
 builder.Services

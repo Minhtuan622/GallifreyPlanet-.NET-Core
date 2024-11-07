@@ -29,7 +29,7 @@ public class BlogsController(
     }
 
     // GET: Blogs/Details/5
-    [HttpGet("Blogs/Details/{id:int}/{userId}")]
+    [HttpGet(template: "Blogs/Details/{id:int}/{userId}")]
     public async Task<IActionResult> Details(int id, string userId)
     {
         try
@@ -58,7 +58,7 @@ public class BlogsController(
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(value: e);
             throw;
         }
     }
