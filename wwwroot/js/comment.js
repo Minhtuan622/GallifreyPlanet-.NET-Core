@@ -93,7 +93,7 @@ function createCommentElement(comment) {
                                     href="#replies-${comment.id}" 
                                     role="button" 
                                 >
-                                Hiển thị phản hồi
+                                Hiển thị phản hồi (${comment.replies.length})
                             </button>
                         ` : ''}
                     </div>
@@ -127,7 +127,7 @@ function createReplyElement(reply) {
                     <p class="mb-1">${reply.content}</p>
                     <small class="text-muted">
                         <i class="far fa-clock me-1"></i>
-                        ${reply.createdAt}
+                        ${formatDate(reply.createdAt)}
                     </small>
                 </div>
             </div>
@@ -316,5 +316,5 @@ function handleAjaxError(error, unauthorizedMessage = 'Đã có lỗi xảy ra')
 }
 
 function formatDate(date) {
-    return new Intl.DateTimeFormat('en-US').format(new Date(date));
+    return new Intl.DateTimeFormat('en-UK').format(new Date(date));
 }
