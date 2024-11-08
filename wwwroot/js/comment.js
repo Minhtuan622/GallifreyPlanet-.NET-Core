@@ -87,6 +87,13 @@ function createCommentElement(comment) {
                 .append($('<i>').addClass('far fa-clock me-1'))
                 .append(formatDate(comment.createdAt))
             )
+            .append($('<br>'))
+            .append($('<button>')
+                .addClass('btn btn-link text-decoration-none p-0')
+                .attr('onclick', `showReplyForm(${comment.id})`)
+                .text('Trả lời')
+            )
+            .append($('<div>').attr('data-comment-id', comment.id))
         );
 
     if (comment.replies && comment.replies.length > 0) {
@@ -149,6 +156,55 @@ function createCommentActions(comment) {
     }
 }
 
+function showReplyForm(commentId) {
+    const replyFormId = `#replyForm-${commentId}`;
+    const existingForm = $(replyFormId);
+
+    if (existingForm.length) {
+        existingForm.remove();
+        return;
+    }
+
+    $(`[data-comment-id="${commentId}"]`).append(getReplyFormHtml(commentId));
+
+    $(replyFormId).find('form').on('submit', function (e) {
+        e.preventDefault();
+        submitReply(commentId);
+    });
+}
+
+function submitReply(commentId) {
+    const contentEl = $('input[name="replyContent"]');
+
+    connection
+        .invoke(
+            "ReplyToComment",
+            commentId,
+            contentEl.val(),
+            $('input[name="activeUserName"]').val(),
+        )
+        .then(() => {
+            contentEl.val("");
+            contentEl.focus();
+            $(this).find('button[type="submit"]').disabled = false;
+        })
+        .catch(err => {
+            console.error('Error invoking SendComment:', err)
+        });
+}
+
+function getReplyFormHtml(commentId) {
+    return `
+        <div id="replyForm-${commentId}" class="mt-3">
+            <form class="d-flex gap-2" method="post" asp-controller="Comment" asp-action="AddReply" autocomplete="off">
+                <input name="replyContent" class="form-control form-control-sm" 
+                       placeholder="Nhập phản hồi của bạn..." required>
+                <button type="submit" class="btn btn-primary btn-sm">Gửi</button>
+            </form>
+        </div>
+    `;
+}
+
 function createReplyActions(reply) {
     if (reply.user.userName === $('#user-name').val()) {
         let actions = $('<div>').addClass('dropdown');
@@ -195,32 +251,8 @@ function updateRepliesUI(parentCommentId, content, result) {
                 avatar: result.user.avatar
             },
             content: content,
-            createdAt: formatDate(result.createdAt),    
+            createdAt: formatDate(result.createdAt),
         }));
-}
-
-function submitReply(form, commentId) {
-    const formData = new FormData(form);
-    $.ajax({
-        url: '/Comment/AddReply',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-    }).done(response => {
-        if (response.success) {
-            connection.invoke(
-                "ReplyToComment",
-                commentId,
-                formData.get('content'),
-                $('#user-name').val(),
-                response.data.value.createdAt
-            );
-            form.reset();
-        } else {
-            alert(response.message);
-        }
-    }).fail(handleAjaxError);
 }
 
 function deleteComment(commentId) {
@@ -260,6 +292,6 @@ function handleAjaxError(error, unauthorizedMessage = 'Đã có lỗi xảy ra')
     alert(error.status === 401 ? unauthorizedMessage : 'Đã có lỗi xảy ra');
 }
 
-function formatDate(date){
+function formatDate(date) {
     return new Intl.DateTimeFormat('en-US').format(new Date(date));
 }

@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- Comment Form -->
-                <div class="card border-0 bg-body-tertiary mb-4">
+                <div class="card border-0 bg-body-tertiary">
                     <div class="card-body p-4">
                         <h5 class="card-title mb-3">Thêm bình luận</h5>
                         <form name="commentForm" method="post" autocomplete="off">
@@ -81,7 +81,7 @@
                 </div>
 
                 <!-- Comments List -->
-                <div class="collapse show">
+                <div class="collapse show mt-4" id="commentsSection">
                     @if (Model.Comments is not null)
                     {
                         <input class="d-none" id="user-name" value="@User.Identity?.Name"/>
