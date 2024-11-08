@@ -7,7 +7,6 @@
         .build();
 
     connection.on("ReceiveComment", (commentableId, content, result) => {
-        console.log(result)
         updateCommentsUI(commentableId, content, result);
     });
 
@@ -86,7 +85,7 @@ function createCommentElement(comment) {
             .append($('<p>').addClass('mb-1').text(comment.content))
             .append($('<small>').addClass('text-muted')
                 .append($('<i>').addClass('far fa-clock me-1'))
-                .append(comment.createdAt)
+                .append(formatDate(comment.createdAt))
             )
         );
 
@@ -180,7 +179,7 @@ function updateCommentsUI(commentableId, content, result) {
             avatar: result.user.avatar
         },
         content: content,
-        createdAt: result.createdAt,
+        createdAt: formatDate(result.createdAt),
         replies: []
     }));
 }
@@ -196,7 +195,7 @@ function updateRepliesUI(parentCommentId, content, result) {
                 avatar: result.user.avatar
             },
             content: content,
-            createdAt: result.createdAt
+            createdAt: formatDate(result.createdAt),    
         }));
 }
 
@@ -259,4 +258,8 @@ function deleteReply(replyId) {
 function handleAjaxError(error, unauthorizedMessage = 'Đã có lỗi xảy ra') {
     console.error('Error:', error);
     alert(error.status === 401 ? unauthorizedMessage : 'Đã có lỗi xảy ra');
+}
+
+function formatDate(date){
+    return new Intl.DateTimeFormat('en-US').format(new Date(date));
 }
