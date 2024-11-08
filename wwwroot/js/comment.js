@@ -7,6 +7,7 @@
         .build();
 
     connection.on("ReceiveComment", (commentableId, content, result) => {
+        console.log(result)
         updateCommentsUI(commentableId, content, result);
     });
 
@@ -29,12 +30,10 @@
                 contentEl.val(),
                 $('input[name="activeUserName"]').val(),
             )
-            .then((e) => {
-                console.log("ahihi")
-                console.log(e)
-                $(this).find('button[type="submit"]').disabled = false;
+            .then(() => {
                 contentEl.val("");
                 contentEl.focus();
+                $(this).find('button[type="submit"]').disabled = false;
             })
             .catch(err => {
                 console.error('Error invoking SendComment:', err)
@@ -177,11 +176,11 @@ function updateCommentsUI(commentableId, content, result) {
         id: -1,
         user: {
             id: $('#user-name').val(),
-            name: result.User.userName,
-            avatar: null
+            name: result.user.name,
+            avatar: result.user.avatar
         },
         content: content,
-        createdAt: result.CreatedAt,
+        createdAt: result.createdAt,
         replies: []
     }));
 }
@@ -193,11 +192,11 @@ function updateRepliesUI(parentCommentId, content, result) {
             id: -1,
             user: {
                 id: $('#user-name').val(),
-                name: result.User.userName,
-                avatar: null
+                name: result.user.name,
+                avatar: result.user.avatar
             },
             content: content,
-            createdAt: result.CreatedAt
+            createdAt: result.createdAt
         }));
 }
 

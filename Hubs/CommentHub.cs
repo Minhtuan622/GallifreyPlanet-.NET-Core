@@ -9,20 +9,12 @@ public class CommentHub(
 {
     public async Task SendComment(int commentableId, string content, string userName)
     {
-        try
-        {
-            await Clients.All.SendAsync(
-                method: "ReceiveComment",
-                arg1: commentableId,
-                arg2: content,
-                arg3: commentService.Add(commentableId: commentableId, content: content)
-            );
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        await Clients.All.SendAsync(
+            method: "ReceiveComment",
+            arg1: commentableId,
+            arg2: content,
+            arg3: await commentService.Add(commentableId: commentableId, content: content)
+        );
     }
 
     public async Task ReplyToComment(int parentCommentId, string content, string userName)
