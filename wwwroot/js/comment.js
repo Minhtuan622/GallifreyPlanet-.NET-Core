@@ -56,129 +56,135 @@ function fetchComments(commentableId) {
 }
 
 function showComments(comments) {
-    const commentsListEl = $('.comments-list');
-    commentsListEl.empty();
-
-    comments.forEach(comment => {
-        const commentEl = createCommentElement(comment);
-        commentsListEl.append(commentEl);
-    });
+    const commentsListEl = document.querySelector('.comments-list');
+    commentsListEl.innerHTML = comments.map(comment => createCommentElement(comment)).join('');
 }
 
 function createCommentElement(comment) {
-    const defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
-    let commentEl = $('<div>').addClass('comment-item d-flex');
-
-    let avatarEl = $('<div>')
-        .addClass('avatar-placeholder me-3')
-        .append($('<img>')
-            .attr('src', comment.user.avatar || defaultAvatarPath)
-            .attr('alt', comment.user.name)
-            .addClass('h-100 w-100 object-fit-cover rounded-circle')
-        );
-
-    let contentEl = $('<div>')
-        .addClass('flex-grow-1')
-        .append($('<div>')
-            .addClass('rounded-4 p-3')
-            .append($('<div>')
-                .addClass('d-flex justify-content-between align-items-start mb-2')
-                .append($('<h6>')
-                    .addClass('mb-0')
-                    .text(comment.user.name)
-                )
-                .append(createCommentActions(comment)
-                )
-            )
-            .append($('<p>')
-                .addClass('mb-1')
-                .text(comment.content)
-            )
-            .append($('<small>')
-                .addClass('text-muted')
-                .append($('<i>').addClass('far fa-clock me-1'))
-                .append(formatDate(comment.createdAt))
-            )
-            .append($('<br>'))
-            .append($('<button>')
-                .addClass('btn btn-link text-decoration-none p-0')
-                .attr('onclick', `showReplyForm(${comment.id})`)
-                .text('Trả lời')
-            )
-            .attr('data-comment-id', comment.id)
-        );
-
-    if (comment.replies && comment.replies.length > 0) {
-        let repliesEl = $('<div>').addClass('ms-4 mt-3');
-        comment.replies.forEach(reply => {
-            repliesEl.append(createReplyElement(reply));
-        });
-        contentEl.append(repliesEl);
-    }
-
-    return commentEl.append(avatarEl, contentEl);
+    const hasReplies = comment.replies && comment.replies.length > 0;
+    return `
+        <div class="comment-item d-flex">
+            <div class="avatar-placeholder me-3">
+                <img src="${comment.user.avatar || "/uploads/accounts/default-avatar.jpg"}" 
+                     alt="${comment.user.name}" 
+                     class="h-100 w-100 object-fit-cover rounded-circle">
+            </div>
+            <div class="flex-grow-1">
+                <div class="rounded-4 p-3" data-comment-id="${comment.id}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="mb-0">${comment.user.name}</h6>
+                        ${createCommentActions(comment)}
+                    </div>
+                    <p class="mb-1">${comment.content}</p>
+                    <small class="text-muted">
+                        <i class="far fa-clock me-1"></i>
+                        ${formatDate(comment.createdAt)}
+                    </small>
+                    <br>
+                    <div class="d-flex btn-action-comment" style="gap: 1rem">
+                        <button class="btn btn-link text-decoration-none p-0" 
+                                onclick="showReplyForm(${comment.id})">
+                            Trả lời
+                        </button>
+                        
+                        ${hasReplies ? `
+                            <button class="btn btn-link text-decoration-none p-0"
+                                    data-bs-toggle="collapse" 
+                                    href="#replies-${comment.id}" 
+                                    role="button" 
+                                >
+                                Hiển thị phản hồi
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+                ${hasReplies ? `
+                    <div id="replies-${comment.id}">
+                        <div class="reply-item ms-4 mt-3">
+                            ${comment.replies.map(reply => createReplyElement(reply)).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
 }
 
 function createReplyElement(reply) {
-    const defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
-    let replyEl = $('<div>').addClass('d-flex mb-3');
-
-    let avatarEl = $('<div>')
-        .addClass('avatar-placeholder me-2')
-        .css({'width': '32px', 'height': '32px'})
-        .append($('<img>')
-            .attr('src', reply.user.avatar || defaultAvatarPath)
-            .attr('alt', reply.user.name)
-            .addClass('h-100 w-100 object-fit-cover rounded-circle')
-        );
-
-    let contentEl = $('<div>')
-        .addClass('flex-grow-1')
-        .append($('<div>')
-            .addClass('rounded-4 p-3')
-            .append($('<div>')
-                .addClass('d-flex justify-content-between align-items-start')
-                .append($('<h6>')
-                    .addClass('mb-1 fs-6')
-                    .text(reply.user.name)
-                )
-                .append(createReplyActions(reply)
-                )
-            )
-            .append($('<p>')
-                .addClass('mb-1')
-                .text(reply.content))
-            .append($('<small>')
-                .addClass('text-muted')
-                .append($('<i>').addClass('far fa-clock me-1'))
-                .append(reply.createdAt)
-            )
-        );
-
-    return replyEl.append(avatarEl, contentEl);
+    return `
+        <div class="d-flex mb-3">
+            <div class="avatar-placeholder me-2" style="width: 32px; height: 32px">
+                <img src="${reply.user.avatar || "/uploads/accounts/default-avatar.jpg"}" 
+                     alt="${reply.user.name}" 
+                     class="h-100 w-100 object-fit-cover rounded-circle">
+            </div>
+            <div class="flex-grow-1">
+                <div class="rounded-4 p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="mb-1 fs-6">${reply.user.name}</h6>
+                        ${createReplyActions(reply)}
+                    </div>
+                    <p class="mb-1">${reply.content}</p>
+                    <small class="text-muted">
+                        <i class="far fa-clock me-1"></i>
+                        ${reply.createdAt}
+                    </small>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function createCommentActions(comment) {
-    if (comment.user.userName === $('#user-name').val()) {
-        let actions = $('<div>').addClass('dropdown');
-        let toggleBtn = $('<button>')
-            .addClass('btn btn-link text-muted p-0')
-            .attr('type', 'button')
-            .attr('data-bs-toggle', 'dropdown')
-            .append($('<i>').addClass('fas fa-ellipsis-v'));
-        let dropdownMenu = $('<ul>').addClass('dropdown-menu dropdown-menu-end');
-        let deleteItem = $('<li>')
-            .append($('<a>')
-                .addClass('dropdown-item text-danger')
-                .attr('href', '#')
-                .attr('onclick', `deleteComment(${comment.id})`)
-                .append($('<i>').addClass('fas fa-trash-alt me-2'))
-                .append('Xóa')
-            );
-        dropdownMenu.append(deleteItem);
-
-        return actions.append(toggleBtn, dropdownMenu);
+    if (comment.user.userName !== $('#user-name').val()) {
+        return '';
     }
+
+    return `
+        <div class="dropdown">
+            <button class="btn btn-link text-muted p-0" 
+                    type="button" 
+                    data-bs-toggle="dropdown">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item text-danger" 
+                       href="#" 
+                       onclick="deleteComment(${comment.id})">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Xóa
+                    </a>
+                </li>
+            </ul>
+        </div>
+    `;
+}
+
+function createReplyActions(reply) {
+    if (reply.user.userName !== $('#user-name').val()) {
+        return '';
+    }
+
+    return `
+        <div class="dropdown">
+            <button class="btn btn-link text-muted p-0" 
+                    type="button" 
+                    data-bs-toggle="dropdown">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item text-danger" 
+                       href="#" 
+                       onclick="deleteReply(${reply.id})">
+                        <i class="fas fa-trash-alt me-2"></i>
+                        Xóa
+                    </a>
+                </li>
+            </ul>
+        </div>
+    `;
 }
 
 function showReplyForm(commentId) {
@@ -190,7 +196,7 @@ function showReplyForm(commentId) {
         return;
     }
 
-    $(`[data-comment-id="${commentId}"]`).append(getReplyFormHtml(commentId));
+    $(`[data-comment-id="${commentId}"]`).append(generateReplyFormHtml(commentId));
 
     $(replyFormId).find('form').on('submit', function (e) {
         e.preventDefault();
@@ -218,7 +224,7 @@ function submitReply(commentId) {
         });
 }
 
-function getReplyFormHtml(commentId) {
+function generateReplyFormHtml(commentId) {
     return `
         <div id="replyForm-${commentId}" class="mt-3">
             <form class="d-flex gap-2" method="post" asp-controller="Comment" asp-action="AddReply" autocomplete="off">
@@ -230,56 +236,46 @@ function getReplyFormHtml(commentId) {
     `;
 }
 
-function createReplyActions(reply) {
-    if (reply.user.userName === $('#user-name').val()) {
-        let actions = $('<div>').addClass('dropdown');
-        let toggleBtn = $('<button>')
-            .addClass('btn btn-link text-muted p-0')
-            .attr('type', 'button')
-            .attr('data-bs-toggle', 'dropdown')
-            .append($('<i>').addClass('fas fa-ellipsis-v'));
-        let dropdownMenu = $('<ul>').addClass('dropdown-menu dropdown-menu-end');
-        let deleteItem = $('<li>')
-            .append($('<a>')
-                .addClass('dropdown-item text-danger')
-                .attr('href', '#')
-                .attr('onclick', `deleteReply(${reply.id})`)
-                .append($('<i>').addClass('fas fa-trash-alt me-2'))
-                .append('Xóa')
-            );
-        dropdownMenu.append(deleteItem);
-
-        return actions.append(toggleBtn, dropdownMenu);
-    }
-}
-
 function updateCommentsUI(commentableId, content, result) {
-    $('.comments-list').prepend(createCommentElement({
+    const newComment = createCommentElement({
         id: -1,
         user: {
-            id: $('#user-name').val(),
+            id: document.querySelector('#user-name').value,
             name: result.user.name,
             avatar: result.user.avatar
         },
         content: content,
         createdAt: formatDate(result.createdAt),
         replies: []
-    }));
+    });
+
+    document.querySelector('.comments-list').insertAdjacentHTML('afterbegin', newComment);
 }
 
 function updateRepliesUI(parentCommentId, content, result) {
-    $(`[data-comment-id="${parentCommentId}"]`)
-        .find('.ms-4.mt-3')
-        .prepend(createReplyElement({
-            id: -1,
-            user: {
-                id: $('#user-name').val(),
-                name: result.user.name,
-                avatar: result.user.avatar
-            },
-            content: content,
-            createdAt: formatDate(result.createdAt),
-        }));
+    const parentComment = document.querySelector(`[data-comment-id="${parentCommentId}"]`);
+    const repliesContainer = parentComment.querySelector('.reply-item');
+
+    const newReply = createReplyElement({
+        id: -1,
+        user: {
+            id: document.querySelector('#user-name').value,
+            name: result.user.name,
+            avatar: result.user.avatar
+        },
+        content: content,
+        createdAt: formatDate(result.createdAt),
+    });
+
+    if (repliesContainer) {
+        repliesContainer.insertAdjacentHTML('afterbegin', newReply);
+    } else {
+        parentComment.insertAdjacentHTML('beforeend', `
+            <div class="reply-item ms-4 mt-3">
+                ${newReply}
+            </div>
+        `);
+    }
 }
 
 function deleteComment(commentId) {
@@ -306,7 +302,7 @@ function deleteReply(replyId) {
             contentType: 'application/json',
         }).done(response => {
             if (response.success) {
-                $(`[data-reply-id="${replyId}"]`).closest('.ms-4 .mt-3').remove();
+                $(`[data-reply-id="${replyId}"]`).closest('.reply-item').remove();
             } else {
                 alert(response.message);
             }
