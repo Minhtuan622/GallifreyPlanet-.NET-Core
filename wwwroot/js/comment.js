@@ -48,14 +48,14 @@ function fetchComments(commentableId) {
         contentType: 'application/json',
     }).done(response => {
         if (response.success) {
-            populateComments(response.data);
+            showComments(response.data);
         } else {
             console.error(response.message);
         }
     }).fail(handleAjaxError);
 }
 
-function populateComments(comments) {
+function showComments(comments) {
     const commentsListEl = $('.comments-list');
     commentsListEl.empty();
 
@@ -69,21 +69,33 @@ function createCommentElement(comment) {
     const defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
     let commentEl = $('<div>').addClass('comment-item d-flex');
 
-    let avatarEl = $('<div>').addClass('avatar-placeholder me-3')
-        .append($('<img>').attr('src', comment.user.avatar || defaultAvatarPath)
+    let avatarEl = $('<div>')
+        .addClass('avatar-placeholder me-3')
+        .append($('<img>')
+            .attr('src', comment.user.avatar || defaultAvatarPath)
             .attr('alt', comment.user.name)
             .addClass('h-100 w-100 object-fit-cover rounded-circle')
         );
 
-    let contentEl = $('<div>').addClass('flex-grow-1')
-        .append($('<div>').addClass('rounded-4 p-3')
-            .append($('<div>').addClass('d-flex justify-content-between align-items-start mb-2')
-                .append($('<h6>').addClass('mb-0').text(comment.user.name))
+    let contentEl = $('<div>')
+        .addClass('flex-grow-1')
+        .append($('<div>')
+            .addClass('rounded-4 p-3')
+            .append($('<div>')
+                .addClass('d-flex justify-content-between align-items-start mb-2')
+                .append($('<h6>')
+                    .addClass('mb-0')
+                    .text(comment.user.name)
+                )
                 .append(createCommentActions(comment)
                 )
             )
-            .append($('<p>').addClass('mb-1').text(comment.content))
-            .append($('<small>').addClass('text-muted')
+            .append($('<p>')
+                .addClass('mb-1')
+                .text(comment.content)
+            )
+            .append($('<small>')
+                .addClass('text-muted')
                 .append($('<i>').addClass('far fa-clock me-1'))
                 .append(formatDate(comment.createdAt))
             )
@@ -93,7 +105,7 @@ function createCommentElement(comment) {
                 .attr('onclick', `showReplyForm(${comment.id})`)
                 .text('Trả lời')
             )
-            .append($('<div>').attr('data-comment-id', comment.id))
+            .attr('data-comment-id', comment.id)
         );
 
     if (comment.replies && comment.replies.length > 0) {
@@ -111,22 +123,33 @@ function createReplyElement(reply) {
     const defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
     let replyEl = $('<div>').addClass('d-flex mb-3');
 
-    let avatarEl = $('<div>').addClass('avatar-placeholder me-2')
+    let avatarEl = $('<div>')
+        .addClass('avatar-placeholder me-2')
         .css({'width': '32px', 'height': '32px'})
-        .append($('<img>').attr('src', reply.user.avatar || defaultAvatarPath)
+        .append($('<img>')
+            .attr('src', reply.user.avatar || defaultAvatarPath)
             .attr('alt', reply.user.name)
             .addClass('h-100 w-100 object-fit-cover rounded-circle')
         );
 
-    let contentEl = $('<div>').addClass('flex-grow-1')
-        .append($('<div>').addClass('rounded-4 p-3')
-            .append($('<div>').addClass('d-flex justify-content-between align-items-start')
-                .append($('<h6>').addClass('mb-1 fs-6').text(reply.user.name))
+    let contentEl = $('<div>')
+        .addClass('flex-grow-1')
+        .append($('<div>')
+            .addClass('rounded-4 p-3')
+            .append($('<div>')
+                .addClass('d-flex justify-content-between align-items-start')
+                .append($('<h6>')
+                    .addClass('mb-1 fs-6')
+                    .text(reply.user.name)
+                )
                 .append(createReplyActions(reply)
                 )
             )
-            .append($('<p>').addClass('mb-1').text(reply.content))
-            .append($('<small>').addClass('text-muted')
+            .append($('<p>')
+                .addClass('mb-1')
+                .text(reply.content))
+            .append($('<small>')
+                .addClass('text-muted')
                 .append($('<i>').addClass('far fa-clock me-1'))
                 .append(reply.createdAt)
             )
@@ -138,13 +161,15 @@ function createReplyElement(reply) {
 function createCommentActions(comment) {
     if (comment.user.userName === $('#user-name').val()) {
         let actions = $('<div>').addClass('dropdown');
-        let toggleBtn = $('<button>').addClass('btn btn-link text-muted p-0')
+        let toggleBtn = $('<button>')
+            .addClass('btn btn-link text-muted p-0')
             .attr('type', 'button')
             .attr('data-bs-toggle', 'dropdown')
             .append($('<i>').addClass('fas fa-ellipsis-v'));
         let dropdownMenu = $('<ul>').addClass('dropdown-menu dropdown-menu-end');
         let deleteItem = $('<li>')
-            .append($('<a>').addClass('dropdown-item text-danger')
+            .append($('<a>')
+                .addClass('dropdown-item text-danger')
                 .attr('href', '#')
                 .attr('onclick', `deleteComment(${comment.id})`)
                 .append($('<i>').addClass('fas fa-trash-alt me-2'))
@@ -178,7 +203,7 @@ function submitReply(commentId) {
 
     connection
         .invoke(
-            "ReplyToComment",
+            "ReplyComment",
             commentId,
             contentEl.val(),
             $('input[name="activeUserName"]').val(),
@@ -208,13 +233,15 @@ function getReplyFormHtml(commentId) {
 function createReplyActions(reply) {
     if (reply.user.userName === $('#user-name').val()) {
         let actions = $('<div>').addClass('dropdown');
-        let toggleBtn = $('<button>').addClass('btn btn-link text-muted p-0')
+        let toggleBtn = $('<button>')
+            .addClass('btn btn-link text-muted p-0')
             .attr('type', 'button')
             .attr('data-bs-toggle', 'dropdown')
             .append($('<i>').addClass('fas fa-ellipsis-v'));
         let dropdownMenu = $('<ul>').addClass('dropdown-menu dropdown-menu-end');
         let deleteItem = $('<li>')
-            .append($('<a>').addClass('dropdown-item text-danger')
+            .append($('<a>')
+                .addClass('dropdown-item text-danger')
                 .attr('href', '#')
                 .attr('onclick', `deleteReply(${reply.id})`)
                 .append($('<i>').addClass('fas fa-trash-alt me-2'))
@@ -263,7 +290,7 @@ function deleteComment(commentId) {
             contentType: 'application/json',
         }).done(response => {
             if (response.success) {
-                $(`[data-comment-id="${commentId}"]`).remove();
+                $(`[data-comment-id="${commentId}"]`).closest('.comment-item').remove();
             } else {
                 alert(response.message);
             }
@@ -279,7 +306,7 @@ function deleteReply(replyId) {
             contentType: 'application/json',
         }).done(response => {
             if (response.success) {
-                $(`[data-reply-id="${replyId}"]`).remove();
+                $(`[data-reply-id="${replyId}"]`).closest('.ms-4 .mt-3').remove();
             } else {
                 alert(response.message);
             }

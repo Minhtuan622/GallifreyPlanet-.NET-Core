@@ -17,7 +17,7 @@ public class CommentHub(
         );
     }
 
-    public async Task ReplyToComment(int parentCommentId, string content, string userName)
+    public async Task ReplyComment(int parentCommentId, string content, string userName)
     {
         await Clients.All.SendAsync(method: "ReceiveReply", arg1: parentCommentId, arg2: content, arg3: userName);
     }
