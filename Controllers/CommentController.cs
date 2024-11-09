@@ -94,48 +94,6 @@ public class CommentController(
         }
     }
 
-    [HttpPost]
-    public async Task<JsonResult> AddReply(int commentId, string content)
-    {
-        try
-        {
-            var contentValidation = ValidateContent(content: content);
-            if (contentValidation != null)
-            {
-                return contentValidation;
-            }
-
-            var user = await GetAuthenticatedUserAsync();
-            var parentComment = commentService.GetById(id: commentId);
-            if (parentComment == null)
-            {
-                return JsonResponse(
-                    success: false,
-                    message: "Bình luận bạn vừa phản hồi không còn tồn tại"
-                );
-            }
-
-            var reply = new Comment
-            {
-                ParentId = commentId,
-                CommentableType = CommentableType.Blog,
-                CommentableId = parentComment.CommentableId,
-                UserId = user.Id,
-                Content = content.Trim(),
-                CreatedAt = DateTime.Now
-            };
-
-            await context.Comment.AddAsync(entity: reply);
-            await context.SaveChangesAsync();
-
-            return JsonResponse(success: true, message: "Phản hồi thành công");
-        }
-        catch (Exception ex)
-        {
-            return JsonResponse(success: false, message: ex.Message);
-        }
-    }
-
     [HttpDelete]
     public async Task<JsonResult> DeleteReply(int id)
     {

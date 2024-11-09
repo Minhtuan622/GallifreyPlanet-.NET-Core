@@ -7,7 +7,7 @@ public class CommentHub(
     CommentService commentService
 ) : Hub
 {
-    public async Task SendComment(int commentableId, string content, string userName)
+    public async Task SendComment(int commentableId, string content)
     {
         await Clients.All.SendAsync(
             method: "ReceiveComment",
@@ -17,8 +17,13 @@ public class CommentHub(
         );
     }
 
-    public async Task ReplyComment(int parentCommentId, string content, string userName)
+    public async Task ReplyComment(int parentCommentId, string content)
     {
-        await Clients.All.SendAsync(method: "ReceiveReply", arg1: parentCommentId, arg2: content, arg3: userName);
+        await Clients.All.SendAsync(
+            method: "ReceiveReply", 
+            arg1: parentCommentId, 
+            arg2: content,
+            arg3: await commentService.AddReply(commentId: parentCommentId, content: content)
+        );
     }
 }

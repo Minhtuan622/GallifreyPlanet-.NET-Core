@@ -1,10 +1,10 @@
 ﻿$(document).ready(function () {
-    fetchComments($('input[name="blogId"]').val());
-
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/commentHub")
         .withAutomaticReconnect()
         .build();
+    
+    connection.start().catch(err => console.error(err));
 
     connection.on("ReceiveComment", (commentableId, content, result) => {
         updateCommentsUI(commentableId, content, result);
@@ -14,8 +14,8 @@
         updateRepliesUI(parentCommentId, content, result);
     });
 
-    connection.start().catch(err => console.error(err));
-
+    fetchComments($('input[name="blogId"]').val());
+    
     $('form[name="commentForm"]').on('submit', function (e) {
         e.preventDefault();
         $(this).find('button[type="submit"]').disabled = true;
@@ -27,7 +27,6 @@
                 "SendComment",
                 parseInt($('input[name="blogId"]').val()),
                 contentEl.val(),
-                $('input[name="activeUserName"]').val(),
             )
             .then(() => {
                 contentEl.val("");
@@ -206,13 +205,13 @@ function showReplyForm(commentId) {
 
 function submitReply(commentId) {
     const contentEl = $('input[name="replyContent"]');
+    $(this).find('button[type="submit"]').disabled = true;
 
     connection
         .invoke(
             "ReplyComment",
             commentId,
             contentEl.val(),
-            $('input[name="activeUserName"]').val(),
         )
         .then(() => {
             contentEl.val("");

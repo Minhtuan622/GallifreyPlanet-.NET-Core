@@ -74,11 +74,55 @@ public class CommentService(
 
             await notificationService.CreateNotification(
                 userId: user.Id,
-                message: "Bài viết của bạn có bình luận mới.",
+                message: $"{user.Name} vừa bình luận vào bài viết của bạn.",
                 type: NotificationType.Comment
             );
 
             return await NewCommentViewModel(comment: comment);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(value: e);
+            return null;
+        }
+    }
+
+    public async Task<CommentViewModel?> AddReply(int commentId, string content)
+    {
+        try
+        {
+            var user = await userService.GetCurrentUserAsync();
+            if (user is null || string.IsNullOrWhiteSpace(value: content))
+            {
+                return null;
+            }
+        
+            var parentComment = GetById(id: commentId);
+            if (parentComment is null)
+            {
+                return null;
+            }
+        
+            var reply = new Comment
+            {
+                ParentId = commentId,
+                CommentableType = CommentableType.Blog,
+                CommentableId = parentComment.CommentableId,
+                UserId = user.Id,
+                Content = content.Trim(),
+                CreatedAt = DateTime.Now
+            };
+
+            await context.Comment.AddAsync(entity: reply);
+            await context.SaveChangesAsync();
+            
+            await notificationService.CreateNotification(
+                userId: user.Id,
+                message: $"{user.Name} vừa phản hồi bình luận của bạn.",
+                type: NotificationType.Comment
+            );
+        
+            return await NewCommentViewModel(comment: reply);
         }
         catch (Exception e)
         {
