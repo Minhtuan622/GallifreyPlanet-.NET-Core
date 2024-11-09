@@ -1,5 +1,7 @@
-﻿$(document).ready(function () {
-    const connection = new signalR.HubConnectionBuilder()
+﻿let connection;
+
+$(document).ready(function () {
+    connection = new signalR.HubConnectionBuilder()
         .withUrl("/commentHub")
         .withAutomaticReconnect()
         .build();
@@ -219,7 +221,7 @@ function submitReply(commentId) {
             $(this).find('button[type="submit"]').disabled = false;
         })
         .catch(err => {
-            console.error('Error invoking SendComment:', err)
+            console.error('Error invoking ReplyComment:', err);
         });
 }
 
