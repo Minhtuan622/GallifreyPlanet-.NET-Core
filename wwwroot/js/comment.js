@@ -1,6 +1,4 @@
-﻿let connection;
-
-$(document).ready(function () {
+﻿$(document).ready(function () {
     connection = new signalR.HubConnectionBuilder()
         .withUrl("/commentHub")
         .withAutomaticReconnect()

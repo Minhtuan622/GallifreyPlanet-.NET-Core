@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    const connection = new signalR.HubConnectionBuilder()
+    connection = new signalR.HubConnectionBuilder()
         .withUrl("/notificationHub")
         .withAutomaticReconnect()
         .build();
@@ -40,18 +40,30 @@
 
         notificationList.innerHTML = "";
 
+        let unreadCount = 0;
+
         notifications.forEach(notification => {
+            if (!notification.isRead) {
+                unreadCount++;
+            }
+
             const listItem = document.createElement("li");
+            listItem.className = "dropdown-item";
+            if (!notification.isRead) {
+                listItem.classList.add("unread-notification");
+            }
+
             listItem.innerHTML = `
-                <div class="dropdown-item">
-                    <p class="notification-message">${notification.content}</p>
-                    <small class="notification-time">${new Date(notification.createdAt).toLocaleString()}</small>
-                </div>
-            `;
+            <div>   
+                <p class="notification-message">${notification.content}</p>
+                <small class="notification-time">${new Date(notification.createdAt).toLocaleString()}</small>
+            </div>
+        `;
+
             notificationList.appendChild(listItem);
         });
 
-        notificationCount.textContent = notifications.length;
+        notificationCount.textContent = unreadCount;
     }
 
     function showToast(message) {

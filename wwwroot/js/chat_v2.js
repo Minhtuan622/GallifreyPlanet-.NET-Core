@@ -1,5 +1,5 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
     const chatMessages = document.getElementById('messages-container');
 
     scrollToBottom();
