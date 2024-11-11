@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Services;
 
-public class NotificationService(GallifreyPlanetContext context, IHubContext<NotificationHub> hubContext, UserService userService)
+public class NotificationService(
+    GallifreyPlanetContext context,
+    IHubContext<NotificationHub> hubContext,
+    UserService userService
+)
 {
     public async Task CreateNotification(string userId, string message, NotificationType type)
     {
@@ -26,17 +30,17 @@ public class NotificationService(GallifreyPlanetContext context, IHubContext<Not
 
     public async Task<List<Notification>> GetUserNotifications()
     {
-        var user = await userService.GetCurrentUserAsync(); 
-        
+        var user = await userService.GetCurrentUserAsync();
+
         return context.Notification
             .Where(predicate: n => n.SenderId == user!.Id)
             .OrderByDescending(keySelector: n => n.CreatedAt)
             .ToList();
     }
 
-    public async Task MarkAsRead(int notificationId)
+    public async Task MarkAsRead(int id)
     {
-        var notification = await context.Notification.FindAsync(keyValues: notificationId);
+        var notification = await context.Notification.FindAsync(keyValues: id);
         if (notification != null)
         {
             notification.IsRead = true;

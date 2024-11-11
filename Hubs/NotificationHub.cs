@@ -17,4 +17,17 @@ public class NotificationHub(NotificationService notificationService) : Hub
     {
         await Clients.All.SendAsync(method: "ReceiveNotification", arg1: user, arg2: message, arg3: type);
     }
+
+    public async Task MarkAllAsRead(List<int> ids)
+    {
+        if (ids.Count > 0)
+        {
+            foreach (var id in ids)
+            {
+                await notificationService.MarkAsRead(id);
+            }
+
+            await Clients.All.SendAsync("MarkAllAsRead", ids);
+        }
+    }
 }

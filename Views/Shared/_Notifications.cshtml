@@ -14,18 +14,14 @@
                     0
                 </small>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0 overflow-auto" id="notification-list"></ul>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-0 overflow-auto" id="notification-list">
+                <li class="dropdown-header">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="m-0 p-0">Thông báo</h6>
+                        <button class="btn btn-link text-decoration-none" id="btnMarkAllAsRead">Đánh dấu tất cả là đã đọc</button>
+                    </div>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>
-
-<style>
-    .unread-notification {
-        font-weight: bold;
-        background-color: #f0f8ff;
-    }
-    
-    #notification-list {
-        max-height: 75vh;
-    }
-</style>

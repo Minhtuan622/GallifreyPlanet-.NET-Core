@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    connection = new signalR.HubConnectionBuilder()
+    const connection = new signalR.HubConnectionBuilder()
         .withUrl("/notificationHub")
         .withAutomaticReconnect()
         .build();
@@ -14,75 +14,102 @@
         renderNotificationList(notifications);
     });
 
-    connection.on("ReceiveNotification", (userId, message, type) => {
-        const notificationList = document.getElementById("notification-list");
-        const notificationCount = document.getElementById("notification-count");
+    connection.on("ReceiveNotification", (userId, message) => {
+        const notificationCount = $("#notification-count");
 
-        const notification = document.createElement("li");
-        notification.innerHTML = `
-        <div class="dropdown-item">
+        $("#notification-list").prepend($("<li>", {
+            class: "dropdown-item unread-notification"
+        }).html(`
             <p class="notification-message">${message}</p>
             <small class="notification-time">Just now</small>
-        </div>
-    `;
+        `));
 
-        notificationList.insertBefore(notification, notificationList.firstChild);
-
-        const currentCount = parseInt(notificationCount.textContent);
-        notificationCount.textContent = currentCount + 1;
+        const currentCount = parseInt(notificationCount.text());
+        notificationCount.text(currentCount + 1);
 
         showToast(message);
     });
 
-    function renderNotificationList(notifications) {
-        const notificationList = document.getElementById("notification-list");
-        const notificationCount = document.getElementById("notification-count");
+    $("#btnMarkAllAsRead").on("click", function (event) {
+        event.preventDefault();
+        markAllAsRead();
+    });
 
-        notificationList.innerHTML = "";
+    function renderNotificationList(notifications) {
+        const notificationList = $("#notification-list");
+        const notReads = notifications
+            .filter(notification => !notification.isRead)
+            .map(notification => notification.id);
+
+        notificationList.data("not-read-ids", notReads);
 
         let unreadCount = 0;
 
-        notifications.forEach(notification => {
-            if (!notification.isRead) {
-                unreadCount++;
-            }
+        if (notifications.length > 0) {
+            notifications.forEach(notification => {
+                if (!notification.isRead) {
+                    unreadCount++;
+                }
 
-            const listItem = document.createElement("li");
-            listItem.className = "dropdown-item";
-            if (!notification.isRead) {
-                listItem.classList.add("unread-notification");
-            }
+                const listItem = $("<li>", {
+                    class: "dropdown-item"
+                });
 
-            listItem.innerHTML = `
-            <div>   
-                <p class="notification-message">${notification.content}</p>
-                <small class="notification-time">${new Date(notification.createdAt).toLocaleString()}</small>
-            </div>
-        `;
+                if (!notification.isRead) {
+                    listItem.addClass("unread-notification");
+                }
 
-            notificationList.appendChild(listItem);
-        });
+                listItem.html(`
+                    <p class="notification-message">${notification.content}</p>
+                    <small class="notification-time">${new Date(notification.createdAt).toLocaleString()}</small>
+                `);
+                notificationList.append(listItem);
+            });
+        } else {
+            notificationList.append($("<li>", {
+                class: "dropdown-item"
+            }).html(`
+                <p class="notification-message">Chưa có thông báo</p>
+            `));
+        }
 
-        notificationCount.textContent = unreadCount;
+        $("#notification-count").text(unreadCount);
+    }
+
+    function markAllAsRead() {
+        connection
+            .invoke(
+                "MarkAllAsRead",
+                $("#notification-list").data("not-read-ids")
+            )
+            .then(() => {
+                $(".unread-notification").removeClass("unread-notification");
+                $("#notification-count").text("0");
+            })
+            .catch(console.error);
     }
 
     function showToast(message) {
-        const toast = document.createElement("div");
-        toast.className = "toast-container position-fixed bottom-0 end-0 p-3";
-        toast.innerHTML = `
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-              <img src="..." class="rounded me-2" alt="...">
-              <strong class="me-auto">Thông báo mới</strong>
-              <small>Bây giờ</small>
-              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        const toast = $("<div>", {
+            class: "toast align-items-center text-bg-primary border-0",
+            role: "alert",
+            "aria-live": "assertive",
+            "aria-atomic": "true"
+        }).html(`
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button 
+                    type="button" 
+                    class="btn-close btn-close-white me-2 m-auto" 
+                    data-bs-dismiss="toast" 
+                    aria-label="Close"
+                ></button>
             </div>
-            <div class="toast-body">
-              ${message}
-            </div>
-        </div>
-    `;
-        document.body.appendChild(toast);
+        `);
+
+        $(".toast-container").append(toast);
+
+        new bootstrap.Toast(toast[0]).show();
 
         setTimeout(() => {
             toast.remove();
