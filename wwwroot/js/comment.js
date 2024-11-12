@@ -252,7 +252,7 @@ function updateCommentsUI(commentableId, content, result) {
 }
 
 function updateRepliesUI(parentCommentId, content, result) {
-    const parentComment = document.querySelector(`[data-comment-id="${parentCommentId}"]`);
+    const parentComment = document.querySelector(`#replies-${parentCommentId}`);
     const repliesContainer = parentComment.querySelector('.reply-item');
 
     const newReply = createReplyElement({
