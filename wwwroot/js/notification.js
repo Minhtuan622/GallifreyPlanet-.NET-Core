@@ -69,14 +69,18 @@
                 notificationList.append(listItem);
             });
         } else {
-            notificationList.append($("<li>", {
-                class: "dropdown-item"
-            }).html(`
-                <p class="notification-message">Chưa có thông báo</p>
-            `));
+            appendNoNotificationMessage();
         }
 
         $("#notification-count").text(unreadCount);
+    }
+
+    function appendNoNotificationMessage() {
+        $("#notification-list").append($("<li>", {
+            class: "dropdown-item"
+        }).html(`
+                <p class="notification-message">Chưa có thông báo</p>
+            `));
     }
 
     function getNotReadIds(notifications) {
@@ -111,6 +115,7 @@
             .then(() => {
                 $(".dropdown-item").remove();
                 $("#notification-count").text("0");
+                appendNoNotificationMessage();
             })
             .catch(console.error);
     }
