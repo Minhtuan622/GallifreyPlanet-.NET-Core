@@ -1,9 +1,5 @@
 ﻿@model GallifreyPlanet.ViewModels.AccountManager.AccountManagerViewModel
 
-@{
-    ViewData[index: "Title"] = "Cài đặt tài khoản";
-}
-
 <div class="container my-5">
     <h1 class="mb-4 text-center">@ViewData[index: "Title"]</h1>
 
@@ -14,6 +10,7 @@
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <button class="nav-link active" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="true">Thông tin cá nhân</button>
+                            <button class="nav-link" id="nav-social-tab" data-bs-toggle="tab" data-bs-target="#nav-social" type="button" role="tab" aria-controls="nav-social" aria-selected="true">Mạng xã hội</button>
                             <button class="nav-link" id="nav-password-tab" data-bs-toggle="tab" data-bs-target="#nav-password" type="button" role="tab" aria-controls="nav-password" aria-selected="false">Đổi mật khẩu</button>
                             <button class="nav-link" id="nav-privacy-tab" data-bs-toggle="tab" data-bs-target="#nav-privacy" type="button" role="tab" aria-controls="nav-privacy" aria-selected="false">Quyền riêng tư</button>
                             <button class="nav-link" id="nav-notifications-tab" data-bs-toggle="tab" data-bs-target="#nav-notifications" type="button" role="tab" aria-controls="nav-notifications" aria-selected="false">Thông báo</button>
@@ -61,6 +58,39 @@
                                     </div>
                                 }
                                 <div id="avatarCropper" class="mb-3"></div>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="nav-social" role="tabpanel" aria-labelledby="nav-social-tab">
+                            <form asp-action="UpdateSocialAccount" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="mb-3">
+                                    <label asp-for="SocialMedia!.PersonalWebsite" class="form-label"></label>
+                                    <input asp-for="SocialMedia!.PersonalWebsite" class="form-control" />
+                                    <span asp-validation-for="SocialMedia!.PersonalWebsite" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="SocialMedia!.Facebook" class="form-label"></label>
+                                    <input asp-for="SocialMedia!.Facebook" class="form-control" />
+                                    <span asp-validation-for="SocialMedia!.Facebook" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="SocialMedia!.Github" class="form-label"></label>
+                                    <input asp-for="SocialMedia!.Github" class="form-control" />
+                                    <span asp-validation-for="SocialMedia!.Github" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="SocialMedia!.Twitter" class="form-label"></label>
+                                    <input asp-for="SocialMedia!.Twitter" class="form-control" />
+                                    <span asp-validation-for="SocialMedia!.Twitter" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="SocialMedia!.Instagram" class="form-label"></label>
+                                    <input asp-for="SocialMedia!.Instagram" class="form-control" />
+                                    <span asp-validation-for="SocialMedia!.Instagram" class="text-danger"></span>
+                                </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                                 </div>

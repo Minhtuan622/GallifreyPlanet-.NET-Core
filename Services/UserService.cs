@@ -63,6 +63,16 @@ public class UserService(
         return await userManager.UpdateAsync(user: user);
     }
 
+    public async Task<IdentityResult> UpdateSocialAccount(User user, SocialMediaViewModel model)
+    {
+        user.PersonalWebsite = model.PersonalWebsite;
+        user.Facebook = model.Facebook;
+        user.Github = model.Github;
+        user.Twitter = model.Twitter;
+        user.Instagram = model.Instagram;
+        return await userManager.UpdateAsync(user: user);
+    }
+
     public async Task<IdentityResult> UpdatePrivacySettingsAsync(User user, PrivacySettingsViewModel model)
     {
         user.ShowEmail = model.ShowEmail;

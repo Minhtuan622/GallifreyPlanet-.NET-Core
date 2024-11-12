@@ -59,6 +59,14 @@ public class AccountManagerController(
                 EmailNotifications = user.EmailNotifications,
                 PushNotifications = user.PushNotifications,
             },
+            SocialMedia = new SocialMediaViewModel
+            {
+                PersonalWebsite = user.PersonalWebsite,
+                Facebook = user.Facebook,
+                Github = user.Github,
+                Twitter = user.Twitter,
+                Instagram = user.Instagram,
+            }
         };
 
         return View(model: viewModel);
@@ -87,7 +95,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Đổi mật khẩu thành công";
-            return RedirectToAction(actionName: nameof(Index));
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         AddErrors(result: result);
@@ -123,7 +131,33 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật thông tin cá nhân thành công";
-            return RedirectToAction(actionName: nameof(Index));
+            return RedirectToAction(actionName: nameof(AccountSetting));
+        }
+
+        AddErrors(result: result);
+        return RedirectToAction(actionName: nameof(AccountSetting));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateSocialAccount(AccountManagerViewModel viewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction(actionName: nameof(AccountSetting));
+        }
+
+        var user = await userService.GetCurrentUserAsync();
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var result = await userService.UpdateSocialAccount(user: user, model: viewModel.SocialMedia!);
+
+        if (result.Succeeded)
+        {
+            TempData[key: "StatusMessage"] = "Cập nhật thông tin mạng xã hội thành công";
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         AddErrors(result: result);
@@ -149,7 +183,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật cài đặt quyền riêng tư thành công";
-            return RedirectToAction(actionName: nameof(Index));
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         AddErrors(result: result);
@@ -170,12 +204,15 @@ public class AccountManagerController(
             return NotFound();
         }
 
-        var result = await userService.UpdateNotificationSettingsAsync(user: user, model: viewModel.NotificationSettings!);
+        var result = await userService.UpdateNotificationSettingsAsync(
+            user: user,
+            model: viewModel.NotificationSettings!
+        );
 
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật cài đặt thông báo thành công";
-            return RedirectToAction(actionName: nameof(Index));
+            return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
         AddErrors(result: result);
@@ -196,9 +233,14 @@ public class AccountManagerController(
             return Json(data: new { success = false });
         }
 
-        var avatarPath = await fileService.UploadFileAsync(file: avatar, folder: "/accounts/avatars", currentFilePath: user.Avatar!);
+        var avatarPath = await fileService.UploadFileAsync(
+            file: avatar,
+            folder: "/accounts/avatars",
+            currentFilePath: user.Avatar!
+        );
         user.Avatar = avatarPath;
-        var result = await userService.UpdateProfileAsync(user: user, model: new EditProfileViewModel { CurrentAvatar = avatarPath });
+        var result = await userService.UpdateProfileAsync(user: user,
+            model: new EditProfileViewModel { CurrentAvatar = avatarPath });
 
         return Json(data: new { success = result.Succeeded, avatarUrl = user.Avatar });
     }
@@ -231,8 +273,13 @@ public class AccountManagerController(
             return NotFound();
         }
 
-        var verificationCode = model.VerificationCode!.Replace(oldValue: " ", newValue: string.Empty).Replace(oldValue: "-", newValue: string.Empty);
-        var is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(user: user, verificationCode: verificationCode);
+        var verificationCode = model.VerificationCode!
+            .Replace(oldValue: " ", newValue: string.Empty)
+            .Replace(oldValue: "-", newValue: string.Empty);
+        var is2FaTokenValid = await userService.VerifyTwoFactorTokenAsync(
+            user: user,
+            verificationCode: verificationCode
+        );
 
         if (!is2FaTokenValid)
         {
@@ -244,12 +291,19 @@ public class AccountManagerController(
         return RedirectToAction(actionName: nameof(Index));
     }
 
-    private void AddErrors(IdentityResult result)
+    public Task<IActionResult> LinkAccount()
     {
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
-        }
+        return Task.FromResult<IActionResult>(NotFound());
+    }
+
+    public Task<IActionResult> UnlinkAccount()
+    {
+        return Task.FromResult<IActionResult>(NotFound());
+    }
+
+    public Task<IActionResult> DeleteAccount()
+    {
+        return Task.FromResult<IActionResult>(NotFound());
     }
 
     [HttpPost]
@@ -263,5 +317,13 @@ public class AccountManagerController(
 
         await userService.TerminateSessionAsync(userId: user.Id, sessionId: sessionId);
         return RedirectToAction(actionName: nameof(Index));
+    }
+
+    private void AddErrors(IdentityResult result)
+    {
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(key: string.Empty, errorMessage: error.Description);
+        }
     }
 }

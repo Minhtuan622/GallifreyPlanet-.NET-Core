@@ -35,13 +35,13 @@ public class PublicProfileController(
             AllowChat = profileUser.AllowChat,
             AllowAddFriend = profileUser.AllowAddFriend,
             CurrentUser = currentUser,
+            Website = profileUser.PersonalWebsite,
+            Github = profileUser.Github is not null ? $"https://github.com/{profileUser.Github}" : null,
+            Twitter = profileUser.Twitter is not null ? $"https://twitter.com/{profileUser.Twitter}" : null,
+            Instagram = profileUser.Instagram is not null ? $"https://instagram.com/{profileUser.Instagram}" : null,
+            Facebook = profileUser.Facebook is not null ? $"https://facebook.com/{profileUser.Facebook}" : null,
 
             // test
-            Website = "https://example.com",
-            Github = "https://github.com/minhtuan622",
-            Twitter = "https://twitter.com/username",
-            Instagram = "https://instagram.com/nguyenminhtuan622",
-            Facebook = "https://facebook.com/minhtuan622",
             RecentActivities = new RecentActivities
             {
                 CommentPercentage = 80,
