@@ -9,7 +9,7 @@ public class NotificationHub(NotificationService notificationService) : Hub
     {
         await Clients.All.SendAsync(
             method: "ReceiveNotifications",
-            arg1: await notificationService.GetUserNotifications()
+            arg1: await notificationService.GetByUser()
         );
     }
 
@@ -28,6 +28,19 @@ public class NotificationHub(NotificationService notificationService) : Hub
             }
 
             await Clients.All.SendAsync("MarkAllAsRead", ids);
+        }
+    }
+
+    public async Task DeleteAll(List<int> ids)
+    {
+        if (ids.Count > 0)
+        {
+            foreach (var id in ids)
+            {
+                await notificationService.Delete(id);
+            }
+            
+            await Clients.All.SendAsync("DeleteAll", ids);
         }
     }
 }

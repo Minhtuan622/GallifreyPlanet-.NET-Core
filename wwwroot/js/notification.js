@@ -35,13 +35,16 @@
         markAllAsRead();
     });
 
+    $("#btnDeleteAll").on("click", function (event) {
+        event.preventDefault();
+        deleteAll();
+    });
+
     function renderNotificationList(notifications) {
         const notificationList = $("#notification-list");
-        const notReads = notifications
-            .filter(notification => !notification.isRead)
-            .map(notification => notification.id);
 
-        notificationList.data("not-read-ids", notReads);
+        notificationList.data("not-read-ids", getNotReadIds(notifications));
+        notificationList.data("notification-ids", getIds(notifications));
 
         let unreadCount = 0;
 
@@ -76,6 +79,16 @@
         $("#notification-count").text(unreadCount);
     }
 
+    function getNotReadIds(notifications) {
+        return notifications
+            .filter(notification => !notification.isRead)
+            .map(notification => notification.id);
+    }
+
+    function getIds(notifications) {
+        return notifications.map(notification => notification.id);
+    }
+
     function markAllAsRead() {
         connection
             .invoke(
@@ -84,6 +97,19 @@
             )
             .then(() => {
                 $(".unread-notification").removeClass("unread-notification");
+                $("#notification-count").text("0");
+            })
+            .catch(console.error);
+    }
+
+    function deleteAll() {
+        connection
+            .invoke(
+                "DeleteAll",
+                $("#notification-list").data("notification-ids")
+            )
+            .then(() => {
+                $(".dropdown-item").remove();
                 $("#notification-count").text("0");
             })
             .catch(console.error);

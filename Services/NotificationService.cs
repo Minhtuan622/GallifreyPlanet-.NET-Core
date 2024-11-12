@@ -28,7 +28,7 @@ public class NotificationService(
         await hubContext.Clients.All.SendAsync(method: "ReceiveNotification", arg1: userId, arg2: message, arg3: type);
     }
 
-    public async Task<List<Notification>> GetUserNotifications()
+    public async Task<List<Notification>> GetByUser()
     {
         var user = await userService.GetCurrentUserAsync();
 
@@ -44,6 +44,16 @@ public class NotificationService(
         if (notification != null)
         {
             notification.IsRead = true;
+            await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task Delete(int id)
+    {
+        var notification = await context.Notification.FindAsync(keyValues: id);
+        if (notification is not null)
+        {
+            context.Notification.Remove(entity: notification);
             await context.SaveChangesAsync();
         }
     }
