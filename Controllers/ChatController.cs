@@ -1,3 +1,4 @@
+using GallifreyPlanet.Data;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.Chat;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,8 @@ namespace GallifreyPlanet.Controllers;
 
 public class ChatController(
     UserService userService,
-    ChatService chatService
+    ChatService chatService,
+    GallifreyPlanetContext context
 ) : Controller
 {
     [HttpGet]
@@ -67,5 +69,24 @@ public class ChatController(
         }
 
         return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteConversation(string senderId, string receiverId)
+    {
+        var conversation = chatService.Find(senderId: senderId, receiverId: receiverId);
+        if (conversation is not null)
+        {
+            context.Conversation.Remove(conversation);
+            await context.SaveChangesAsync();
+            TempData[key: "StatusMessage"] = "Xóa thành công";
+            TempData[key: "StatusType"] = "success";
+        }
+        else
+        {
+            ModelState.AddModelError(key: string.Empty, errorMessage: "Cuộc trò chuyện không tồn tại trên hệ thống.");
+        }
+
+        return RedirectToAction(actionName: nameof(Index));
     }
 }
