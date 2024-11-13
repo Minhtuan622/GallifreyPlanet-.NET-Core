@@ -41,10 +41,12 @@ public class FriendController(
         if (friendService.Send(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Gửi lời mời kết bạn thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while sending friend request";
+        TempData[key: "StatusMessage"] = "Có lỗi khi gửi lời mời kết bạn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index), controllerName: "PublicProfile", routeValues: new { username = user.UserName });
     }
 
@@ -60,10 +62,12 @@ public class FriendController(
         if (friendService.Cancel(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Hủy lời mời kết bạn thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while canceling friend request";
+        TempData[key: "StatusMessage"] = "Có lỗi khi hủy lời mời kết bạn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index), controllerName: "PublicProfile", routeValues: new { username = user.UserName });
     }
 
@@ -79,10 +83,12 @@ public class FriendController(
         if (friendService.Accept(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Đã chấp nhận lời mời kết bạn";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while accept friend request";
+        TempData[key: "StatusMessage"] = "Có lỗi khi chấp nhận lời mời kết bạn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "success";
         return RedirectToAction(actionName: nameof(Index));
     }
 
@@ -98,10 +104,12 @@ public class FriendController(
         if (friendService.Decline(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Đã từ chối lời mời kết bạn";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while decline friend request";
+        TempData[key: "StatusMessage"] = "Có lỗi khi từ chối lời mời kết bạn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index));
     }
 
@@ -117,10 +125,12 @@ public class FriendController(
         if (friendService.Blocked(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Đã chặn thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while block friend";
+        TempData[key: "StatusMessage"] = "Có lỗi khi chặn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index));
     }
 
@@ -136,10 +146,12 @@ public class FriendController(
         if (friendService.UnBlocked(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Bỏ chặn thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while unblock friend";
+        TempData[key: "StatusMessage"] = "Có lỗi khi bỏ chặn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index));
     }
 
@@ -155,10 +167,12 @@ public class FriendController(
         if (friendService.Remove(userId: user.Id, friendId: friendId))
         {
             TempData[key: "StatusMessage"] = "Đã hủy kết bạn thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Error while remove friend";
+        TempData[key: "StatusMessage"] = "Có lỗi khi hủy kết bạn, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
         return RedirectToAction(actionName: nameof(Index));
     }
 }

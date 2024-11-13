@@ -100,6 +100,7 @@ public class BlogsController(
             context.Add(entity: blog);
             await context.SaveChangesAsync();
             TempData[key: "StatusMessage"] = "Tạo thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(Index));
         }
         return View(model: viewModel);
@@ -174,6 +175,7 @@ public class BlogsController(
         }
 
         TempData[key: "StatusMessage"] = "Cập nhật thành công";
+        TempData[key: "StatusType"] = "success";
         return RedirectToAction(actionName: nameof(Index));
     }
 
@@ -213,6 +215,7 @@ public class BlogsController(
 
         await context.SaveChangesAsync();
         TempData[key: "StatusMessage"] = "Xóa thành công";
+        TempData[key: "StatusType"] = "success";
         return RedirectToAction(actionName: nameof(Index));
     }
 }

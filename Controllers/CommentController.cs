@@ -83,6 +83,7 @@ public class CommentController(
             var deleteSuccess = commentService.DeleteCommentChildren(comment: comment);
 
             TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
+            TempData[key: "StatusType"] = "success";
             return JsonResponse(
                 success: deleteSuccess,
                 message: deleteSuccess ? "Xóa bình luận thành công" : "Xóa bình luận không thành công"
@@ -121,6 +122,7 @@ public class CommentController(
             await context.SaveChangesAsync();
 
             TempData[key: "StatusMessage"] = "Xóa bình luận thành công";
+            TempData[key: "StatusType"] = "success";
             return JsonResponse(success: true, message: "Xóa bình luận thành công");
         }
         catch (Exception ex)

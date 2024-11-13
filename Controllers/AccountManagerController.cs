@@ -7,7 +7,8 @@ namespace GallifreyPlanet.Controllers;
 
 public class AccountManagerController(
     UserService userService,
-    FileService fileService) : Controller
+    FileService fileService
+) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -95,6 +96,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Đổi mật khẩu thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
@@ -131,6 +133,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật thông tin cá nhân thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
@@ -157,6 +160,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật thông tin mạng xã hội thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
@@ -183,6 +187,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật cài đặt quyền riêng tư thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
@@ -212,6 +217,7 @@ public class AccountManagerController(
         if (result.Succeeded)
         {
             TempData[key: "StatusMessage"] = "Cập nhật cài đặt thông báo thành công";
+            TempData[key: "StatusType"] = "success";
             return RedirectToAction(actionName: nameof(AccountSetting));
         }
 
