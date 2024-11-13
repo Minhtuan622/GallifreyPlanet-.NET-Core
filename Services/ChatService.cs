@@ -1,6 +1,7 @@
 ﻿using GallifreyPlanet.Data;
 using GallifreyPlanet.Models;
 using GallifreyPlanet.ViewModels.Chat;
+using Microsoft.EntityFrameworkCore;
 
 namespace GallifreyPlanet.Services;
 
@@ -38,11 +39,11 @@ public class ChatService(
         return true;
     }
 
-    public async Task<bool> SaveMessage(int chatId, string senderId, string content)
+    public async Task<Message?> SaveMessage(int chatId, string senderId, string content)
     {
         if (string.IsNullOrEmpty(value: senderId))
         {
-            return false;
+            return null;
         }
 
         var chatMessage = new Message
@@ -56,7 +57,7 @@ public class ChatService(
 
         await context.ChatMessage.AddAsync(entity: chatMessage);
         await context.SaveChangesAsync();
-        return true;
+        return chatMessage;
     }
 
     public async Task<List<User?>?> CheckPermission(int chatId, string senderId)
@@ -136,6 +137,42 @@ public class ChatService(
 
         return usersList;
     }
+    
+    public async Task<bool> RevokeMessage(int messageId, string userId)
+    {
+        try
+        {
+            var message = await context.Message.FirstOrDefaultAsync(m => m.Id == messageId);
+            if (message is null)
+            {
+                return false;
+            }
+
+            if (message.SenderId != userId)
+            {
+                return false;
+            }
+
+            if ((DateTime.UtcNow - message.CreatedAt).TotalHours > 24)
+            {
+                return false;
+            }
+
+            message.IsRevoked = true;
+            message.RevokedAt = DateTime.UtcNow;
+            message.Content = "[Tin nhắn đã bị thu hồi]";
+
+            context.Message.Update(message);
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 
     private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
     {
@@ -157,11 +194,14 @@ public class ChatService(
     {
         return new MessageViewModel
         {
+            Id = message.Id,
             Conversation = await GetConversationById(conversationId: message.ChatId),
             Sender = await userService.GetUserAsyncById(userId: message.SenderId!),
             Content = message.Content,
             CreatedAt = message.CreatedAt,
             UpdatedAt = message.UpdatedAt,
+            IsRevoked = message.IsRevoked,
+            RevokedAt = message.RevokedAt
         };
     }
 }

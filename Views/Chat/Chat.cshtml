@@ -2,7 +2,7 @@
 @model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
 
 @{
-    var defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
+    const string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
 }
 
 <!-- Chat Main Area -->
@@ -49,24 +49,33 @@
         {
             foreach (var message in Model.Messages)
             {
-                @if (message.Sender!.UserName != User.Identity!.Name)
-                {
-                    <div class="message message-received">
+                var isMessage = message.Sender!.UserName != User.Identity!.Name;
+                var messageClass = isMessage ? "message-received" : "message-sent";
+                messageClass += message.IsRevoked ? " revoked" : "";
+
+                <div class="message @messageClass" data-message-id="@message.Id">
+                    <div class="message-header">
                         <div class="message-content">
                             @message.Content
                         </div>
-                        <span class="message-time">@message.CreatedAt.Humanize()</span>
+                        @if (!isMessage)
+                        {
+                            <div class="dropdown message-actions">
+                                <button class="btn btn-sm btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <button class="dropdown-item revoke-message" data-message-id="@message.Id">
+                                            <i class="fas fa-undo-alt"></i> Revoke
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     </div>
-                }
-                else
-                {
-                    <div class="message message-sent">
-                        <div class="message-content">
-                            @message.Content
-                        </div>
-                        <span class="message-time">@message.CreatedAt.Humanize()</span>
-                    </div>
-                }
+                    <span class="message-time">@message.CreatedAt.Humanize()</span>
+                </div>
             }
         }
     </div>

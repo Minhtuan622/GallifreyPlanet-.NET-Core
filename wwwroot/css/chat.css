@@ -74,10 +74,13 @@
     gap: 1rem;
 }
 
+/* Message Styles */
 .message {
     display: flex;
     flex-direction: column;
     max-width: 75%;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
 }
 
 .message-sent {
@@ -112,6 +115,34 @@
     margin-top: 0.25rem;
 }
 
+/* Dropdown Menu Styling */
+.message-actions {
+    position: absolute;
+    top: 8px;
+    left: 15px;
+    display: none;
+}
+
+.message:hover .message-actions {
+    display: block; 
+}
+
+.message-actions .btn-action {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.dropdown-menu {
+    min-width: auto;
+    font-size: 0.875rem;
+}
+
+.dropdown-item i {
+    margin-right: 6px;
+}
+
+/* Chat Input */
 .input-container {
     display: flex;
     align-items: center;
@@ -121,29 +152,24 @@
     border-radius: 2rem;
 }
 
-    .input-container input {
-        flex: 1;
-        border: none;
-        background: none;
-        padding: 0.5rem;
-        min-width: 0;
-    }
-
-        .input-container input:focus {
-            outline: none;
-        }
-
-
-.message {
-    animation: slideIn 0.3s ease-out;
+.input-container input {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 0.5rem;
+    min-width: 0;
 }
 
+.input-container input:focus {
+    outline: none;
+}
+
+/* Animation */
 @keyframes slideIn {
     from {
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -151,7 +177,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
     .chat-sidebar {
         position: fixed;
         left: 0;
@@ -165,9 +191,9 @@
         transition: transform 0.3s ease-in-out;
     }
 
-        .chat-sidebar.show {
-            transform: translateX(0);
-        }
+    .chat-sidebar.show {
+        transform: translateX(0);
+    }
 
     .messages-container {
         padding: 0.5rem;

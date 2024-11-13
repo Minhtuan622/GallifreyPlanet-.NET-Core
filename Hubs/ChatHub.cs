@@ -3,18 +3,21 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace GallifreyPlanet.Hubs;
 
-public class ChatHub(ChatService chatService) : Hub
+public class ChatHub(ChatService chatService, UserService userService) : Hub
 {
     public async Task SendMessage(string chatId, string senderId, string content)
     {
         var members = await chatService.CheckPermission(chatId: int.Parse(s: chatId), senderId: senderId);
-        if (members is not null && await chatService.SaveMessage(chatId: int.Parse(s: chatId), senderId: senderId, content: content))
+        var result = await chatService.SaveMessage(chatId: int.Parse(s: chatId), senderId: senderId, content: content);
+        if (members is not null && result is not null)
         {
             foreach (var member in members)
             {
                 if (member?.Id != null)
                 {
-                    await Clients.User(userId: member.Id).SendAsync(method: "ReceiveMessage", arg1: senderId, arg2: content);
+                    await Clients
+                        .User(userId: member.Id)
+                        .SendAsync(method: "ReceiveMessage", arg1: senderId, arg2: result);
                 }
             }
         }
@@ -30,5 +33,25 @@ public class ChatHub(ChatService chatService) : Hub
         await Clients
             .Group(groupName: "SignalR Users")
             .SendAsync(method: "ReceiveMessage", arg1: user, arg2: message);
+    }
+
+    public async Task RevokeMessage(int messageId)
+    {
+        try
+        {
+            var user = await userService.GetCurrentUserAsync();
+            if (user is not null)
+            {
+                if (await chatService.RevokeMessage(messageId, user.Id))
+                {
+                    await Clients.All.SendAsync("MessageRevoked", messageId);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
