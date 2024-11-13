@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GallifreyPlanet.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
-    @RenderSection(name: "Styles", required: false)
+    @await RenderSectionAsync(name: "Styles", required: false)
 </head>
 <body class="d-flex justify-content-center align-items-center bg-body-secondary user-select-none">
     <div class="container-fluid p-3">

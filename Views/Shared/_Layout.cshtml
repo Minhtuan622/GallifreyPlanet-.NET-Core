@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/GallifreyPlanet.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/notification.css" />
-    @RenderSection(name: "Styles", required: false)
+    @await RenderSectionAsync(name: "Styles", required: false)
 </head>
 <body class="user-select-none bg-body-tertiary">
     <header>

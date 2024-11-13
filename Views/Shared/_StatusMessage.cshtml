@@ -1,6 +1,6 @@
 ﻿@model string
 
-@if (!String.IsNullOrEmpty(value: Model))
+@if (!string.IsNullOrEmpty(value: Model))
 {
     var statusMessageClass = Model.StartsWith(value: "Error") ? "danger" : "success";
     <div class="alert alert-@statusMessageClass alert-dismissible border-0" role="alert">

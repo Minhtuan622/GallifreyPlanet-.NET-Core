@@ -4,7 +4,7 @@ namespace GallifreyPlanet.ViewModels.AccountManager;
 
 public class SocialMediaViewModel
 {
-    [Display(Name = "Personal website", Prompt = "Địa chỉ trang web cá nhân")]
+    [Display(Name = "Website", Prompt = "Địa chỉ trang web cá nhân")]
     public string? PersonalWebsite { get; set; }
     [Display(Prompt = "Tên người dùng Facebook")]
     public string? Facebook { get; set; }
