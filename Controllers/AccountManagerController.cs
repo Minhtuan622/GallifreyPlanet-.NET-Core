@@ -299,17 +299,17 @@ public class AccountManagerController(
 
     public Task<IActionResult> LinkAccount()
     {
-        return Task.FromResult<IActionResult>(NotFound());
+        return Task.FromResult<IActionResult>(result: NotFound());
     }
 
     public Task<IActionResult> UnlinkAccount()
     {
-        return Task.FromResult<IActionResult>(NotFound());
+        return Task.FromResult<IActionResult>(result: NotFound());
     }
 
     public Task<IActionResult> DeleteAccount()
     {
-        return Task.FromResult<IActionResult>(NotFound());
+        return Task.FromResult<IActionResult>(result: NotFound());
     }
 
     [HttpPost]

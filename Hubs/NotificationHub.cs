@@ -24,10 +24,10 @@ public class NotificationHub(NotificationService notificationService) : Hub
         {
             foreach (var id in ids)
             {
-                await notificationService.MarkAsRead(id);
+                await notificationService.MarkAsRead(id: id);
             }
 
-            await Clients.All.SendAsync("MarkAllAsRead", ids);
+            await Clients.All.SendAsync(method: "MarkAllAsRead", arg1: ids);
         }
     }
 
@@ -37,10 +37,10 @@ public class NotificationHub(NotificationService notificationService) : Hub
         {
             foreach (var id in ids)
             {
-                await notificationService.Delete(id);
+                await notificationService.Delete(id: id);
             }
             
-            await Clients.All.SendAsync("DeleteAll", ids);
+            await Clients.All.SendAsync(method: "DeleteAll", arg1: ids);
         }
     }
 }

@@ -2,8 +2,8 @@
 
 @if (!string.IsNullOrEmpty(value: Model))
 {
-    var statusType = TempData["StatusType"] as string;
-    var statusMessageClass = !string.IsNullOrEmpty(statusType) ? statusType : "info";
+    var statusType = TempData[key: "StatusType"] as string;
+    var statusMessageClass = !string.IsNullOrEmpty(value: statusType) ? statusType : "info";
     <div class="alert alert-@statusMessageClass alert-dismissible border-0" role="alert">
         @Model
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

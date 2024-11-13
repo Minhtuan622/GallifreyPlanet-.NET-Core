@@ -10,17 +10,19 @@ public class ChatService(
     UserService userService
 )
 {
-    public bool CreateConversation(string senderId, string receiverId, string? groupName = null)
+    public Conversation? Find(string senderId, string receiverId)
     {
-        var existingConversation = context.Conversation
+        return context.Conversation
             .FirstOrDefault(predicate: c =>
                 c.Members != null &&
                 c.Members.Contains(senderId) &&
                 c.Members.Contains(receiverId) &&
                 c.IsGroup == false
             );
-
-        if (existingConversation is not null)
+    }
+    public bool CreateConversation(string senderId, string receiverId, string? groupName = null)
+    {
+        if (Find(senderId: senderId, receiverId: receiverId) is not null)
         {
             return false;
         }
@@ -140,7 +142,7 @@ public class ChatService(
 
     public async Task<bool> RevokeMessage(int messageId, string userId)
     {
-        var message = await context.Message.FirstOrDefaultAsync(m => m.Id == messageId);
+        var message = await context.Message.FirstOrDefaultAsync(predicate: m => m.Id == messageId);
         if (message is null || message.SenderId != userId || (DateTime.UtcNow - message.CreatedAt).TotalHours > 24)
         {
             return false;
@@ -150,7 +152,7 @@ public class ChatService(
         message.RevokedAt = DateTime.UtcNow;
         message.Content = "[Tin nhắn đã bị thu hồi]";
 
-        context.Message.Update(message);
+        context.Message.Update(entity: message);
         await context.SaveChangesAsync();
 
         return true;

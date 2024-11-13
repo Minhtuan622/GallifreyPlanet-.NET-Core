@@ -56,11 +56,14 @@ public class ChatController(
             return NotFound();
         }
 
-        // todo: improve create logic 
-        var result = chatService.CreateConversation(senderId: senderId, receiverId: receiverId);
-        if (!result)
+        if (chatService.Find(senderId: senderId, receiverId: receiverId) is not null)
         {
-            return NotFound(value: "Could not create conversation, the conversation already exists.");
+            return RedirectToAction(actionName: "Index", controllerName: "Chat");
+        }
+
+        if (!chatService.CreateConversation(senderId: senderId, receiverId: receiverId))
+        {
+            ModelState.AddModelError(key: string.Empty, errorMessage: "Có lỗi xảy ra, vui lòng thử lại sau");
         }
 
         return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");

@@ -37,21 +37,13 @@ public class ChatHub(ChatService chatService, UserService userService) : Hub
 
     public async Task RevokeMessage(int messageId)
     {
-        try
+        var user = await userService.GetCurrentUserAsync();
+        if (user is not null)
         {
-            var user = await userService.GetCurrentUserAsync();
-            if (user is not null)
+            if (await chatService.RevokeMessage(messageId: messageId, userId: user.Id))
             {
-                if (await chatService.RevokeMessage(messageId, user.Id))
-                {
-                    await Clients.All.SendAsync("MessageRevoked", messageId);
-                }
+                await Clients.All.SendAsync(method: "MessageRevoked", arg1: messageId);
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
         }
     }
 }
