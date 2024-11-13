@@ -58,7 +58,7 @@
                         <div class="message-content">
                             @message.Content
                         </div>
-                        @if (!isMessage)
+                        @if (!isMessage && !message.IsRevoked)
                         {
                             <div class="dropdown message-actions">
                                 <button class="btn btn-sm btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">

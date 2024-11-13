@@ -42,6 +42,7 @@
         const messageElement = $(`[data-message-id="${messageId}"]`);
         if (messageElement.length) {
             messageElement.find('.message-content').text('[Tin nhắn đã bị thu hồi]');
+            messageElement.find('.message-actions').remove();
             messageElement.addClass('revoked');
         }
     });

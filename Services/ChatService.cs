@@ -137,41 +137,23 @@ public class ChatService(
 
         return usersList;
     }
-    
+
     public async Task<bool> RevokeMessage(int messageId, string userId)
     {
-        try
+        var message = await context.Message.FirstOrDefaultAsync(m => m.Id == messageId);
+        if (message is null || message.SenderId != userId || (DateTime.UtcNow - message.CreatedAt).TotalHours > 24)
         {
-            var message = await context.Message.FirstOrDefaultAsync(m => m.Id == messageId);
-            if (message is null)
-            {
-                return false;
-            }
-
-            if (message.SenderId != userId)
-            {
-                return false;
-            }
-
-            if ((DateTime.UtcNow - message.CreatedAt).TotalHours > 24)
-            {
-                return false;
-            }
-
-            message.IsRevoked = true;
-            message.RevokedAt = DateTime.UtcNow;
-            message.Content = "[Tin nhắn đã bị thu hồi]";
-
-            context.Message.Update(message);
-            await context.SaveChangesAsync();
-
-            return true;
+            return false;
         }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+
+        message.IsRevoked = true;
+        message.RevokedAt = DateTime.UtcNow;
+        message.Content = "[Tin nhắn đã bị thu hồi]";
+
+        context.Message.Update(message);
+        await context.SaveChangesAsync();
+
+        return true;
     }
 
     private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
