@@ -1,0 +1,208 @@
+@model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
+
+@{
+    const string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
+}
+
+<div class="col-md-8 col-lg-9">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Tên nhóm -->
+        <div class="mb-3">
+            <label asp-for="CreateGroupChat!.GroupName" class="form-label text-secondary">Tên nhóm</label>
+            <input asp-for="CreateGroupChat!.GroupName" class="form-control rounded-pill border-light" placeholder="Nhập tên nhóm...">
+            <span asp-validation-for="CreateGroupChat!.GroupName" class="text-danger"></span>
+        </div>
+
+        <!-- Ảnh nhóm -->
+        <div class="mb-3">
+            <label asp-for="CreateGroupChat!.GroupAvatar" class="form-label text-secondary">Ảnh nhóm</label>
+            <div class="d-flex align-items-center gap-3">
+                <img id="avatarPreview" src="@defaultAvatarPath" class="rounded-circle border border-light" width="64" height="64" alt="Group Avatar">
+                <div class="flex-grow-1">
+                    <input asp-for="CreateGroupChat!.GroupAvatar" class="form-control rounded-pill border-light" type="file" accept="image/*" onchange="previewImage(this)">
+                </div>
+            </div>
+            <span asp-validation-for="CreateGroupChat!.GroupAvatar" class="text-danger"></span>
+        </div>
+
+        <!-- Tìm kiếm và thêm thành viên -->
+        <div class="mb-3">
+            <label class="form-label text-secondary">Thêm thành viên</label>
+            <div class="input-group mb-3">
+                <input type="text" id="searchMembers" class="form-control rounded-pill border-light" placeholder="Tìm kiếm bạn bè...">
+                <button class="btn btn-outline-secondary rounded-pill text-secondary border-light" type="button" id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Danh sách thành viên đã chọn -->
+        <div class="mb-3">
+            <label class="form-label text-secondary">Thành viên đã chọn</label>
+            <div id="selectedMembers" class="selected-members-container">
+                <!-- Template cho thành viên đã chọn -->
+                <div class="selected-member-template d-none">
+                    <div class="selected-member d-flex align-items-center p-2 mb-2 border border-light rounded-pill">
+                        <img src="" class="rounded-circle me-2" width="32" height="32" alt="Member">
+                        <span class="member-name flex-grow-1"></span>
+                        <input type="hidden" name="SelectedMemberIds[]" value="">
+                        <button type="button" class="btn btn-sm text-danger remove-member">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kết quả tìm kiếm -->
+        <div id="searchResults" class="mb-3 border border-light rounded" style="max-height: 300px; overflow-y: auto;">
+            <!-- Template cho kết quả tìm kiếm -->
+            <div class="search-result-template d-none">
+                <div class="search-result-item d-flex align-items-center p-2">
+                    <img src="" class="rounded-circle me-2 border-light" width="40" height="40" alt="User">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0 text-secondary user-name"></h6>
+                        <small class="text-muted user-email"></small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-light add-member rounded-pill">
+                        <i class="fas fa-plus text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill">
+                <i class="fas fa-times me-1"></i>Hủy
+            </a>
+            <button type="submit" class="btn btn-primary rounded-pill">
+                <i class="fas fa-check me-1"></i>Tạo nhóm
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <style>
+        .form-control, .btn, .selected-member, .search-result-item {
+            border-radius: 30px;
+        }
+
+        .btn-outline-secondary, .btn-primary, .form-control {
+            padding: 10px 20px;
+        }
+
+        .text-secondary {
+            color: #6c757d;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .container {
+            background-color: #f4f5f7;
+            border-radius: 20px;
+        }
+
+        .selected-members-container {
+            background-color: #f8f9fa;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .search-result-item {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-result-item:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+
+        .rounded-pill {
+            border-radius: 30px !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Preview ảnh đại diện nhóm
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Xử lý tìm kiếm thành viên
+        let searchTimeout;
+        const searchInput = document.getElementById('searchMembers');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const searchTerm = this.value.trim();
+                if (searchTerm.length >= 2) {
+                    searchMembers(searchTerm);
+                }
+            }, 500);
+        });
+
+        async function searchMembers(searchTerm) {
+            try {
+                const response = await fetch(`/api/Users/Search?term=${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
+                displaySearchResults(data);
+            } catch (error) {
+                console.error('Error searching members:', error);
+            }
+        }
+
+        function displaySearchResults(users) {
+            const template = document.querySelector('.search-result-template').cloneNode(true);
+            searchResults.innerHTML = '';
+
+            users.forEach(user => {
+                const resultItem = template.querySelector('.search-result-item').cloneNode(true);
+                resultItem.querySelector('img').src = user.avatar || '@defaultAvatarPath';
+                resultItem.querySelector('.user-name').textContent = user.name;
+                resultItem.querySelector('.user-email').textContent = user.email;
+                
+                const addButton = resultItem.querySelector('.add-member');
+                addButton.onclick = () => addMember(user);
+                
+                searchResults.appendChild(resultItem);
+            });
+        }
+
+        function addMember(user) {
+            const selectedMembers = document.getElementById('selectedMembers');
+            const template = document.querySelector('.selected-member-template').cloneNode(true);
+            const memberItem = template.querySelector('.selected-member').cloneNode(true);
+
+            memberItem.querySelector('img').src = user.avatar || '@defaultAvatarPath';
+            memberItem.querySelector('.member-name').textContent = user.name;
+            memberItem.querySelector('input[name="SelectedMemberIds[]"]').value = user.id;
+
+            const removeButton = memberItem.querySelector('.remove-member');
+            removeButton.onclick = () => memberItem.remove();
+
+            selectedMembers.appendChild(memberItem);
+        }
+    </script>
+
+    @{
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
+    }
+}

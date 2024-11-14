@@ -79,11 +79,9 @@
     });
 
     $(document).on('click', '.revoke-message', function () {
-        const messageId = $(this).data('message-id');
-        connection.invoke('RevokeMessage', messageId)
-            .catch(err => {
-                console.error(err);
-            });
+        connection
+            .invoke('RevokeMessage', $(this).data('message-id'))
+            .catch(console.error);
     });
 
     function scrollToBottom() {

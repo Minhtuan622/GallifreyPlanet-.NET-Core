@@ -34,7 +34,7 @@
 }
 
 .conversation-item:hover > .conversation-actions {
-    display: block;
+    visibility: visible;
 }
 
 .conversation-content {
@@ -45,8 +45,7 @@
 }
 
 .conversation-actions {
-    display: none;
-    transition: all 0.2s ease-in-out;
+    visibility: hidden;
 }
 
 /* Chat Area Styles */

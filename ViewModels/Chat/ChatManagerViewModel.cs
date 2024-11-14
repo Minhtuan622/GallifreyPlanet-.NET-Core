@@ -8,4 +8,5 @@ public class ChatManagerViewModel
     public List<ConversationViewModel>? Conversations { get; set; }
     public ConversationViewModel? SelectedConversation { get; set; }
     public List<MessageViewModel>? Messages { get; set; }
+    public CreateGroupChatViewModel? CreateGroupChat { get; set; }
 }
