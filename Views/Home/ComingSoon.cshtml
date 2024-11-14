@@ -1,0 +1,217 @@
+@{
+    ViewBag.Title = "Coming Soon";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .logo {
+            margin-bottom: 2rem;
+        }
+
+        .logo img {
+            width: 150px;
+            height: auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .timer-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            min-width: 100px;
+        }
+
+        .timer-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subscribe {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .subscribe input {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .subscribe button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .subscribe button:hover {
+            background: #45a049;
+        }
+
+        .social-links {
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        @@media (max-width: 768px) {
+            .timer {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .timer-item {
+                min-width: 80px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="/api/placeholder/150/150" alt="Logo" />
+        </div>
+
+        <h1>Coming Soon</h1>
+        
+        <div class="message">
+            <p>We're working hard to bring you something amazing.</p>
+            <p>Stay tuned for updates!</p>
+        </div>
+
+        <div class="timer">
+            <div class="timer-item">
+                <div class="timer-number" id="days">00</div>
+                <div class="timer-label">Days</div>
+            </div>
+            <div class="timer-item">
+                <div class="timer-number" id="hours">00</div>
+                <div class="timer-label">Hours</div>
+            </div>
+            <div class="timer-item">
+                <div class="timer-number" id="minutes">00</div>
+                <div class="timer-label">Minutes</div>
+            </div>
+            <div class="timer-item">
+                <div class="timer-number" id="seconds">00</div>
+                <div class="timer-label">Seconds</div>
+            </div>
+        </div>
+
+        <div class="subscribe">
+            <input type="email" placeholder="Enter your email for updates" />
+            <button>Notify Me</button>
+        </div>
+
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // Set the launch date (1 month from now)
+        const launchDate = new Date();
+        launchDate.setMonth(launchDate.getMonth() + 1);
+
+        function updateTimer() {
+            const now = new Date();
+            const distance = launchDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Update timer every second
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Handle form submission
+        document.querySelector('.subscribe button').addEventListener('click', function() {
+            const email = document.querySelector('.subscribe input').value;
+            if (email) {
+                alert('Thank you for subscribing! We will notify you when we launch.');
+                document.querySelector('.subscribe input').value = '';
+            }
+        });
+    </script>
+</body>
+</html>

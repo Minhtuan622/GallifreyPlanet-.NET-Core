@@ -160,7 +160,7 @@ public class ChatService(
 
     private async Task<ConversationViewModel> NewConversationViewModel(Conversation conversation)
     {
-        var message = GetLatestMessage(conversationId: conversation.Id)!;
+        var message = GetLatestMessage(conversationId: conversation.Id);
 
         return new ConversationViewModel
         {
@@ -170,7 +170,7 @@ public class ChatService(
             IsGroup = conversation.IsGroup,
             IsRead = conversation.IsRead,
             CreatedAt = conversation.CreatedAt,
-            LatestMessage = message.Content,
+            LatestMessage = message?.Content,
         };
     }
 
