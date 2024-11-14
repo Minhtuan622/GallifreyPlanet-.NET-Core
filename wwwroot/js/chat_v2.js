@@ -78,9 +78,9 @@
         }
     });
 
-    $('.revoke-message').on('click', function () {
-        connection
-            .invoke('RevokeMessage', $(this).data('message-id'))
+    $(document).on('click', '.revoke-message', function () {
+        const messageId = $(this).data('message-id');
+        connection.invoke('RevokeMessage', messageId)
             .catch(err => {
                 console.error(err);
             });
