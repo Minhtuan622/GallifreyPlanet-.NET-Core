@@ -33,11 +33,20 @@
     transition: background-color 0.2s ease;
 }
 
+.conversation-item:hover > .conversation-actions {
+    display: block;
+}
+
 .conversation-content {
     display: flex;
     flex-direction: column;
     flex: 1;
     min-width: 0; /* Helps with text-truncate */
+}
+
+.conversation-actions {
+    display: none;
+    transition: all 0.2s ease-in-out;
 }
 
 /* Chat Area Styles */
@@ -124,7 +133,7 @@
 }
 
 .message:hover .message-actions {
-    display: block; 
+    display: block;
 }
 
 .message-actions .btn-action {

@@ -63,10 +63,13 @@ public class ChatController(
             return RedirectToAction(actionName: "Index", controllerName: "Chat");
         }
 
-        if (!chatService.CreateConversation(senderId: senderId, receiverId: receiverId))
+        if (chatService.CreateConversation(senderId: senderId, receiverId: receiverId))
         {
-            ModelState.AddModelError(key: string.Empty, errorMessage: "Có lỗi xảy ra, vui lòng thử lại sau");
+            return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
         }
+
+        TempData[key: "StatusMessage"] = "Có lỗi xảy ra, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
 
         return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
     }
@@ -77,6 +80,10 @@ public class ChatController(
         var conversation = chatService.Find(senderId: senderId, receiverId: receiverId);
         if (conversation is not null)
         {
+            var messages = context.Message
+                .Where(predicate: m => m.ChatId == conversation.Id)
+                .ToList();
+            context.RemoveRange(messages);
             context.Conversation.Remove(conversation);
             await context.SaveChangesAsync();
             TempData[key: "StatusMessage"] = "Xóa thành công";
@@ -84,7 +91,8 @@ public class ChatController(
         }
         else
         {
-            ModelState.AddModelError(key: string.Empty, errorMessage: "Cuộc trò chuyện không tồn tại trên hệ thống.");
+            TempData[key: "StatusMessage"] = "Cuộc trò chuyện không tồn tại trên hệ thống.";
+            TempData[key: "StatusType"] = "danger";
         }
 
         return RedirectToAction(actionName: nameof(Index));
