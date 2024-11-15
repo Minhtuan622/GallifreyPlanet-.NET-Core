@@ -1,9 +1,10 @@
 using GallifreyPlanet.Data;
+using GallifreyPlanet.Models;
 using GallifreyPlanet.Services;
 using GallifreyPlanet.ViewModels.Chat;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace GallifreyPlanet.Controllers;
 
@@ -26,13 +27,13 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
+            Conversations = await chatService.GetConversationsByUserId(user.Id),
         };
 
-        return View(model: conversations);
+        return View(conversations);
     }
 
-    [HttpGet(template: "Chat/{conversationId:int}")]
+    [HttpGet("Chat/{conversationId:int}")]
     public async Task<IActionResult> Chat(int conversationId)
     {
         var user = await userService.GetCurrentUserAsync();
@@ -44,12 +45,12 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
-            SelectedConversation = await chatService.GetConversationById(conversationId: conversationId),
-            Messages = await chatService.GetMessagesByConversationId(conversationId: conversationId),
+            Conversations = await chatService.GetConversationsByUserId(user.Id),
+            SelectedConversation = await chatService.GetConversationById(conversationId),
+            Messages = await chatService.GetMessagesByConversationId(conversationId),
         };
 
-        return View(model: conversations);
+        return View(conversations);
     }
 
     [HttpPost]
@@ -61,48 +62,50 @@ public class ChatController(
             return NotFound();
         }
 
-        if (chatService.Find(senderId: senderId, receiverId: receiverId) is not null)
+        if (chatService.Find(senderId, receiverId) is not null)
         {
-            return RedirectToAction(actionName: "Index", controllerName: "Chat");
+            return RedirectToAction("Index");
         }
 
-        if (chatService.CreateConversation(senderId: senderId, receiverId: receiverId))
+        if (chatService.CreateConversation(senderId, receiverId))
         {
-            return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
+            return RedirectToAction(nameof(Index));
         }
 
-        TempData[key: "StatusMessage"] = "Có lỗi xảy ra, vui lòng thử lại sau";
-        TempData[key: "StatusType"] = "danger";
+        TempData["StatusMessage"] = "Có lỗi xảy ra, vui lòng thử lại sau";
+        TempData["StatusType"] = "danger";
 
-        return RedirectToAction(actionName: nameof(Index), controllerName: "Chat");
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
     public async Task<IActionResult> DeleteConversation(string senderId, string receiverId)
     {
-        var conversation = chatService.Find(senderId: senderId, receiverId: receiverId);
+        var conversation = chatService.Find(senderId, receiverId);
         if (conversation is not null)
         {
             var messages = context.Message
-                .Where(predicate: m => m.ChatId == conversation.Id)
+                .Where(m => m.ChatId == conversation.Id)
                 .ToList();
-            context.RemoveRange(entities: messages);
-            context.Conversation.Remove(entity: conversation);
+
+            context.RemoveRange(messages);
+            context.Conversation.Remove(conversation);
             await context.SaveChangesAsync();
-            TempData[key: "StatusMessage"] = "Xóa thành công";
-            TempData[key: "StatusType"] = "success";
+
+            TempData["StatusMessage"] = "Xóa thành công";
+            TempData["StatusType"] = "success";
         }
         else
         {
-            TempData[key: "StatusMessage"] = "Cuộc trò chuyện không tồn tại trên hệ thống.";
-            TempData[key: "StatusType"] = "danger";
+            TempData["StatusMessage"] = "Cuộc trò chuyện không tồn tại trên hệ thống.";
+            TempData["StatusType"] = "danger";
         }
 
-        return RedirectToAction(actionName: nameof(Index));
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> CreateGroup()
     {
         var user = await userService.GetCurrentUserAsync();
         if (user is null)
@@ -113,66 +116,69 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
+            Conversations = await chatService.GetConversationsByUserId(user.Id),
         };
 
-        return View(model: conversations);
+        return View(conversations);
     }
 
-    /*[HttpPost]
-    public async Task<IActionResult> Create(ChatManagerViewModel viewModel)
+    [HttpPost]
+    public async Task<IActionResult> CreateGroup(ChatManagerViewModel viewModel)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || viewModel.NewConversation is null)
         {
             return View(viewModel);
         }
 
-        // Upload avatar if provided
-        var avatarPath = viewModel.GroupAvatar != null
-            ? await fileService.UploadFileAsync(viewModel.GroupAvatar)
-            : "/uploads/accounts/default-avatar.jpg";
-
-        // Create the group chat entity
-        var groupChat = new GroupChat
+        var groupChat = new Conversation
         {
-            Name = viewModel.GroupName,
-            Avatar = avatarPath,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = User.Identity.Name
+            IsGroup = true,
+            GroupName = viewModel.NewConversation.GroupName,
+            GroupDetail = viewModel.NewConversation.GroupDetail,
+            GroupAvatar = viewModel.NewConversation.GroupAvatar is not null
+                ? await fileService.UploadFileAsync(viewModel.NewConversation.GroupAvatar, "conversations")
+                : null,
+            CreatedBy = viewModel.User?.Id,
+            CreatedAt = DateTime.Now
         };
 
-        // Add selected members to the group chat
-        foreach (var memberId in viewModel.SelectedMemberIds)
+        // Serialize the selected member IDs as JSON
+        if (viewModel.SelectedMemberIds is not null && viewModel.SelectedMemberIds.Any())
         {
-            groupChat.Members.Add(new GroupChatMember
-            {
-                UserId = memberId,
-                JoinedAt = DateTime.UtcNow
-            });
+            groupChat.Members = JsonSerializer.Serialize(viewModel.SelectedMemberIds);
         }
 
-        // Save the group chat and its members to the database
-        await context.GroupChats.AddAsync(groupChat);
+        await context.Conversation.AddAsync(groupChat);
         await context.SaveChangesAsync();
+
+        TempData["StatusMessage"] = "Nhóm đã được tạo thành công!";
+        TempData["StatusType"] = "success";
 
         return RedirectToAction("Chat", new { conversationId = groupChat.Id });
     }
 
-    [HttpGet("api/Users/Search")]
-    public async Task<IActionResult> SearchUsers(string term)
+    [HttpGet("api/Users/Search/{search}")]
+    public async Task<IActionResult> SearchUsers(string search)
     {
         var users = await context.Users
-            .Where(u => u.Name.Contains(term) || u.Email.Contains(term))
+            .Where(u =>
+                u.UserName != null &&
+                u.Name != null &&
+                u.Email != null && (
+                    u.UserName.Contains(search) ||
+                    u.Name.Contains(search) ||
+                    u.Email.Contains(search)
+                )
+            )
             .Select(u => new
             {
                 id = u.Id,
                 name = u.Name,
                 email = u.Email,
-                avatar = u.Avatar ?? "/uploads/accounts/default-avatar.jpg"
+                avatar = u.Avatar
             })
-            .Take(10)
             .ToListAsync();
 
         return Json(users);
-    }*/
+    }
 }

@@ -1,0 +1,298 @@
+@model GallifreyPlanet.ViewModels.Chat.ChatManagerViewModel
+
+@{
+    const string defaultAvatarPath = "/uploads/accounts/default-avatar.jpg";
+}
+
+<div class="col-md-8 col-lg-9">
+    <div class="container-fluid py-4">
+        <div class="card border-0">
+            <form asp-action="CreateGroup" method="post" enctype="multipart/form-data" autocomplete="off">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="card-header bg-transparent border-0">
+                    <h4 class="card-title">Tạo cuộc trò chuyện nhóm</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Group Name Field -->
+                    <div class="mb-4">
+                        <label asp-for="NewConversation!.GroupName" class="form-label fw-semibold"></label>
+                        <input asp-for="NewConversation!.GroupName" class="form-control">
+                        <span asp-validation-for="NewConversation!.GroupName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Group Detail Field -->
+                    <div class="mb-4">
+                        <label asp-for="NewConversation!.GroupDetail" class="form-label fw-semibold"></label>
+                        <textarea asp-for="NewConversation!.GroupDetail" class="form-control"></textarea>
+                        <span asp-validation-for="NewConversation!.GroupDetail" class="text-danger"></span>
+                    </div>
+
+                    <!-- Group Avatar Upload -->
+                    <div class="mb-4">
+                        <label asp-for="NewConversation!.GroupAvatar" class="form-label fw-semibold"></label>
+                        <div class="d-flex align-items-center gap-3">
+                            <img
+                                id="avatarPreview"
+                                src="@defaultAvatarPath"
+                                class="rounded-circle border"
+                                width="64"
+                                height="64"
+                                alt="Group Avatar">
+                            <div class="w-100">
+                                <input
+                                    asp-for="NewConversation!.GroupAvatar"
+                                    type="file"
+                                    class="form-control"
+                                    accept="image/*"
+                                    onchange="previewImage(this)">
+                                <small class="form-text text-muted">Upload tỉ lệ 1:1 để phù hợp nhất</small>
+                            </div>
+                        </div>
+                        <span asp-validation-for="NewConversation!.GroupAvatar" class="text-danger"></span>
+                    </div>
+
+                    <!-- Member Search Field -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Thêm thành viên</label>
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                id="searchMembers"
+                                class="form-control"
+                                placeholder="Tìm kiếm bạn bè..."
+                            >
+                            <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Members List -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Thành viên đã chọn</label>
+                        <div id="selectedMembers" class="selected-members-container d-flex flex-wrap gap-2 p-3 rounded-lg border">
+                            <!-- Template for a selected member -->
+                            <div class="selected-member-template d-none">
+                                <div class="selected-member d-flex align-items-center p-2 bg-light rounded-pill">
+                                    <img src="" class="rounded-circle me-2" width="32" height="32" alt="Member Avatar">
+                                    <span class="member-name me-2"></span>
+                                    <!-- Hidden input for SelectedMemberIds -->
+                                    <input type="hidden" name="SelectedMemberIds[]" value="">
+                                    <button type="button" class="btn btn-sm text-danger remove-member">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Results Container -->
+                    <div id="searchResults" class="search-results-container list-group mb-4 border"></div>
+                    <!-- Search Result Item Template -->
+                    <div class="search-result-template d-none">
+                        <div class="search-result-item d-flex align-items-center p-3">
+                            <img src="" class="rounded-circle me-3" width="40" height="40" alt="User Avatar">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 user-name"></h6>
+                                <small class="text-muted user-email"></small>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm add-member rounded-pill">
+                                <i class="fas fa-plus"></i> Thêm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <!-- Form Action Buttons -->
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i> Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check me-1"></i> Tạo nhóm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Selected Members Container Styling */
+        .selected-members-container {
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        /* Individual Selected Member Styling */
+        .selected-member {
+            display: flex;
+            align-items: center;
+            background-color: var(--bs-body-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: background-color 0.2s ease;
+        }
+
+        .selected-member img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .selected-member .remove-member {
+            color: var(--bs-danger);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        /* Search Results Container Styling */
+        .search-results-container {
+            background-color: var(--bs-body-bg);
+            border: 1px solid var(--bs-border-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Individual Search Result Item Styling */
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .search-result-item:hover {
+            background-color: var(--bs-body-bg);
+        }
+
+        .search-result-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .add-member {
+            color: var(--bs-primary);
+            border: 1px solid var(--bs-primary);
+            background-color: transparent;
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .add-member:hover {
+            color: var(--bs-white);
+            background-color: var(--bs-primary);
+        }
+    </style>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(partialViewName: "_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            let searchTimeout;
+            const searchInput = $('#searchMembers');
+            const searchResults = $('#searchResults');
+
+            searchInput.on('input', function () {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = $.trim(searchInput.val());
+                    if (searchTerm.length >= 2) {
+                        searchMembers(searchTerm);
+                    } else {
+                        searchResults.empty();
+                    }
+                }, 500);
+            });
+
+            function searchMembers(searchTerm) {
+                $.ajax({
+                    url: `/api/Users/Search/${encodeURIComponent(searchTerm)}`,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        displaySearchResults(data);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error searching members:', error);
+                        searchResults.html('<div class="p-3 text-danger">Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.</div>');
+                    }
+                });
+            }
+
+            function displaySearchResults(users) {
+                if (users.length === 0) {
+                    searchResults.html('<div class="p-3 text-muted">Không tìm thấy kết quả phù hợp</div>');
+                    return;
+                }
+
+                const searchResultItem = $('.search-result-template')
+                    .clone()
+                    .removeClass('d-none search-result-template')
+                    .find('.search-result-item');
+
+                users.forEach(user => {
+                    searchResultItem.find('img').attr('src', user.avatar || '@defaultAvatarPath');
+                    searchResultItem.find('.user-name').text(user.name);
+                    searchResultItem.find('.user-email').text(user.email);
+
+                    searchResultItem.find('.add-member').on('click', function () {
+                        addMember(user);
+                        searchResults.empty();
+                        searchInput.val('');
+                        searchInput.focus();
+                    });
+
+                    searchResults.append(searchResultItem);
+                });
+            }
+
+            function addMember(user) {
+                const selectedMembers = $('#selectedMembers');
+                const existingMember = selectedMembers.find(`input[value="${user.id}"]`);
+                if (existingMember.length > 0) {
+                    alert('Thành viên này đã được thêm vào nhóm!');
+                    return;
+                }
+
+                const template = $('.selected-member-template');
+                const memberItem = template.clone()
+                    .removeClass('d-none selected-member-template');
+
+                const selectedMember = memberItem.find('.selected-member');
+                selectedMember.find('img').attr('src', user.avatar || '@defaultAvatarPath');
+                selectedMember.find('.member-name').text(user.name);
+                selectedMember.find('input[name="SelectedMemberIds[]"]').val(user.id);
+
+                selectedMember.find('.remove-member').on('click', function () {
+                    selectedMember.remove();
+                });
+
+                selectedMembers.append(selectedMember);
+            }
+        })
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#avatarPreview').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

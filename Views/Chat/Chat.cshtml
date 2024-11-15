@@ -10,24 +10,100 @@
     <!-- Chat Header -->
     <div class="chat-header">
         @{
-            var members = Model.SelectedConversation!.Members;
-            if (members is not null && members.Count == 2)
+            var conversation = Model.SelectedConversation!;
+            var members = conversation.Members;
+            if (members is not null)
             {
-                @foreach (var member in members.Where(predicate: member => member!.Id != Model.User!.Id))
+                if (members.Count == 2)
+                {
+                    @foreach (var member in members.Where(predicate: member => member!.Id != Model.User!.Id))
+                    {
+                        <div class="user-info">
+                            <div class="position-relative">
+                                <a asp-controller="PublicProfile" asp-action="Index"
+                                   asp-route-username="@member?.UserName">
+                                    <img src="@(member?.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48"
+                                         height="48" alt="User">
+                                    <span class="status-dot bg-success"></span>
+                                </a>
+                            </div>
+                            <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName"
+                               class="text-decoration-none">
+                                <h6 class="mb-0">@member?.Name</h6>
+                                <small class="text-success">Trực tuyến</small>
+                            </a>
+                        </div>
+                        <div class="header-actions">
+                            <div class="dropdown">
+                                <button class="btn btn-action" type="button" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <form asp-controller="PublicProfile" asp-action="Index"
+                                              asp-route-username="@member?.UserName" method="post">
+                                            <button type="submit" class="dropdown-item revoke-message">
+                                                <i class="fa-regular fa-user"></i>
+                                                Trang cá nhân
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Home" asp-action="ComingSoon" method="post">
+                                            <button type="submit" class="dropdown-item revoke-message">
+                                                <i class="fas fa-phone"></i>
+                                                Gọi thoại
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Home" asp-action="ComingSoon" method="post">
+                                            <button type="submit" class="dropdown-item revoke-message">
+                                                <i class="fas fa-video"></i>
+                                                Gọi video
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="Friend" asp-action="Blocked"
+                                              asp-route-username="@member?.Id" method="post">
+                                            <button type="submit" class="dropdown-item revoke-message">
+                                                <i class="fa-solid fa-ban"></i>
+                                                Chặn
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form asp-action="DeleteConversation" asp-route-senderId="@Model.User?.Id"
+                                              asp-route-receiverId="@member?.Id" method="post">
+                                            <button type="submit" class="dropdown-item revoke-message text-danger">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                                Xóa cuộc trò chuyện
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
+                else
                 {
                     <div class="user-info">
                         <div class="position-relative">
-                            <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName">
-                                <img src="@(member?.Avatar ?? defaultAvatarPath)" class="rounded-circle" width="48"
+                            <a asp-controller="PublicProfile" asp-action="Index"
+                               asp-route-username="@conversation.GroupName">
+                                <img src="@(conversation.CurrentGroupAvatar ?? defaultAvatarPath)"
+                                     class="rounded-circle" width="48"
                                      height="48" alt="User">
                                 <span class="status-dot bg-success"></span>
                             </a>
                         </div>
-                        <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName"
-                           class="text-decoration-none">
-                            <h6 class="mb-0">@member?.Name</h6>
+                        <div>
+                            <h6 class="mb-0 text-primary">@conversation.GroupName</h6>
                             <small class="text-success">Trực tuyến</small>
-                        </a>
+                        </div>
                     </div>
                     <div class="header-actions">
                         <div class="dropdown">
@@ -36,14 +112,6 @@
                                 <i class="fas fa-ellipsis-v"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <form asp-controller="PublicProfile" asp-action="Index" asp-route-username="@member?.UserName" method="post">
-                                        <button type="submit" class="dropdown-item revoke-message">
-                                            <i class="fa-regular fa-user"></i>
-                                            Trang cá nhân
-                                        </button>
-                                    </form>
-                                </li>
                                 <li>
                                     <form asp-controller="Home" asp-action="ComingSoon" method="post">
                                         <button type="submit" class="dropdown-item revoke-message">
@@ -57,22 +125,6 @@
                                         <button type="submit" class="dropdown-item revoke-message">
                                             <i class="fas fa-video"></i>
                                             Gọi video
-                                        </button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <form asp-controller="Friend" asp-action="Blocked" asp-route-username="@member?.Id" method="post">
-                                        <button type="submit" class="dropdown-item revoke-message">
-                                            <i class="fa-solid fa-ban"></i>
-                                            Chặn
-                                        </button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <form asp-action="DeleteConversation" asp-route-senderId="@Model.User?.Id" asp-route-receiverId="@member?.Id" method="post">
-                                        <button type="submit" class="dropdown-item revoke-message text-danger">
-                                            <i class="fa-regular fa-trash-can"></i>
-                                            Xóa cuộc trò chuyện
                                         </button>
                                     </form>
                                 </li>
@@ -143,5 +195,5 @@
 
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat_v2.js"></script>
+    <script src="~/js/chat.js"></script>
 }

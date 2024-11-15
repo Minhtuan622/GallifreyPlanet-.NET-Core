@@ -13,13 +13,19 @@ public class ChatService(
     public Conversation? Find(string senderId, string receiverId)
     {
         return context.Conversation
-            .FirstOrDefault(predicate: c =>
-                c.Members != null &&
-                c.Members.Contains(senderId) &&
-                c.Members.Contains(receiverId) &&
-                c.IsGroup == false
-            );
+            .AsEnumerable()
+            .FirstOrDefault(c =>
+            {
+                if (c.Members == null || c.IsGroup)
+                {
+                    return false;
+                }
+
+                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(c.Members);
+                return members != null && members.Contains(senderId) && members.Contains(receiverId);
+            });
     }
+
     public bool CreateConversation(string senderId, string receiverId, string? groupName = null)
     {
         if (Find(senderId: senderId, receiverId: receiverId) is not null)
@@ -29,7 +35,7 @@ public class ChatService(
 
         var conversation = new Conversation
         {
-            Members = string.Join(separator: ",", values: new List<string> { senderId, receiverId }),
+            Members = System.Text.Json.JsonSerializer.Serialize(new List<string> { senderId, receiverId }),
             GroupName = groupName,
             IsGroup = false,
             CreatedAt = DateTime.Now,
@@ -76,28 +82,39 @@ public class ChatService(
         context.SaveChanges();
     }
 
-    public Task<ConversationViewModel> GetConversationById(int conversationId)
+    public async Task<ConversationViewModel> GetConversationById(int conversationId)
     {
-        var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == conversationId)!;
-        MarkAsRead(conversation: conversation);
+        var conversation = context.Conversation.FirstOrDefault(c => c.Id == conversationId);
+        if (conversation == null)
+        {
+            throw new Exception("Conversation not found");
+        }
 
-        return NewConversationViewModel(conversation: conversation);
+        MarkAsRead(conversation);
+
+        return await NewConversationViewModel(conversation);
     }
 
     public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
     {
         var conversations = context.Conversation
-            .Where(predicate: c =>
-                c.Members != null &&
-                c.Members.Contains(userId)
-            )
-            .OrderBy(keySelector: c => c.CreatedAt)
+            .AsEnumerable()
+            .Where(c =>
+            {
+                if (c.Members == null)
+                {
+                    return false;
+                }
+                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(c.Members);
+                return members != null && members.Contains(userId);
+            })
+            .OrderBy(c => c.CreatedAt)
             .ToList();
-        var newConversations = new List<ConversationViewModel>();
 
+        var newConversations = new List<ConversationViewModel>();
         foreach (var conversation in conversations)
         {
-            newConversations.Add(item: await NewConversationViewModel(conversation: conversation));
+            newConversations.Add(await NewConversationViewModel(conversation));
         }
 
         return newConversations;
@@ -127,14 +144,23 @@ public class ChatService(
 
     private async Task<List<User?>> GetMembers(int chatId)
     {
-        var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == chatId);
-        var members = conversation?.Members;
-        var usersId = members!.Split(separator: ',');
-        var usersList = new List<User?>();
-
-        foreach (var userId in usersId)
+        var conversation = context.Conversation.FirstOrDefault(c => c.Id == chatId);
+        if (conversation?.Members == null)
         {
-            usersList.Add(item: await userService.GetUserAsyncById(userId: userId));
+            return [];
+        }
+
+        var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(conversation.Members);
+        if (members == null)
+        {
+            return [];
+        }
+
+        var usersList = new List<User?>();
+        foreach (var userId in members)
+        {
+            var user = await userService.GetUserAsyncById(userId: userId);
+            usersList.Add(user);
         }
 
         return usersList;
