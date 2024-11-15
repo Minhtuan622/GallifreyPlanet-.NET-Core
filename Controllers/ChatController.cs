@@ -27,13 +27,13 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(user.Id),
+            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
         };
 
-        return View(conversations);
+        return View(model: conversations);
     }
 
-    [HttpGet("Chat/{conversationId:int}")]
+    [HttpGet(template: "Chat/{conversationId:int}")]
     public async Task<IActionResult> Chat(int conversationId)
     {
         var user = await userService.GetCurrentUserAsync();
@@ -45,12 +45,12 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(user.Id),
-            SelectedConversation = await chatService.GetConversationById(conversationId),
-            Messages = await chatService.GetMessagesByConversationId(conversationId),
+            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
+            SelectedConversation = await chatService.GetConversationById(conversationId: conversationId),
+            Messages = await chatService.GetMessagesByConversationId(conversationId: conversationId),
         };
 
-        return View(conversations);
+        return View(model: conversations);
     }
 
     [HttpPost]
@@ -62,46 +62,46 @@ public class ChatController(
             return NotFound();
         }
 
-        if (chatService.Find(senderId, receiverId) is not null)
+        if (chatService.Find(senderId: senderId, receiverId: receiverId) is not null)
         {
-            return RedirectToAction("Index");
+            return RedirectToAction(actionName: "Index");
         }
 
-        if (chatService.CreateConversation(senderId, receiverId))
+        if (chatService.CreateConversation(senderId: senderId, receiverId: receiverId))
         {
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(actionName: nameof(Index));
         }
 
-        TempData["StatusMessage"] = "Có lỗi xảy ra, vui lòng thử lại sau";
-        TempData["StatusType"] = "danger";
+        TempData[key: "StatusMessage"] = "Có lỗi xảy ra, vui lòng thử lại sau";
+        TempData[key: "StatusType"] = "danger";
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(actionName: nameof(Index));
     }
 
     [HttpPost]
     public async Task<IActionResult> DeleteConversation(string senderId, string receiverId)
     {
-        var conversation = chatService.Find(senderId, receiverId);
+        var conversation = chatService.Find(senderId: senderId, receiverId: receiverId);
         if (conversation is not null)
         {
             var messages = context.Message
-                .Where(m => m.ChatId == conversation.Id)
+                .Where(predicate: m => m.ChatId == conversation.Id)
                 .ToList();
 
-            context.RemoveRange(messages);
-            context.Conversation.Remove(conversation);
+            context.RemoveRange(entities: messages);
+            context.Conversation.Remove(entity: conversation);
             await context.SaveChangesAsync();
 
-            TempData["StatusMessage"] = "Xóa thành công";
-            TempData["StatusType"] = "success";
+            TempData[key: "StatusMessage"] = "Xóa thành công";
+            TempData[key: "StatusType"] = "success";
         }
         else
         {
-            TempData["StatusMessage"] = "Cuộc trò chuyện không tồn tại trên hệ thống.";
-            TempData["StatusType"] = "danger";
+            TempData[key: "StatusMessage"] = "Cuộc trò chuyện không tồn tại trên hệ thống.";
+            TempData[key: "StatusType"] = "danger";
         }
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(actionName: nameof(Index));
     }
 
     [HttpGet]
@@ -116,10 +116,10 @@ public class ChatController(
         var conversations = new ChatManagerViewModel
         {
             User = user,
-            Conversations = await chatService.GetConversationsByUserId(user.Id),
+            Conversations = await chatService.GetConversationsByUserId(userId: user.Id),
         };
 
-        return View(conversations);
+        return View(model: conversations);
     }
 
     [HttpPost]
@@ -127,7 +127,7 @@ public class ChatController(
     {
         if (!ModelState.IsValid || viewModel.NewConversation is null)
         {
-            return View(viewModel);
+            return View(model: viewModel);
         }
 
         var groupChat = new Conversation
@@ -136,7 +136,7 @@ public class ChatController(
             GroupName = viewModel.NewConversation.GroupName,
             GroupDetail = viewModel.NewConversation.GroupDetail,
             GroupAvatar = viewModel.NewConversation.GroupAvatar is not null
-                ? await fileService.UploadFileAsync(viewModel.NewConversation.GroupAvatar, "conversations")
+                ? await fileService.UploadFileAsync(file: viewModel.NewConversation.GroupAvatar, folder: "conversations")
                 : null,
             CreatedBy = viewModel.User?.Id,
             CreatedAt = DateTime.Now
@@ -145,23 +145,23 @@ public class ChatController(
         // Serialize the selected member IDs as JSON
         if (viewModel.SelectedMemberIds is not null && viewModel.SelectedMemberIds.Any())
         {
-            groupChat.Members = JsonSerializer.Serialize(viewModel.SelectedMemberIds);
+            groupChat.Members = JsonSerializer.Serialize(value: viewModel.SelectedMemberIds);
         }
 
-        await context.Conversation.AddAsync(groupChat);
+        await context.Conversation.AddAsync(entity: groupChat);
         await context.SaveChangesAsync();
 
-        TempData["StatusMessage"] = "Nhóm đã được tạo thành công!";
-        TempData["StatusType"] = "success";
+        TempData[key: "StatusMessage"] = "Nhóm đã được tạo thành công!";
+        TempData[key: "StatusType"] = "success";
 
-        return RedirectToAction("Chat", new { conversationId = groupChat.Id });
+        return RedirectToAction(actionName: "Chat", routeValues: new { conversationId = groupChat.Id });
     }
 
-    [HttpGet("api/Users/Search/{search}")]
+    [HttpGet(template: "api/Users/Search/{search}")]
     public async Task<IActionResult> SearchUsers(string search)
     {
         var users = await context.Users
-            .Where(u =>
+            .Where(predicate: u =>
                 u.UserName != null &&
                 u.Name != null &&
                 u.Email != null && (
@@ -170,7 +170,7 @@ public class ChatController(
                     u.Email.Contains(search)
                 )
             )
-            .Select(u => new
+            .Select(selector: u => new
             {
                 id = u.Id,
                 name = u.Name,
@@ -179,6 +179,6 @@ public class ChatController(
             })
             .ToListAsync();
 
-        return Json(users);
+        return Json(data: users);
     }
 }

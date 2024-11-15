@@ -14,15 +14,15 @@ public class ChatService(
     {
         return context.Conversation
             .AsEnumerable()
-            .FirstOrDefault(c =>
+            .FirstOrDefault(predicate: c =>
             {
                 if (c.Members == null || c.IsGroup)
                 {
                     return false;
                 }
 
-                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(c.Members);
-                return members != null && members.Contains(senderId) && members.Contains(receiverId);
+                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json: c.Members);
+                return members != null && members.Contains(item: senderId) && members.Contains(item: receiverId);
             });
     }
 
@@ -35,7 +35,7 @@ public class ChatService(
 
         var conversation = new Conversation
         {
-            Members = System.Text.Json.JsonSerializer.Serialize(new List<string> { senderId, receiverId }),
+            Members = System.Text.Json.JsonSerializer.Serialize(value: new List<string> { senderId, receiverId }),
             GroupName = groupName,
             IsGroup = false,
             CreatedAt = DateTime.Now,
@@ -84,37 +84,37 @@ public class ChatService(
 
     public async Task<ConversationViewModel> GetConversationById(int conversationId)
     {
-        var conversation = context.Conversation.FirstOrDefault(c => c.Id == conversationId);
+        var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == conversationId);
         if (conversation == null)
         {
-            throw new Exception("Conversation not found");
+            throw new Exception(message: "Conversation not found");
         }
 
-        MarkAsRead(conversation);
+        MarkAsRead(conversation: conversation);
 
-        return await NewConversationViewModel(conversation);
+        return await NewConversationViewModel(conversation: conversation);
     }
 
     public async Task<List<ConversationViewModel>> GetConversationsByUserId(string userId)
     {
         var conversations = context.Conversation
             .AsEnumerable()
-            .Where(c =>
+            .Where(predicate: c =>
             {
                 if (c.Members == null)
                 {
                     return false;
                 }
-                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(c.Members);
-                return members != null && members.Contains(userId);
+                var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json: c.Members);
+                return members != null && members.Contains(item: userId);
             })
-            .OrderBy(c => c.CreatedAt)
+            .OrderBy(keySelector: c => c.CreatedAt)
             .ToList();
 
         var newConversations = new List<ConversationViewModel>();
         foreach (var conversation in conversations)
         {
-            newConversations.Add(await NewConversationViewModel(conversation));
+            newConversations.Add(item: await NewConversationViewModel(conversation: conversation));
         }
 
         return newConversations;
@@ -144,13 +144,13 @@ public class ChatService(
 
     private async Task<List<User?>> GetMembers(int chatId)
     {
-        var conversation = context.Conversation.FirstOrDefault(c => c.Id == chatId);
+        var conversation = context.Conversation.FirstOrDefault(predicate: c => c.Id == chatId);
         if (conversation?.Members == null)
         {
             return [];
         }
 
-        var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(conversation.Members);
+        var members = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json: conversation.Members);
         if (members == null)
         {
             return [];
@@ -160,7 +160,7 @@ public class ChatService(
         foreach (var userId in members)
         {
             var user = await userService.GetUserAsyncById(userId: userId);
-            usersList.Add(user);
+            usersList.Add(item: user);
         }
 
         return usersList;

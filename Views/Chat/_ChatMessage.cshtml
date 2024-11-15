@@ -1,0 +1,40 @@
+@using Humanizer
+@model GallifreyPlanet.ViewModels.Chat.MessageViewModel
+
+<div class="message @(Model.Sender.UserName != User.Identity!.Name ? "message-received" : "message-sent") 
+                      @(Model.IsRevoked ? "revoked" : "")"
+     data-message-id="@Model.Id">
+    <div class="d-flex align-items-center">
+        @if (Model.Sender.UserName != User.Identity!.Name)
+        {
+            <img src="@(Model.Sender.Avatar ?? "/uploads/accounts/default-avatar.jpg")"
+                 alt="Avatar" class="rounded-circle" width="48" height="48">
+        }
+        <div>
+            @if (Model.Sender.UserName != User.Identity!.Name)
+            {
+                <p class="message-name">@Model.Sender.Name</p>
+            }
+            <div class="message-header">
+                <span class="message-content">@Model.Content</span>
+                @if (Model.Sender.UserName == User.Identity!.Name && !Model.IsRevoked)
+                {
+                    <div class="dropdown message-actions">
+                        <button class="btn btn-sm btn-action" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item revoke-message" data-message-id="@Model.Id">
+                                    <i class="fas fa-undo-alt"></i> Revoke
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+            <span class="message-time">@Model.CreatedAt.Humanize()</span>
+        </div>
+    </div>
+</div>

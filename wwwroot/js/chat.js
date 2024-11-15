@@ -1,52 +1,72 @@
 ﻿$(document).ready(() => {
-    const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    // Initialize SignalR connection
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    // Select DOM elements
     const chatMessages = $('#messages-container');
     const contentInput = $('#content');
+    const sendMessageButton = $('#send-message');
+    const senderId = $('#senderId').val();
+    const chatId = $('#chatId').val();
 
-    scrollToBottom();
+    // Scroll to the bottom of the chat messages
+    function scrollToBottom() {
+        chatMessages.scrollTop(chatMessages[0].scrollHeight);
+    }
 
-    $("#send-message").prop('disabled', true);
+    // Escape HTML to prevent XSS attacks
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-    connection.start().then(() => {
-        $("#send-message").prop('disabled', false);
-        console.log("Connected to SignalR hub");
-    }).catch(err => {
-        console.error("SignalR connection error:", err.toString());
-    });
-
-    connection.on("ReceiveMessage", (senderId, message) => {
-        const typeMessage = $('#senderId').val() !== senderId ? 'message-received' : 'message-sent';
-        const messageElement = $('<div>', {class: `message ${typeMessage}`, 'data-message-id': message.id});
+    // Add a message to the chat container
+    function addMessage(senderId, message) {
+        const isReceived = $('#senderId').val() !== senderId;
+        const messageType = isReceived ? 'message-received' : 'message-sent';
+        const messageElement = $('<div>', {
+            class: `message ${messageType}`,
+            'data-message-id': message.id
+        });
 
         messageElement.html(`
             <div class="message-content">
                 ${escapeHtml(message.content)}
             </div>
             <span class="message-time">
-                ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
-            <div class="message-actions">
-                <button class="btn btn-sm btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-ellipsis-v"></i>
-                </button>
-                <ul class="dropdown-menu">
-                    <li><button class="dropdown-item revoke-message" data-message-id="${message.id}">Revoke</button></li>
-                </ul>
-            </div>
+            ${!isReceived ? `
+                <div class="message-actions">
+                    <button class="btn btn-sm btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item revoke-message" data-message-id="${message.id}">Revoke</button></li>
+                    </ul>
+                </div>` : ''}
         `);
+
         chatMessages.append(messageElement);
         scrollToBottom();
-    });
+    }
 
-    connection.on("MessageRevoked", (messageId) => {
+    // Revoke a message visually
+    function revokeMessage(messageId) {
         const messageElement = $(`[data-message-id="${messageId}"]`);
         if (messageElement.length) {
             messageElement.find('.message-content').text('[Tin nhắn đã bị thu hồi]');
             messageElement.find('.message-actions').remove();
             messageElement.addClass('revoked');
         }
-    });
+    }
 
+    // Send a message through SignalR
     function sendMessage() {
         const content = contentInput.val().trim();
 
@@ -54,23 +74,34 @@
             return;
         }
 
-        connection
-            .invoke(
-                "SendMessage",
-                $('#chatId').val(),
-                $('#senderId').val(),
-                content
-            )
-            .catch(err => {
-                console.error("Send message error:", err);
-            });
-
-        contentInput.val('');
-        contentInput.focus();
-        scrollToBottom();
+        connection.invoke("SendMessage", chatId, senderId, content)
+            .then(() => {
+                contentInput.val('');
+                contentInput.focus();
+                scrollToBottom();
+            })
+            .catch(err => console.error("Error sending message:", err));
     }
 
-    $('#send-message').click(sendMessage);
+    // Setup SignalR connection
+    function setupConnection() {
+        connection.start()
+            .then(() => {
+                sendMessageButton.prop('disabled', false);
+                console.log("Connected to SignalR hub");
+            })
+            .catch(err => {
+                sendMessageButton.prop('disabled', true);
+                console.error("SignalR connection error:", err.toString());
+            });
+
+        connection.on("ReceiveMessage", (senderId, message) => addMessage(senderId, message));
+        connection.on("MessageRevoked", (messageId) => revokeMessage(messageId));
+    }
+
+    // Event Handlers
+    sendMessageButton.click(sendMessage);
+
     contentInput.keypress(e => {
         if (e.key === 'Enter') {
             sendMessage();
@@ -79,20 +110,13 @@
     });
 
     $(document).on('click', '.revoke-message', function () {
-        connection
-            .invoke('RevokeMessage', $(this).data('message-id'))
-            .catch(console.error);
+        const messageId = $(this).data('message-id');
+        connection.invoke('RevokeMessage', messageId)
+            .catch(err => console.error("Error revoking message:", err));
     });
 
-    function scrollToBottom() {
-        chatMessages.scrollTop(chatMessages[0].scrollHeight);
-    }
-
-    function escapeHtml(text) {
-        return text.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
+    // Initial setup
+    scrollToBottom();
+    sendMessageButton.prop('disabled', true);
+    setupConnection();
 });

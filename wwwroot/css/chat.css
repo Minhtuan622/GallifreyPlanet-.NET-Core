@@ -117,7 +117,8 @@
     border-bottom-left-radius: 0.25rem;
 }
 
-.message-time {
+.message-time,
+.message-name {
     font-size: 0.75rem;
     color: var(--bs-secondary);
     margin-top: 0.25rem;
@@ -170,6 +171,29 @@
 
 .input-container input:focus {
     outline: none;
+}
+
+.modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header.bg-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.group-info img {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.group-members .list-group-item {
+    border: none;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.group-members .list-group-item:last-child {
+    border-bottom: none;
 }
 
 /* Animation */

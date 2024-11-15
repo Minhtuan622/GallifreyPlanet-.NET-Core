@@ -1,0 +1,40 @@
+@model GallifreyPlanet.ViewModels.Chat.ConversationViewModel
+
+<div class="chat-header">
+    <div class="user-info">
+        <div class="position-relative">
+            <a asp-controller="PublicProfile" asp-action="Index" asp-route-username="@Model.GroupName">
+                <img src="@(Model.CurrentGroupAvatar ?? "/uploads/accounts/default-avatar.jpg")"
+                     class="rounded-circle" width="48" height="48" alt="Avatar">
+                <span class="status-dot bg-success"></span>
+            </a>
+        </div>
+        <div>
+            <h6 class="mb-0 text-primary">@Model.GroupName</h6>
+            <small class="text-success">Trực tuyến</small>
+        </div>
+    </div>
+    <div class="header-actions">
+        <div class="dropdown">
+            <button class="btn btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <form asp-controller="Home" asp-action="ComingSoon" method="post">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-phone"></i> Gọi thoại
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <form asp-controller="Home" asp-action="ComingSoon" method="post">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-video"></i> Gọi video
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
