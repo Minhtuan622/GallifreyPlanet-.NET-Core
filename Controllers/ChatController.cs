@@ -79,9 +79,9 @@ public class ChatController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> DeleteConversation(string senderId, string receiverId)
+    public async Task<IActionResult> DeleteConversation(int id)
     {
-        var conversation = chatService.Find(senderId: senderId, receiverId: receiverId);
+        var conversation = await context.Conversation.FindAsync(id);
         if (conversation is not null)
         {
             var messages = context.Message
@@ -125,6 +125,12 @@ public class ChatController(
     [HttpPost]
     public async Task<IActionResult> CreateGroup(ChatManagerViewModel viewModel)
     {
+        var user = await userService.GetCurrentUserAsync();
+        if (user is null)
+        {
+            return NotFound();
+        }
+        
         if (!ModelState.IsValid || viewModel.NewConversation is null)
         {
             return View(model: viewModel);
@@ -138,12 +144,12 @@ public class ChatController(
             GroupAvatar = viewModel.NewConversation.GroupAvatar is not null
                 ? await fileService.UploadFileAsync(file: viewModel.NewConversation.GroupAvatar, folder: "conversations")
                 : null,
-            CreatedBy = viewModel.User?.Id,
+            CreatedBy = user.Id,
             CreatedAt = DateTime.Now
         };
 
         // Serialize the selected member IDs as JSON
-        if (viewModel.SelectedMemberIds is not null && viewModel.SelectedMemberIds.Any())
+        if (viewModel.SelectedMemberIds is not null)
         {
             groupChat.Members = JsonSerializer.Serialize(value: viewModel.SelectedMemberIds);
         }

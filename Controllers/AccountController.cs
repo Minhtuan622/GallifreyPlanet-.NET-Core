@@ -31,7 +31,6 @@ public class AccountController(
     {
         try
         {
-            var m = new MailAddress(address: emailAddress);
             return true;
         }
         catch (FormatException)

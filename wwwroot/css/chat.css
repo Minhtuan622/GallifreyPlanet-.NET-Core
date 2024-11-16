@@ -173,27 +173,18 @@
     outline: none;
 }
 
-.modal-content {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+.nav-link.active {
+    color: var(--bs-primary) !important;
+    background-color: transparent !important;
+    border-bottom: 2px solid var(--bs-primary) !important;
 }
 
-.modal-header.bg-primary {
-    background: linear-gradient(45deg, #007bff, #0056b3);
+.nav-link {
+    color: var(--bs-secondary);
 }
 
-.group-info img {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.group-members .list-group-item {
-    border: none;
-    border-bottom: 1px solid #f1f1f1;
-}
-
-.group-members .list-group-item:last-child {
-    border-bottom: none;
+img {
+    object-fit: cover;
 }
 
 /* Animation */

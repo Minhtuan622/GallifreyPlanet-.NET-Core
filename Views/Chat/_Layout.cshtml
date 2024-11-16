@@ -22,7 +22,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-3">Messages</h5>
                     <div class="dropdown">
-                        <button class="btn btn-action" type="button" data-bs-toggle="dropdown"aria-expanded="false">
+                        <button class="btn btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -112,8 +112,8 @@
                                             </li>
                                             <li>
                                                 <form asp-action="DeleteConversation"
-                                                      asp-route-senderId="@Model.User?.Id"
-                                                      asp-route-receiverId="@member?.Id" method="post">
+                                                      asp-route-id="@conversation.Id"
+                                                      method="post">
                                                     <button type="submit"
                                                             class="dropdown-item revoke-message text-danger">
                                                         <i class="fa-regular fa-trash-can"></i>
@@ -132,7 +132,8 @@
                                class="text-decoration-none">
                                 <div class="conversation-item hover-bg">
                                     <div class="position-relative">
-                                        <img src="@(conversation.CurrentGroupAvatar ?? defaultAvatarPath)" class="rounded-circle" width="48" height="48" alt="User">
+                                        <img src="@(conversation.CurrentGroupAvatar ?? defaultAvatarPath)"
+                                             class="rounded-circle" width="48" height="48" alt="User">
                                         <span class="status-dot bg-success"></span>
                                     </div>
                                     <div class="conversation-content ms-3">

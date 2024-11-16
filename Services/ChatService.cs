@@ -192,11 +192,14 @@ public class ChatService(
         {
             Id = conversation.Id,
             Members = await GetMembers(chatId: conversation.Id),
-            GroupName = conversation.GroupName,
-            IsGroup = conversation.IsGroup,
             IsRead = conversation.IsRead,
             CreatedAt = conversation.CreatedAt,
             LatestMessage = message?.Content,
+            IsGroup = conversation.IsGroup,
+            GroupName = conversation.GroupName,
+            GroupDetail = conversation.GroupDetail,
+            CurrentGroupAvatar = conversation.GroupAvatar,
+            CreatedBy = await userService.GetUserAsyncById(userId: conversation.CreatedBy!),
         };
     }
 
