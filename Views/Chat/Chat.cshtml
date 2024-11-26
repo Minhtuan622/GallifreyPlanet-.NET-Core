@@ -136,76 +136,88 @@
     <!-- Group Info Modal -->
     <div class="modal fade" id="groupInfoModal" tabindex="-1" aria-labelledby="groupInfoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0">
+            <div class="modal-content border-0 rounded-3 shadow">
                 <!-- Header -->
                 <div class="modal-header bg-primary border-0">
                     <h5 class="modal-title text-white" id="groupInfoModalLabel">
                         <i class="fa-solid fa-users me-2"></i>Thông tin cuộc trò chuyện
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body p-4">
+                <!-- Modal Body -->
+                <div class="modal-body p-4 bg-light">
                     <!-- Tabs -->
                     <ul class="nav nav-tabs nav-fill border-0 mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active border-0" data-bs-toggle="tab" data-bs-target="#info-tab"
-                                    type="button">
-                                <i class="fa-solid fa-circle-info me-2"></i>Tổng quan
+                            <button class="nav-link active border-0 fw-bold" data-bs-toggle="tab" data-bs-target="#group-info-tab">
+                                <i class="fa-solid fa-circle-info me-2"></i>Thông tin nhóm
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link border-0" data-bs-toggle="tab" data-bs-target="#members-tab"
-                                    type="button">
+                            <button class="nav-link border-0 fw-bold" data-bs-toggle="tab" data-bs-target="#members-tab">
                                 <i class="fa-solid fa-users me-2"></i>Thành viên
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link border-0" data-bs-toggle="tab" data-bs-target="#details-tab"
-                                    type="button">
-                                <i class="fa-solid fa-file-lines me-2"></i>Chi tiết
                             </button>
                         </li>
                     </ul>
 
-                    <!-- Tab content -->
+                    <!-- Tab Content -->
                     <div class="tab-content">
-                        <!-- Overview Tab -->
-                        <div class="tab-pane fade show active" id="info-tab">
+                        <!-- Group Info Tab -->
+                        <div class="tab-pane fade show active" id="group-info-tab">
+                            <!-- Avatar Section -->
                             <div class="text-center mb-4">
-                                <div class="position-relative d-inline-block mb-3">
+                                <div class="position-relative d-inline-block">
                                     <img src="@(conversation.CurrentGroupAvatar ?? defaultAvatarPath)"
                                          alt="Group Avatar"
                                          class="rounded-circle border border-primary"
-                                         width="120" height="120">
-                                    <button
-                                        class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </button>
+                                         width="120" height="120" id="group-avatar-preview" style="object-fit: cover;">
+                                    <form method="post" enctype="multipart/form-data" id="avatar-upload-form">
+                                        <input type="file" name="GroupAvatar" accept="image/*"
+                                               class="d-none" id="group-avatar-input" onchange="previewAvatar(this)">
+                                        <label for="group-avatar-input" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0">
+                                            <i class="fa-solid fa-camera"></i>
+                                        </label>
+                                    </form>
                                 </div>
-                                <h4 class="mb-2">@conversation.GroupName</h4>
+                                <h4 class="fw-bold mt-3">@conversation.GroupName</h4>
                                 <p class="text-muted small">
-                                    <i class="fa-regular fa-calendar me-2"></i>
-                                    Được tạo lúc: @conversation.CreatedAt.ToString("dd/MM/yyyy")
+                                    <i class="fa-regular fa-calendar me-2"></i>Được tạo lúc: @conversation.CreatedAt.ToString("dd/MM/yyyy")
                                 </p>
                             </div>
 
                             <!-- Group Details Section -->
-                            <div class="row g-4">
+                            <div class="row row-cols-1 row-cols-md-3 g-4">
                                 <!-- Description -->
-                                <div class="col-12">
-                                    <div class="bg-body-tertiary rounded p-3">
-                                        <h6 class="text-primary mb-3">
-                                            <i class="fa-solid fa-align-left me-2"></i>Mô tả
-                                        </h6>
-                                        <p class="mb-0 text-secondary">@conversation.GroupDetail</p>
+                                <div class="col">
+                                    <div class="bg-body rounded p-3 h-100 d-flex flex-column">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h6 class="text-primary mb-3"><i class="fa-solid fa-align-left me-2"></i>Mô tả</h6>
+                                                <p id="group-description" class="mb-0 text-secondary">@(conversation.GroupDetail ?? "Chưa có mô tả.")</p>
+                                            </div>
+                                            <button class="btn btn-sm btn-link text-primary" id="edit-description-button">
+                                                <i class="fa-solid fa-pencil me-1"></i>Chỉnh sửa
+                                            </button>
+                                        </div>
+                                        <!-- Edit Description Form -->
+                                        <form method="post" id="edit-description-form" class="d-none mt-auto">
+                                            <textarea name="GroupDescription" class="form-control mb-2">@conversation.GroupDetail</textarea>
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button type="button" class="btn btn-secondary btn-sm" id="cancel-edit-description">
+                                                    Hủy
+                                                </button>
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    Lưu
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
 
-                                <!-- Quick Stats -->
-                                <div class="col-md-4">
-                                    <div class="bg-body-tertiary rounded p-3 h-100">
+                                <!-- Members Count -->
+                                <div class="col">
+                                    <div class="bg-body rounded p-3 h-100">
                                         <h6 class="text-primary mb-2">Thành viên</h6>
                                         <div class="d-flex align-items-center">
                                             <i class="fa-solid fa-users fs-4 me-2 text-secondary"></i>
@@ -214,26 +226,21 @@
                                     </div>
                                 </div>
 
-                                <!-- Created By -->
-                                <div class="col-md-4">
-                                    <div class="bg-body-tertiary rounded p-3 h-100">
+                                <!-- Group Leader -->
+                                <div class="col">
+                                    <div class="bg-body rounded p-3 h-100">
                                         <h6 class="text-primary mb-2">Trưởng nhóm</h6>
                                         <div class="d-flex align-items-center">
-                                            <img
-                                                src="@(conversation.CreatedBy?.Avatar ?? defaultAvatarPath)"
-                                                class="rounded-circle me-3"
-                                                width="48"
-                                                height="48"
-                                                alt=""
-                                            >
+                                            <img src="@(conversation.CreatedBy?.Avatar ?? defaultAvatarPath)"
+                                                 class="rounded-circle me-3" width="48" height="48" alt="">
                                             <span>@conversation.CreatedBy?.Name</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Group ID -->
-                                <div class="col-md-4">
-                                    <div class="bg-body-tertiary rounded p-3 h-100">
+                                <div class="col">
+                                    <div class="bg-body rounded p-3 h-100">
                                         <h6 class="text-primary mb-2">ID Nhóm</h6>
                                         <div class="d-flex align-items-center">
                                             <i class="fa-solid fa-hashtag fs-4 me-2 text-secondary"></i>
@@ -249,8 +256,7 @@
                             <!-- Search and Filter -->
                             <div class="d-flex gap-3 mb-4">
                                 <div class="position-relative flex-grow-1">
-                                    <input type="text" class="form-control border-0 bg-body-tertiary ps-5"
-                                           placeholder="Tìm thành viên...">
+                                    <input type="text" class="form-control bg-body ps-5" placeholder="Tìm thành viên...">
                                     <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                 </div>
                                 <button class="btn btn-light">
@@ -259,62 +265,58 @@
                             </div>
 
                             <!-- Members List -->
-                            <div class="d-grid gap-3" style="max-height: 400px; overflow-y: auto;">
+                            <div class="d-flex flex-column gap-3" style="max-height: 400px; overflow-y: auto;">
                                 @if (members?.Count > 0)
                                 {
                                     foreach (var member in members.OfType<User>())
                                     {
-                                        <div class="d-flex align-items-center bg-body-tertiary rounded p-3">
+                                        var statusClass = "text-success";
+                                        var statusText = "Trực tuyến";
+
+                                        <div class="d-flex align-items-center bg-body rounded p-3">
                                             <img src="@(member.Avatar ?? defaultAvatarPath)"
                                                  alt="@member.Name"
-                                                 class="rounded-circle me-3"
-                                                 width="48" height="48">
+                                                 class="rounded-circle me-3" width="48" height="48">
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-0">@member.Name</h6>
                                                 <small class="text-muted">@member.UserName</small>
+                                                <div class="@statusClass small">@statusText</div>
                                             </div>
-                                            <span class="badge bg-primary">Admin</span>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                    <i class="fa-solid fa-ellipsis-v"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <button class="dropdown-item">
+                                                            <i class="fa-solid fa-message me-2"></i>
+                                                            Nhắn tin
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="dropdown-item">
+                                                            <i class="fa-solid fa-user-gear me-2"></i>
+                                                            Chỉnh sửa vai trò
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                    <li>
+                                                        <button class="dropdown-item text-danger">
+                                                            <i class="fa-solid fa-user-xmark me-2"></i>
+                                                            Xóa khỏi nhóm
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     }
                                 }
-                            </div>
-                        </div>
-
-                        <!-- Details Tab -->
-                        <div class="tab-pane fade" id="details-tab">
-                            <div class="bg-body-tertiary rounded p-4">
-                                <div class="row g-4">
-                                    <div class="col-12">
-                                        <h6 class="text-primary mb-3">Chi tiết nhóm</h6>
-                                        <div class="text-secondary">@conversation.GroupDetail</div>
-                                    </div>
-
-                                    <!-- Additional Details -->
-                                    <div class="col-12">
-                                        <div class="border-top pt-4">
-                                            <div class="row g-3">
-                                                <div class="col-md-6">
-                                                    <div class="d-flex align-items-start">
-                                                        <i class="fa-solid fa-calendar me-3 mt-1 text-primary"></i>
-                                                        <div>
-                                                            <h6 class="mb-1">Ngày tạo</h6>
-                                                            <p class="text-muted mb-0">@conversation.CreatedAt.ToString("dd/MM/yyyy")</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="d-flex align-items-start">
-                                                        <i class="fa-solid fa-user me-3 mt-1 text-primary"></i>
-                                                        <div>
-                                                            <h6 class="mb-1">Người tạo</h6>
-                                                            <p class="text-muted mb-0">@conversation.CreatedBy?.Name</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                else
+                                {
+                                    <p class="text-center text-muted">Không có thành viên nào.</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -406,4 +408,31 @@
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/chat.js"></script>
+
+    <script>
+        // Xem trước ảnh khi upload
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('group-avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Chuyển từ chế độ xem sang chế độ chỉnh sửa mô tả
+        document.getElementById('edit-description-button').addEventListener('click', function () {
+            document.getElementById('group-description').classList.add('d-none');
+            document.getElementById('edit-description-button').classList.add('d-none');
+            document.getElementById('edit-description-form').classList.remove('d-none');
+        });
+
+        // Hủy chỉnh sửa mô tả
+        document.getElementById('cancel-edit-description').addEventListener('click', function () {
+            document.getElementById('group-description').classList.remove('d-none');
+            document.getElementById('edit-description-button').classList.remove('d-none');
+            document.getElementById('edit-description-form').classList.add('d-none');
+        });
+    </script>
 }
