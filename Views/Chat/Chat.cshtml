@@ -8,7 +8,13 @@
     var members = conversation.Members;
     var currentUserId = Model.User!.Id;
 }
-
+@* todo: 
+    - thiết kế lại giao diện cho popup info cuộc trò chuyện nhóm 
+    - add người dùng vào cuộc trò chuyện 
+    - xóa người dùng khỏi cuộc trò chuyện 
+    - chỉ admin mới được chỉnh cài đặt cuộc trò chuyện và thao tác thêm hoặc xóa người dùng 
+    - chặn người dùng tham gia cuộc trò chuyện 
+*@
 <!-- Chat Main Area -->
 <div class="col-md-8 col-lg-9 chat-main">
     <!-- Chat Header -->
@@ -28,9 +34,9 @@
                 else
                 {
                     <a asp-controller="PublicProfile" asp-action="Index"
-                       asp-route-username="@(conversation.GroupName ?? members?.FirstOrDefault(m => m!.Id != currentUserId)?.UserName)">
+                       asp-route-username="@(conversation.GroupName ?? members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.UserName)">
                         <img
-                            src="@(members?.FirstOrDefault(m => m!.Id != currentUserId)?.Avatar ?? defaultAvatarPath)"
+                            src="@(members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.Avatar ?? defaultAvatarPath)"
                             class="rounded-circle" width="48" height="48" alt="User/Group Avatar">
                         <span class="status-dot bg-success"></span>
                     </a>
@@ -48,9 +54,9 @@
                 else
                 {
                     <a asp-controller="PublicProfile" asp-action="Index"
-                       asp-route-username="@members?.FirstOrDefault(m => m!.Id != currentUserId)?.UserName"
+                       asp-route-username="@members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.UserName"
                        class="text-decoration-none">
-                        <h6 class="mb-0">@members?.FirstOrDefault(m => m!.Id != currentUserId)?.Name</h6>
+                        <h6 class="mb-0">@members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.Name</h6>
                         <small class="text-success">Trực tuyến</small>
                     </a>
                 }
@@ -69,7 +75,7 @@
                         <!-- Options for Personal Chat -->
                         <li>
                             <a class="dropdown-item" asp-controller="PublicProfile" asp-action="Index"
-                               asp-route-username="@members?.FirstOrDefault(m => m!.Id != currentUserId)?.UserName">
+                               asp-route-username="@members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.UserName">
                                 <i class="fa-regular fa-user"></i> Trang cá nhân
                             </a>
                         </li>
@@ -89,7 +95,7 @@
                         </li>
                         <li>
                             <form asp-controller="Friend" asp-action="Blocked"
-                                  asp-route-username="@members?.FirstOrDefault(m => m!.Id != currentUserId)?.Id"
+                                  asp-route-username="@members?.FirstOrDefault(predicate: m => m!.Id != currentUserId)?.Id"
                                   method="post">
                                 <button type="submit" class="dropdown-item">
                                     <i class="fa-solid fa-ban"></i> Chặn
@@ -140,7 +146,8 @@
                 <!-- Header -->
                 <div class="modal-header bg-primary border-0">
                     <h5 class="modal-title text-white" id="groupInfoModalLabel">
-                        <i class="fa-solid fa-users me-2"></i>Thông tin cuộc trò chuyện
+                        <i class="fa-solid fa-users me-2"></i>
+                        Thông tin cuộc trò chuyện
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -150,13 +157,19 @@
                     <!-- Tabs -->
                     <ul class="nav nav-tabs nav-fill border-0 mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active border-0 fw-bold" data-bs-toggle="tab" data-bs-target="#group-info-tab">
-                                <i class="fa-solid fa-circle-info me-2"></i>Thông tin nhóm
+                            <button class="nav-link active border-0 fw-bold"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#group-info-tab">
+                                <i class="fa-solid fa-circle-info me-2"></i>
+                                Thông tin nhóm
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link border-0 fw-bold" data-bs-toggle="tab" data-bs-target="#members-tab">
-                                <i class="fa-solid fa-users me-2"></i>Thành viên
+                            <button class="nav-link border-0 fw-bold"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#members-tab">
+                                <i class="fa-solid fa-users me-2"></i>
+                                Thành viên
                             </button>
                         </li>
                     </ul>
@@ -171,40 +184,55 @@
                                     <img src="@(conversation.CurrentGroupAvatar ?? defaultAvatarPath)"
                                          alt="Group Avatar"
                                          class="rounded-circle border border-primary"
-                                         width="120" height="120" id="group-avatar-preview" style="object-fit: cover;">
+                                         width="120"
+                                         height="120"
+                                         id="group-avatar-preview"
+                                         style="object-fit: cover;"
+                                    >
                                     <form method="post" enctype="multipart/form-data" id="avatar-upload-form">
                                         <input type="file" name="GroupAvatar" accept="image/*"
                                                class="d-none" id="group-avatar-input" onchange="previewAvatar(this)">
-                                        <label for="group-avatar-input" class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0">
+                                        <label for="group-avatar-input"
+                                               class="btn btn-sm btn-primary rounded-circle position-absolute bottom-0 end-0">
                                             <i class="fa-solid fa-camera"></i>
                                         </label>
                                     </form>
                                 </div>
                                 <h4 class="fw-bold mt-3">@conversation.GroupName</h4>
                                 <p class="text-muted small">
-                                    <i class="fa-regular fa-calendar me-2"></i>Được tạo lúc: @conversation.CreatedAt.ToString("dd/MM/yyyy")
+                                    <i class="fa-regular fa-calendar me-2"></i>
+                                    Được tạo lúc: @conversation.CreatedAt.ToString(format: "dd/MM/yyyy")
                                 </p>
                             </div>
 
                             <!-- Group Details Section -->
-                            <div class="row row-cols-1 row-cols-md-3 g-4">
+                            <div class="row g-4">
                                 <!-- Description -->
-                                <div class="col">
+                                <div class="col-12">
                                     <div class="bg-body rounded p-3 h-100 d-flex flex-column">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <h6 class="text-primary mb-3"><i class="fa-solid fa-align-left me-2"></i>Mô tả</h6>
-                                                <p id="group-description" class="mb-0 text-secondary">@(conversation.GroupDetail ?? "Chưa có mô tả.")</p>
+                                                <h6 class="text-primary mb-3">
+                                                    <i class="fa-solid fa-align-left me-2"></i>
+                                                    Mô tả
+                                                </h6>
+                                                <p id="group-description" class="mb-0 text-secondary">
+                                                    @(conversation.GroupDetail ?? "Chưa có mô tả.")
+                                                </p>
                                             </div>
-                                            <button class="btn btn-sm btn-link text-primary" id="edit-description-button">
-                                                <i class="fa-solid fa-pencil me-1"></i>Chỉnh sửa
+                                            <button class="btn btn-sm btn-link text-primary"
+                                                    id="edit-description-button">
+                                                <i class="fa-solid fa-pencil me-1"></i>
+                                                Chỉnh sửa
                                             </button>
                                         </div>
                                         <!-- Edit Description Form -->
                                         <form method="post" id="edit-description-form" class="d-none mt-auto">
-                                            <textarea name="GroupDescription" class="form-control mb-2">@conversation.GroupDetail</textarea>
+                                            <textarea name="GroupDescription"
+                                                      class="form-control mb-2">@conversation.GroupDetail</textarea>
                                             <div class="d-flex justify-content-end gap-2">
-                                                <button type="button" class="btn btn-secondary btn-sm" id="cancel-edit-description">
+                                                <button type="button" class="btn btn-secondary btn-sm"
+                                                        id="cancel-edit-description">
                                                     Hủy
                                                 </button>
                                                 <button type="submit" class="btn btn-primary btn-sm">
@@ -256,7 +284,8 @@
                             <!-- Search and Filter -->
                             <div class="d-flex gap-3 mb-4">
                                 <div class="position-relative flex-grow-1">
-                                    <input type="text" class="form-control bg-body ps-5" placeholder="Tìm thành viên...">
+                                    <input type="text" class="form-control bg-body ps-5"
+                                           placeholder="Tìm thành viên...">
                                     <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                 </div>
                                 <button class="btn btn-light">
